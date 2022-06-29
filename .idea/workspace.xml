@@ -4,39 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="68a419b5-686e-42fd-b5f5-5c643456d57d" name="Changes" comment="Bot Setup and Music System">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/freyr/apollo18/commands/Category.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/freyr/apollo18/commands/Command.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/freyr/apollo18/commands/CommandManager.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/freyr/apollo18/commands/music/LoopCommand.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/freyr/apollo18/commands/music/NowPlayingCommand.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/freyr/apollo18/commands/music/PauseCommand.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/freyr/apollo18/commands/music/PlayCommand.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/freyr/apollo18/commands/music/QueueCommand.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/freyr/apollo18/commands/music/ResumeCommand.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/freyr/apollo18/commands/music/SkipCommand.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/freyr/apollo18/commands/music/StopCommand.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/freyr/apollo18/commands/music/VolumeCommand.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/freyr/apollo18/commands/utility/HelpCommand.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/freyr/apollo18/commands/utility/InviteCommand.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/freyr/apollo18/commands/utility/PingCommand.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/freyr/apollo18/commands/utility/ReportBugCommand.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/freyr/apollo18/listeners/ButtonListener.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/freyr/apollo18/listeners/GuildListener.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/freyr/apollo18/util/embeds/EmbedColor.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/freyr/apollo18/util/embeds/EmbedUtils.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/freyr/apollo18/util/music/AudioPlayerSendHandler.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/freyr/apollo18/util/music/GuildMusicManager.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/freyr/apollo18/util/music/PlayerManager.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/freyr/apollo18/util/music/TrackScheduler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.env.example" beforeDir="false" afterPath="$PROJECT_DIR$/.env.example" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+    <list default="true" id="68a419b5-686e-42fd-b5f5-5c643456d57d" name="Changes" comment="Removed Welcome and Remove Messages">
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Procfile" beforeDir="false" afterPath="$PROJECT_DIR$/Procfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/freyr/apollo18/Apollo18.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/freyr/apollo18/Apollo18.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -48,6 +17,13 @@
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="useMavenConfig" value="true" />
+      </MavenGeneralSettings>
+    </option>
   </component>
   <component name="ProjectId" id="2BGkIFisyqZaoQdsRQvvUaYT6m1" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -122,7 +98,21 @@
       <option name="project" value="LOCAL" />
       <updated>1656542200806</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Bot Setup and Music System">
+      <created>1656542270866</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1656542270866</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Removed Welcome and Remove Messages">
+      <created>1656542410985</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1656542410985</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -138,6 +128,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Bot Setup and Music System" />
-    <option name="LAST_COMMIT_MESSAGE" value="Bot Setup and Music System" />
+    <MESSAGE value="Removed Welcome and Remove Messages" />
+    <option name="LAST_COMMIT_MESSAGE" value="Removed Welcome and Remove Messages" />
   </component>
 </project>
