@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="68a419b5-686e-42fd-b5f5-5c643456d57d" name="Changes" comment="">
+    <list default="true" id="68a419b5-686e-42fd-b5f5-5c643456d57d" name="Changes" comment="Bot Setup and Music System">
       <change afterPath="$PROJECT_DIR$/src/main/java/com/freyr/apollo18/commands/Category.java" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/src/main/java/com/freyr/apollo18/commands/Command.java" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/src/main/java/com/freyr/apollo18/commands/CommandManager.java" afterDir="false" />
@@ -115,6 +115,14 @@
       <option name="presentableId" value="Default" />
       <updated>1656539730251</updated>
     </task>
+    <task id="LOCAL-00001" summary="Bot Setup and Music System">
+      <created>1656542200806</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1656542200806</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -127,5 +135,9 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Bot Setup and Music System" />
+    <option name="LAST_COMMIT_MESSAGE" value="Bot Setup and Music System" />
   </component>
 </project>
