@@ -14,6 +14,7 @@ Below is a comprehensive list of the frameworks and libraries used to build Apol
 
 * [Java Discord API](https://github.com/DV8FromTheWorld/JDA)
 * [DotEnv](https://github.com/cdimascio/dotenv-java)
+* [LavaPlayer](https://github.com/sedmelluq/lavaplayer)
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
