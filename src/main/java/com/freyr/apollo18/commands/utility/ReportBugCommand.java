@@ -40,6 +40,6 @@ public class ReportBugCommand extends Command {
         event.getGuild().getChannelById(MessageChannel.class, 854150278760103937L).sendMessageEmbeds(embed.build()).queue();
 
         MessageEmbed replyEmbed = new EmbedBuilder().setDescription(":white_check_mark: - **Your report has been sent to the bot developer!**").setColor(EmbedColor.DEFAULT_COLOR).build();
-        event.getHook().sendMessageEmbeds(replyEmbed).queue();
+        event.getHook().sendMessageEmbeds(replyEmbed).setEphemeral(true).queue();
     }
 }
