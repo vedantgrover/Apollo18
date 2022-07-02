@@ -35,7 +35,7 @@ public class InviteCommand extends Command {
         if (option.equals("server")) {
             EmbedBuilder serverEmbed = new EmbedBuilder();
             serverEmbed.setTitle("Server Invite");
-            serverEmbed.setThumbnail(event.getJDA().getGuildById(988655520082714654L).getIconUrl());
+            serverEmbed.setThumbnail(event.getGuild().getIconUrl());
             serverEmbed.setColor(EmbedColor.DEFAULT_COLOR);
             serverEmbed.setDescription(event.getGuild().getDescription());
             serverEmbed.setFooter("Requested by " + event.getUser().getName());
