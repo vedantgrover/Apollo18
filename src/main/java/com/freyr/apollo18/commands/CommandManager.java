@@ -8,6 +8,10 @@ import com.freyr.apollo18.commands.utility.HelpCommand;
 import com.freyr.apollo18.commands.utility.InviteCommand;
 import com.freyr.apollo18.commands.utility.PingCommand;
 import com.freyr.apollo18.commands.utility.ReportBugCommand;
+import com.freyr.apollo18.util.embeds.EmbedUtils;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.MessageChannel;
+import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -96,6 +100,17 @@ public class CommandManager extends ListenerAdapter {
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
         Command cmd = mapCommands.get(event.getName()); // Getting the command based off of the name received in the event
         if (cmd != null) {
+            Role botRole = event.getGuild().getBotRole();
+            if (cmd.botPermission != null) {
+                if (!botRole.hasPermission(cmd.botPermission) && !botRole.hasPermission(Permission.ADMINISTRATOR)) {
+                    String missingPerms = "";
+                    for (Permission perm : cmd.botPermission) {
+                        missingPerms += perm.getName() + ", ";
+                    }
+                    event.replyEmbeds(EmbedUtils.createError("Missing the `" + missingPerms + "` permission.")).queue();
+                    return;
+                }
+            }
             cmd.execute(event); // Executing the execute method.
         }
     }

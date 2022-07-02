@@ -51,8 +51,6 @@ public class MemeCommand extends Command {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             JSONObject data = new JSONObject(response.body());
 
-            System.out.println(data);
-
             EmbedBuilder memeEmbed = new EmbedBuilder();
             memeEmbed.setColor(EmbedColor.DEFAULT_COLOR);
             memeEmbed.setTitle(data.getString("title"), data.getString("postLink"));

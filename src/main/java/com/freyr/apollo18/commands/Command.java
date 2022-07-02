@@ -1,6 +1,7 @@
 package com.freyr.apollo18.commands;
 
 import com.freyr.apollo18.Apollo18;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
@@ -20,6 +21,7 @@ public abstract class Command {
     public String description; // Description of the command
     public Category category;
     public List<OptionData> args; // Any options the command needs goes here
+    public List<Permission> botPermission; // Permission the bot needs
 
     /**
      * Command Constructor.

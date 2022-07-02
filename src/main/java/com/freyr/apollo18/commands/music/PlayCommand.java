@@ -27,6 +27,8 @@ public class PlayCommand extends Command {
         this.name = "play";
         this.description = "Plays a song either from a search or from a link.";
         this.category = Category.MUSIC;
+        this.botPermission.add(Permission.VOICE_CONNECT);
+        this.botPermission.add(Permission.VOICE_SPEAK);
 
         this.args.add(new OptionData(OptionType.STRING, "song", "Enter in a song search or song/playlist link", true));
     }
