@@ -115,7 +115,7 @@ public class CommandManager extends ListenerAdapter {
         Command cmd = mapCommands.get(event.getName()); // Getting the command based off of the name received in the event
         if (cmd != null) {
             if (!botHasPermission(event.getGuild().getBotRole(), cmd.botPermission)) {
-                buildMissingPermString(cmd.botPermission);
+                event.replyEmbeds(EmbedUtils.createError(buildMissingPermString(cmd.botPermission))).queue();
                 return;
             }
             cmd.execute(event); // Executing the execute method.
