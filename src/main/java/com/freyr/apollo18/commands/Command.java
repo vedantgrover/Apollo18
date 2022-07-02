@@ -30,6 +30,7 @@ public abstract class Command {
     public Command(Apollo18 bot) {
         this.bot = bot;
         this.args = new ArrayList<>();
+        this.botPermission = new ArrayList<>();
     }
 
     /**
