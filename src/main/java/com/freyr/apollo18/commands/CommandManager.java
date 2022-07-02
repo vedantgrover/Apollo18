@@ -91,6 +91,20 @@ public class CommandManager extends ListenerAdapter {
         return commandData;
     }
 
+    private boolean botHasPermission(Role botRole, List<Permission> botPerms) {
+        return botRole.hasPermission(botPerms) || botRole.hasPermission(Permission.ADMINISTRATOR);
+    }
+
+    private String buildMissingPermString(List<Permission> perms) {
+        StringBuilder result = new StringBuilder("Missing permissions: ");
+
+        for (int i = 0; i < perms.size(); i++) {
+            result.append("`").append(perms.get(i).getName()).append("`").append((i == perms.size() - 1) ? "" : ", ");
+        }
+
+        return result.toString();
+    }
+
     /**
      * This method fires everytime someone uses a slash command.
      *
@@ -100,16 +114,8 @@ public class CommandManager extends ListenerAdapter {
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
         Command cmd = mapCommands.get(event.getName()); // Getting the command based off of the name received in the event
         if (cmd != null) {
-            Role botRole = event.getGuild().getBotRole();
-            if (cmd.botPermission != null) {
-                if (!botRole.hasPermission(cmd.botPermission) && !botRole.hasPermission(Permission.ADMINISTRATOR)) {
-                    String missingPerms = "";
-                    for (int i = 0; i < cmd.botPermission.size(); i++) {
-                        missingPerms += cmd.botPermission.get(i).getName() + ((i == cmd.botPermission.size() - 1) ? "":", ");
-                    }
-                    event.replyEmbeds(EmbedUtils.createError("Missing the `" + missingPerms + "` permission.")).queue();
-                    return;
-                }
+            if (!botHasPermission(event.getGuild().getBotRole(), cmd.botPermission)) {
+                buildMissingPermString(cmd.botPermission);
             }
             cmd.execute(event); // Executing the execute method.
         }
