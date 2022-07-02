@@ -116,6 +116,7 @@ public class CommandManager extends ListenerAdapter {
         if (cmd != null) {
             if (!botHasPermission(event.getGuild().getBotRole(), cmd.botPermission)) {
                 buildMissingPermString(cmd.botPermission);
+                return;
             }
             cmd.execute(event); // Executing the execute method.
         }
