@@ -1,5 +1,8 @@
 package com.freyr.apollo18.commands;
 
+import com.freyr.apollo18.Apollo18;
+import com.freyr.apollo18.commands.fun.MemeCommand;
+import com.freyr.apollo18.commands.information.WeatherCommand;
 import com.freyr.apollo18.commands.music.*;
 import com.freyr.apollo18.commands.utility.HelpCommand;
 import com.freyr.apollo18.commands.utility.InviteCommand;
@@ -32,24 +35,29 @@ public class CommandManager extends ListenerAdapter {
 
     public static final Map<String, Command> mapCommands = new HashMap<>(); // Contains all the commands with their identifiers (names)
 
-    public CommandManager() {
+    public CommandManager(Apollo18 bot) {
         mapCommands(
-                new PingCommand(),
-                new InviteCommand(),
-                new ReportBugCommand(),
+                new PingCommand(bot),
+                new InviteCommand(bot),
+                new ReportBugCommand(bot),
                 // Music Commands
-                new PlayCommand(),
-                new StopCommand(),
-                new SkipCommand(),
-                new NowPlayingCommand(),
-                new QueueCommand(),
-                new LoopCommand(),
-                new VolumeCommand(),
-                new PauseCommand(),
-                new ResumeCommand(),
+                new PlayCommand(bot),
+                new StopCommand(bot),
+                new SkipCommand(bot),
+                new NowPlayingCommand(bot),
+                new QueueCommand(bot),
+                new LoopCommand(bot),
+                new VolumeCommand(bot),
+                new PauseCommand(bot),
+                new ResumeCommand(bot),
+                // Information Commands
+                new WeatherCommand(bot),
+
+                // Fun Commands
+                new MemeCommand(bot),
 
                 // Help command should come at the bottom
-                new HelpCommand()
+                new HelpCommand(bot)
         );
     }
 
@@ -100,7 +108,7 @@ public class CommandManager extends ListenerAdapter {
      */
     @Override
     public void onGuildReady(@NotNull GuildReadyEvent event) {
-        event.getGuild().updateCommands().addCommands(unpackCommandData()).queue(); // Creating a guild command using the command data
+        event.getGuild().updateCommands().queue(); // Creating a guild command using the command data
     }
 
     /**
@@ -111,6 +119,6 @@ public class CommandManager extends ListenerAdapter {
      */
     @Override
     public void onReady(@NotNull ReadyEvent event) {
-        //event.getJDA().updateCommands().addCommands(unpackCommandData()).queue(); // Creating a global command using the command data
+        event.getJDA().updateCommands().addCommands(unpackCommandData()).queue(); // Creating a global command using the command data
     }
 }

@@ -1,5 +1,6 @@
 package com.freyr.apollo18.commands.music;
 
+import com.freyr.apollo18.Apollo18;
 import com.freyr.apollo18.commands.Category;
 import com.freyr.apollo18.commands.Command;
 import com.freyr.apollo18.util.embeds.EmbedColor;
@@ -19,8 +20,8 @@ import java.util.TimeZone;
 
 public class NowPlayingCommand extends Command {
 
-    public NowPlayingCommand() {
-        super();
+    public NowPlayingCommand(Apollo18 bot) {
+        super(bot);
         this.name = "np";
         this.description = "Shows you what song is currently playing.";
         this.category = Category.MUSIC;

@@ -1,5 +1,6 @@
 package com.freyr.apollo18.commands.music;
 
+import com.freyr.apollo18.Apollo18;
 import com.freyr.apollo18.commands.Category;
 import com.freyr.apollo18.commands.Command;
 import com.freyr.apollo18.util.embeds.EmbedColor;
@@ -21,8 +22,8 @@ import java.net.URISyntaxException;
 public class PlayCommand extends Command {
 
 
-    public PlayCommand() {
-        super();
+    public PlayCommand(Apollo18 bot) {
+        super(bot);
         this.name = "play";
         this.description = "Plays a song either from a search or from a link.";
         this.category = Category.MUSIC;

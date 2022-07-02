@@ -1,5 +1,6 @@
 package com.freyr.apollo18.commands;
 
+import com.freyr.apollo18.Apollo18;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
@@ -14,6 +15,7 @@ import java.util.List;
  */
 public abstract class Command {
 
+    public Apollo18 bot; // This gives us access to the config file which is in the main class
     public String name; // Name of the command
     public String description; // Description of the command
     public Category category;
@@ -23,7 +25,8 @@ public abstract class Command {
      * Command Constructor.
      * Initializes args as an empty arraylist
      */
-    public Command() {
+    public Command(Apollo18 bot) {
+        this.bot = bot;
         this.args = new ArrayList<>();
     }
 

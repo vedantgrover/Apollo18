@@ -1,5 +1,6 @@
 package com.freyr.apollo18.commands.utility;
 
+import com.freyr.apollo18.Apollo18;
 import com.freyr.apollo18.commands.Category;
 import com.freyr.apollo18.commands.Command;
 import com.freyr.apollo18.util.embeds.EmbedColor;
@@ -10,8 +11,8 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 public class InviteCommand extends Command {
 
-    public InviteCommand() {
-        super();
+    public InviteCommand(Apollo18 bot) {
+        super(bot);
         this.name = "invite";
         this.description = "Generate an invite to the server or to the bot";
         this.category = Category.UTILITY;

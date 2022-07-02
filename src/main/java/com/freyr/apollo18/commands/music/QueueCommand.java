@@ -1,5 +1,6 @@
 package com.freyr.apollo18.commands.music;
 
+import com.freyr.apollo18.Apollo18;
 import com.freyr.apollo18.commands.Category;
 import com.freyr.apollo18.commands.Command;
 import com.freyr.apollo18.util.embeds.EmbedColor;
@@ -23,8 +24,8 @@ import java.util.TimeZone;
 
 public class QueueCommand extends Command {
 
-    public QueueCommand() {
-        super();
+    public QueueCommand(Apollo18 bot) {
+        super(bot);
         this.name = "queue";
         this.description = "Displays the current queue";
         this.category = Category.MUSIC;

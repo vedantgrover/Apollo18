@@ -1,5 +1,6 @@
 package com.freyr.apollo18.commands.music;
 
+import com.freyr.apollo18.Apollo18;
 import com.freyr.apollo18.commands.Category;
 import com.freyr.apollo18.commands.Command;
 import com.freyr.apollo18.util.embeds.EmbedColor;
@@ -14,8 +15,8 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 
 public class SkipCommand extends Command {
 
-    public SkipCommand() {
-        super();
+    public SkipCommand(Apollo18 bot) {
+        super(bot);
         this.name = "skip";
         this.description = "Skips the current track";
         this.category = Category.MUSIC;

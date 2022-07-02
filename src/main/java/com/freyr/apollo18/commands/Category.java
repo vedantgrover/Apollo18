@@ -8,10 +8,10 @@ package com.freyr.apollo18.commands;
  */
 public enum Category {
 
-    UTILITY("Utility", ":tools:"), MUSIC("Music", ":musical_note:");
+    UTILITY("Utility", ":tools:"), MUSIC("Music", ":musical_note:"), INFORMATION("Information", ":thinking:"), FUN("Fun", ":balloon:");
 
-    public String name; // Name of the Category
-    public String emoji; // What emoji to use with it
+    public final String name; // Name of the Category
+    public final String emoji; // What emoji to use with it
 
     Category(String name, String emoji) {
         this.name = name;

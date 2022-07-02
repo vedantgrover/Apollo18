@@ -42,7 +42,7 @@ public class Apollo18 {
         shardManager = builder.build(); // Creating the bot
 
         // Registering Listeners
-        shardManager.addEventListener(new GuildListener(), new ButtonListener(), new CommandManager());
+        shardManager.addEventListener(new GuildListener(), new ButtonListener(), new CommandManager(this));
     }
 
     public static void main(String[] args) {

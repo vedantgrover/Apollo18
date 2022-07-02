@@ -1,5 +1,6 @@
 package com.freyr.apollo18.commands.utility;
 
+import com.freyr.apollo18.Apollo18;
 import com.freyr.apollo18.commands.Category;
 import com.freyr.apollo18.commands.Command;
 import com.freyr.apollo18.commands.CommandManager;
@@ -29,8 +30,8 @@ public class HelpCommand extends Command {
 
     private static final int COMMANDS_PER_PAGE = 6; // Sets the max number of commands per page
 
-    public HelpCommand() {
-        super();
+    public HelpCommand(Apollo18 bot) {
+        super(bot);
         this.name = "help";
         this.description = "Display a list of all commands and categories.";
         this.category = Category.UTILITY;

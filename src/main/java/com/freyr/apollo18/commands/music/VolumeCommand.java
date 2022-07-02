@@ -1,5 +1,6 @@
 package com.freyr.apollo18.commands.music;
 
+import com.freyr.apollo18.Apollo18;
 import com.freyr.apollo18.commands.Category;
 import com.freyr.apollo18.commands.Command;
 import com.freyr.apollo18.util.embeds.EmbedColor;
@@ -16,8 +17,8 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 public class VolumeCommand extends Command {
 
-    public VolumeCommand() {
-        super();
+    public VolumeCommand(Apollo18 bot) {
+        super(bot);
         this.name = "volume";
         this.description = "Sets the volume of the music";
         this.category = Category.MUSIC;

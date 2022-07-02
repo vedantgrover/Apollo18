@@ -1,5 +1,6 @@
 package com.freyr.apollo18.commands.music;
 
+import com.freyr.apollo18.Apollo18;
 import com.freyr.apollo18.commands.Category;
 import com.freyr.apollo18.commands.Command;
 import com.freyr.apollo18.util.embeds.EmbedUtils;
@@ -11,8 +12,8 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 
 public class PauseCommand extends Command {
 
-    public PauseCommand() {
-        super();
+    public PauseCommand(Apollo18 bot) {
+        super(bot);
         this.name = "pause";
         this.description = "pauses your music";
         this.category = Category.MUSIC;

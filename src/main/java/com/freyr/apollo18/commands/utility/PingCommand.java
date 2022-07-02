@@ -1,5 +1,6 @@
 package com.freyr.apollo18.commands.utility;
 
+import com.freyr.apollo18.Apollo18;
 import com.freyr.apollo18.commands.Category;
 import com.freyr.apollo18.commands.Command;
 import com.freyr.apollo18.util.embeds.EmbedColor;
@@ -8,8 +9,8 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 
 public class PingCommand extends Command {
 
-    public PingCommand() {
-        super();
+    public PingCommand(Apollo18 bot) {
+        super(bot);
         this.name = "ping";
         this.description = "Returns the latency of the bot and the Discord API";
         this.category = Category.UTILITY;

@@ -1,5 +1,6 @@
 package com.freyr.apollo18.commands.utility;
 
+import com.freyr.apollo18.Apollo18;
 import com.freyr.apollo18.commands.Category;
 import com.freyr.apollo18.commands.Command;
 import com.freyr.apollo18.util.embeds.EmbedColor;
@@ -15,8 +16,8 @@ import java.time.Instant;
 
 public class ReportBugCommand extends Command {
 
-    public ReportBugCommand() {
-        super();
+    public ReportBugCommand(Apollo18 bot) {
+        super(bot);
         this.name = "report";
         this.description = "Report a bug!";
         this.category = Category.UTILITY;
