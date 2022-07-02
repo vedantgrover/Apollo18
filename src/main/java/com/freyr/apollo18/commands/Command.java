@@ -21,7 +21,8 @@ public abstract class Command {
     public String description; // Description of the command
     public Category category;
     public List<OptionData> args; // Any options the command needs goes here
-    public List<Permission> botPermission; // Permission the bot needs
+    public List<Permission> userPermission; // Permissions for the user
+    public List<Permission> botPermission; // Permissions the bot needs
 
     /**
      * Command Constructor.
@@ -31,6 +32,7 @@ public abstract class Command {
         this.bot = bot;
         this.args = new ArrayList<>();
         this.botPermission = new ArrayList<>();
+        this.userPermission = new ArrayList<>();
     }
 
     /**

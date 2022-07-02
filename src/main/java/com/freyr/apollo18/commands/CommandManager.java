@@ -10,7 +10,6 @@ import com.freyr.apollo18.commands.utility.PingCommand;
 import com.freyr.apollo18.commands.utility.ReportBugCommand;
 import com.freyr.apollo18.util.embeds.EmbedUtils;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
@@ -91,8 +90,8 @@ public class CommandManager extends ListenerAdapter {
         return commandData;
     }
 
-    private boolean botHasPermission(Role botRole, List<Permission> botPerms) {
-        return botRole.hasPermission(botPerms) || botRole.hasPermission(Permission.ADMINISTRATOR);
+    private boolean hasPermission(Role role, List<Permission> botPerms) {
+        return role.hasPermission(botPerms) || role.hasPermission(Permission.ADMINISTRATOR);
     }
 
     private String buildMissingPermString(List<Permission> perms) {
@@ -114,9 +113,17 @@ public class CommandManager extends ListenerAdapter {
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
         Command cmd = mapCommands.get(event.getName()); // Getting the command based off of the name received in the event
         if (cmd != null) {
-            if (!botHasPermission(event.getGuild().getBotRole(), cmd.botPermission)) {
-                event.replyEmbeds(EmbedUtils.createError(buildMissingPermString(cmd.botPermission))).queue();
-                return;
+            if (!cmd.botPermission.isEmpty()) {
+                if (!hasPermission(event.getGuild().getBotRole(), cmd.botPermission)) {
+                    event.replyEmbeds(EmbedUtils.createError(buildMissingPermString(cmd.botPermission))).queue();
+                    return;
+                }
+            }
+            if (!cmd.userPermission.isEmpty()) {
+                if (!event.getMember().hasPermission(cmd.userPermission) && event.getMember().hasPermission(Permission.ADMINISTRATOR)) {
+                    event.replyEmbeds(EmbedUtils.createError(buildMissingPermString(cmd.userPermission))).queue();
+                    return;
+                }
             }
             cmd.execute(event); // Executing the execute method.
         }

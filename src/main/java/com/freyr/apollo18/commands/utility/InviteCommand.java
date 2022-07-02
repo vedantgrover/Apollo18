@@ -5,6 +5,7 @@ import com.freyr.apollo18.commands.Category;
 import com.freyr.apollo18.commands.Command;
 import com.freyr.apollo18.util.embeds.EmbedColor;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
@@ -22,6 +23,7 @@ public class InviteCommand extends Command {
         data.addChoice("bot", "bot");
 
         this.args.add(data);
+        this.userPermission.add(Permission.CREATE_INSTANT_INVITE);
     }
 
     @Override
