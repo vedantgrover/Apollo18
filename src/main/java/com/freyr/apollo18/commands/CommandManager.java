@@ -104,8 +104,8 @@ public class CommandManager extends ListenerAdapter {
             if (cmd.botPermission != null) {
                 if (!botRole.hasPermission(cmd.botPermission) && !botRole.hasPermission(Permission.ADMINISTRATOR)) {
                     String missingPerms = "";
-                    for (Permission perm : cmd.botPermission) {
-                        missingPerms += perm.getName() + ", ";
+                    for (int i = 0; i < cmd.botPermission.size(); i++) {
+                        missingPerms += cmd.botPermission.get(i).getName() + ((i == cmd.botPermission.size() - 1) ? "":", ");
                     }
                     event.replyEmbeds(EmbedUtils.createError("Missing the `" + missingPerms + "` permission.")).queue();
                     return;
