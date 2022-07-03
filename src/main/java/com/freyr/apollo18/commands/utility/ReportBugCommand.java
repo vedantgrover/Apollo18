@@ -14,6 +14,9 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 import java.time.Instant;
 
+/**
+ * This command allows you to report bugs that the user has found
+ */
 public class ReportBugCommand extends Command {
 
     public ReportBugCommand(Apollo18 bot) {

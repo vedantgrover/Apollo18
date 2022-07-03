@@ -19,6 +19,9 @@ import net.dv8tion.jda.api.managers.AudioManager;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+/**
+ * This command connects to a voice channel and plays music
+ */
 public class PlayCommand extends Command {
 
 

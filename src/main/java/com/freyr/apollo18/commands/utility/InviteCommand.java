@@ -10,6 +10,9 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
+/**
+ * This command gives you the invite to invite apollo
+ */
 public class InviteCommand extends Command {
 
     public InviteCommand(Apollo18 bot) {

@@ -18,6 +18,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
+/**
+ * This command returns the current track that is being played
+ */
 public class NowPlayingCommand extends Command {
 
     public NowPlayingCommand(Apollo18 bot) {

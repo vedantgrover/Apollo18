@@ -12,6 +12,9 @@ import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
+/**
+ * This command is part of the music system. It allows us to loop songs
+ */
 public class LoopCommand extends Command {
 
     public LoopCommand(Apollo18 bot) {

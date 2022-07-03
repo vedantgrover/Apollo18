@@ -7,6 +7,9 @@ import com.freyr.apollo18.util.embeds.EmbedColor;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
+/**
+ * The first command ever. This command returns the bot and discord latency
+ */
 public class PingCommand extends Command {
 
     public PingCommand(Apollo18 bot) {

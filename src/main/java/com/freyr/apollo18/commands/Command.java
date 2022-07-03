@@ -48,6 +48,12 @@ public abstract class Command {
      */
     public abstract void execute(SlashCommandInteractionEvent event);
 
+    /**
+     * This command uses an API URL to grab data and return it for use
+     *
+     * @param apiURL The api url you want to use
+     * @return All the data given through that URL
+     */
     public JSONObject getApiData(String apiURL) {
         try {
             HttpClient client = HttpClient.newHttpClient();

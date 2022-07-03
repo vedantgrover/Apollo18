@@ -10,6 +10,9 @@ import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
+/**
+ * This command resumes music when paused
+ */
 public class ResumeCommand extends Command {
 
     public ResumeCommand(Apollo18 bot) {

@@ -11,6 +11,9 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
+/**
+ * This command allows you to send in a suggestion for me to review
+ */
 public class SuggestCommand extends Command {
 
     public SuggestCommand(Apollo18 bot) {
@@ -30,7 +33,7 @@ public class SuggestCommand extends Command {
 
         EmbedBuilder embed = new EmbedBuilder();
 
-        embed.setAuthor(event.getUser().getName(), event.getUser().getAvatarUrl());
+        embed.setAuthor(event.getUser().getName(), null, event.getUser().getAvatarUrl());
         embed.addField("Suggestion", suggestion, false);
         embed.addField("Server", event.getGuild().getName(), false);
         embed.setColor(EmbedColor.DEFAULT_COLOR);

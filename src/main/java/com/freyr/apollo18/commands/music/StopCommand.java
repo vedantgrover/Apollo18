@@ -12,6 +12,9 @@ import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
+/**
+ * This command stops the music, clears the queue, and leaves the voice channel
+ */
 public class StopCommand extends Command {
 
     public StopCommand(Apollo18 bot) {

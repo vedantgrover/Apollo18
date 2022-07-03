@@ -13,6 +13,9 @@ import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
+/**
+ * This command skips the current track
+ */
 public class SkipCommand extends Command {
 
     public SkipCommand(Apollo18 bot) {

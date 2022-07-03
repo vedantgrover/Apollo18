@@ -15,6 +15,9 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
+/**
+ * This command returns the volume of the bot and also allows you to change the volume
+ */
 public class VolumeCommand extends Command {
 
     public VolumeCommand(Apollo18 bot) {

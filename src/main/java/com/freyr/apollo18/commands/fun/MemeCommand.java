@@ -4,7 +4,6 @@ import com.freyr.apollo18.Apollo18;
 import com.freyr.apollo18.commands.Category;
 import com.freyr.apollo18.commands.Command;
 import com.freyr.apollo18.util.embeds.EmbedColor;
-import com.freyr.apollo18.util.embeds.EmbedUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
@@ -12,12 +11,9 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.json.JSONObject;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-
+/**
+ * This command goes through Reddit and finds a meme to give you
+ */
 public class MemeCommand extends Command {
 
     public MemeCommand(Apollo18 bot) {
@@ -26,6 +22,7 @@ public class MemeCommand extends Command {
         this.description = "Get a random meme from the internet";
         this.category = Category.FUN;
 
+        // Adding different subreddit options
         OptionData optionData = new OptionData(OptionType.STRING, "type", "Specify a type of meme", false);
         optionData.addChoice("dankmeme", "dankmeme");
         optionData.addChoice("surreal", "surreal");
@@ -36,32 +33,26 @@ public class MemeCommand extends Command {
 
     @Override
     public void execute(SlashCommandInteractionEvent event) {
-        event.deferReply().queue();
-        OptionMapping type = event.getOption("type");
-        String memeAPI = "https://meme-api.herokuapp.com/gimme";
+        event.deferReply().queue(); // Asking discord to wait longer
+        OptionMapping type = event.getOption("type"); // Getting the type (could be null if not given)
+        String memeAPI = "https://meme-api.herokuapp.com/gimme"; // Initializing the base string
 
+        // Adding the subreddit if it is not null
         if (type != null) {
             memeAPI += "/" + type.getAsString();
         }
 
-        try {
-            HttpClient client = HttpClient.newHttpClient();
-            HttpRequest request = HttpRequest.newBuilder().uri(URI.create(memeAPI)).build();
+        // Getting the data
+        JSONObject data = getApiData(memeAPI);
 
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            JSONObject data = new JSONObject(response.body());
+        // Building the embed
+        EmbedBuilder memeEmbed = new EmbedBuilder();
+        memeEmbed.setColor(EmbedColor.DEFAULT_COLOR);
+        memeEmbed.setTitle(data.getString("title"), data.getString("postLink"));
+        memeEmbed.setDescription("Created by: " + data.getString("author"));
+        memeEmbed.setImage(data.getString("url"));
+        memeEmbed.setFooter("👍 - " + data.getInt("ups"));
 
-            EmbedBuilder memeEmbed = new EmbedBuilder();
-            memeEmbed.setColor(EmbedColor.DEFAULT_COLOR);
-            memeEmbed.setTitle(data.getString("title"), data.getString("postLink"));
-            memeEmbed.setDescription("Created by: " + data.getString("author"));
-            memeEmbed.setImage(data.getString("url"));
-            memeEmbed.setFooter("👍 - " + data.getInt("ups"));
-
-            event.getHook().sendMessageEmbeds(memeEmbed.build()).queue();
-        } catch (IOException | InterruptedException e) {
-            event.getHook().sendMessageEmbeds(EmbedUtils.createError("There was an error while getting your meme.")).queue();
-            e.printStackTrace();
-        }
+        event.getHook().sendMessageEmbeds(memeEmbed.build()).queue();
     }
 }

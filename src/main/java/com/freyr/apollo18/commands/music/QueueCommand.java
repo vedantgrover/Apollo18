@@ -22,6 +22,9 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.TimeZone;
 
+/**
+ * This command displays the queue and the current song. You can also skip to a certain point in the queue if you want
+ */
 public class QueueCommand extends Command {
 
     public QueueCommand(Apollo18 bot) {
