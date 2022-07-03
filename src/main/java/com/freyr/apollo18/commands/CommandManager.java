@@ -4,10 +4,7 @@ import com.freyr.apollo18.Apollo18;
 import com.freyr.apollo18.commands.fun.MemeCommand;
 import com.freyr.apollo18.commands.information.WeatherCommand;
 import com.freyr.apollo18.commands.music.*;
-import com.freyr.apollo18.commands.utility.HelpCommand;
-import com.freyr.apollo18.commands.utility.InviteCommand;
-import com.freyr.apollo18.commands.utility.PingCommand;
-import com.freyr.apollo18.commands.utility.ReportBugCommand;
+import com.freyr.apollo18.commands.utility.*;
 import com.freyr.apollo18.util.embeds.EmbedUtils;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Role;
@@ -40,9 +37,11 @@ public class CommandManager extends ListenerAdapter {
 
     public CommandManager(Apollo18 bot) {
         mapCommands(
+                // Utility Commands
                 new PingCommand(bot),
                 new InviteCommand(bot),
                 new ReportBugCommand(bot),
+                new SuggestCommand(bot),
                 // Music Commands
                 new PlayCommand(bot),
                 new StopCommand(bot),
@@ -58,9 +57,6 @@ public class CommandManager extends ListenerAdapter {
 
                 // Fun Commands
                 new MemeCommand(bot),
-
-                // Moderation Commands
-
 
                 // Help command should come at the bottom
                 new HelpCommand(bot)
