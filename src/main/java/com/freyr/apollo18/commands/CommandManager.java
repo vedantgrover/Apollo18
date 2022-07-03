@@ -120,7 +120,7 @@ public class CommandManager extends ListenerAdapter {
                 }
             }
             if (!cmd.userPermission.isEmpty()) {
-                if (!event.getMember().hasPermission(cmd.userPermission) && event.getMember().hasPermission(Permission.ADMINISTRATOR)) {
+                if (!event.getMember().hasPermission(cmd.userPermission) && !event.getMember().hasPermission(Permission.ADMINISTRATOR)) {
                     event.replyEmbeds(EmbedUtils.createError(buildMissingPermString(cmd.userPermission))).queue();
                     return;
                 }
