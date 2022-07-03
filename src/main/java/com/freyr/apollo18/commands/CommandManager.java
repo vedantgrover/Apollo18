@@ -1,6 +1,7 @@
 package com.freyr.apollo18.commands;
 
 import com.freyr.apollo18.Apollo18;
+import com.freyr.apollo18.commands.fun.EmoteCommand;
 import com.freyr.apollo18.commands.fun.MemeCommand;
 import com.freyr.apollo18.commands.information.WeatherCommand;
 import com.freyr.apollo18.commands.music.*;
@@ -57,6 +58,7 @@ public class CommandManager extends ListenerAdapter {
 
                 // Fun Commands
                 new MemeCommand(bot),
+                new EmoteCommand(bot),
 
                 // Help command should come at the bottom
                 new HelpCommand(bot)
