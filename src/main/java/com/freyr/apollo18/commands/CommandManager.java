@@ -59,6 +59,9 @@ public class CommandManager extends ListenerAdapter {
                 // Fun Commands
                 new MemeCommand(bot),
 
+                // Moderation Commands
+
+
                 // Help command should come at the bottom
                 new HelpCommand(bot)
         );
