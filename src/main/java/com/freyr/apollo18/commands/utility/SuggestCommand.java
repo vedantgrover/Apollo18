@@ -38,7 +38,10 @@ public class SuggestCommand extends Command {
         embed.addField("Server", event.getGuild().getName(), false);
         embed.setColor(EmbedColor.DEFAULT_COLOR);
 
-        event.getGuild().getChannelById(MessageChannel.class, 854150407655784448L).sendMessageEmbeds(embed.build()).queue();
+        event.getGuild().getChannelById(MessageChannel.class, 854150407655784448L).sendMessageEmbeds(embed.build()).queue(m -> {
+            m.addReaction(":arrow_up:").queue();
+            m.addReaction(":arrow_down:").queue();
+        });
         event.getJDA().getUserById(622506118551437322L).openPrivateChannel().flatMap(channel -> channel.sendMessageEmbeds(embed.build())).queue();
         event.getHook().sendMessageEmbeds(EmbedUtils.createSuccess("Suggestion sent to developer")).setEphemeral(true).queue();
     }
