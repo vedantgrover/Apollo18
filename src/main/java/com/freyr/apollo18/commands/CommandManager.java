@@ -43,6 +43,7 @@ public class CommandManager extends ListenerAdapter {
                 new InviteCommand(bot),
                 new ReportBugCommand(bot),
                 new SuggestCommand(bot),
+                new VoteCommand(bot),
                 // Music Commands
                 new PlayCommand(bot),
                 new StopCommand(bot),
