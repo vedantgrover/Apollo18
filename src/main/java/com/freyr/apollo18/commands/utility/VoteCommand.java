@@ -35,7 +35,7 @@ public class VoteCommand extends Command {
         event.deferReply().queue();
         try {
             HttpClient client = HttpClient.newHttpClient();
-            HttpRequest request = HttpRequest.newBuilder().uri(URI.create("https://top.gg/api/bots/" + "853812538218381352" + "/check?userId=" + event.getUser().getId())).header("Authorization", "Bearer " + bot.getConfig().get("TOPGG_TOKEN")).build();
+            HttpRequest request = HttpRequest.newBuilder().uri(URI.create("https://top.gg/api/bots/" + "853812538218381352" + "/check?userId=" + event.getUser().getId())).header("Authorization", "Bearer " + bot.getConfig().get("TOPGG_TOKEN", System.getenv("TOPGG_TOKEN"))).build();
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
