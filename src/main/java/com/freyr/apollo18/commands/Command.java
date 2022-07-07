@@ -4,6 +4,7 @@ import com.freyr.apollo18.Apollo18;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;

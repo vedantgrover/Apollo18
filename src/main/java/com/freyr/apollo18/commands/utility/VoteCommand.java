@@ -50,7 +50,8 @@ public class VoteCommand extends Command {
                 embed.setColor(EmbedColor.DEFAULT_COLOR);
 
                 event.getHook().sendMessageEmbeds(embed.build()).addActionRow(Button.link("https://top.gg/bot/853812538218381352/vote", "Vote")).queue();
-            } else event.getHook().sendMessageEmbeds(EmbedUtils.createError("You have already voted! You can vote every 12 hours.")).queue();
+            } else
+                event.getHook().sendMessageEmbeds(EmbedUtils.createError("You have already voted! You can vote every 12 hours.")).queue();
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
             event.getHook().sendMessageEmbeds(EmbedUtils.createError("Something went wrong while getting the data. Please try again later.")).queue();
