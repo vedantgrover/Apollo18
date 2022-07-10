@@ -68,4 +68,25 @@ public abstract class Command {
             return null;
         }
     }
+
+    /**
+     * This command uses an API URL to grab data and return it for use
+     *
+     * @param apiURL The api url you want to use
+     * @param authentication The authentication key (Bearer + [key])
+     * @return All the data given through that URL
+     */
+    public JSONObject getApiData(String apiURL, String authentication) {
+        try {
+            HttpClient client = HttpClient.newHttpClient();
+            HttpRequest request = HttpRequest.newBuilder().uri(URI.create(apiURL)).header("Authorization", "Bearer " + authentication).build();
+
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+            return new JSONObject(response.body());
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }

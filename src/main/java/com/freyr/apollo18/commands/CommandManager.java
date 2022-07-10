@@ -1,9 +1,10 @@
 package com.freyr.apollo18.commands;
 
 import com.freyr.apollo18.Apollo18;
+import com.freyr.apollo18.commands.fun.AvatarCommand;
 import com.freyr.apollo18.commands.fun.EmoteCommand;
 import com.freyr.apollo18.commands.fun.MemeCommand;
-import com.freyr.apollo18.commands.information.WeatherCommand;
+import com.freyr.apollo18.commands.information.*;
 import com.freyr.apollo18.commands.music.*;
 import com.freyr.apollo18.commands.utility.*;
 import com.freyr.apollo18.util.embeds.EmbedUtils;
@@ -57,10 +58,15 @@ public class CommandManager extends ListenerAdapter {
                 new ResumeCommand(bot),
                 // Information Commands
                 new WeatherCommand(bot),
+                new YouTubeCommand(bot),
+                new TwitterCommand(bot),
+                new ServerInfoCommand(bot),
+                new UserInfoCommand(bot),
 
                 // Fun Commands
                 new MemeCommand(bot),
                 new EmoteCommand(bot),
+                new AvatarCommand(bot),
 
                 // Help command should come at the bottom
                 new HelpCommand(bot)
@@ -140,7 +146,7 @@ public class CommandManager extends ListenerAdapter {
      */
     @Override
     public void onGuildReady(@NotNull GuildReadyEvent event) {
-        event.getGuild().updateCommands().queue(); // Creating a guild command using the command data
+        event.getGuild().updateCommands().addCommands(unpackCommandData()).queue(); // Creating a guild command using the command data
     }
 
     /**
@@ -151,6 +157,6 @@ public class CommandManager extends ListenerAdapter {
      */
     @Override
     public void onReady(@NotNull ReadyEvent event) {
-        event.getJDA().updateCommands().addCommands(unpackCommandData()).queue(); // Creating a global command using the command data
+        event.getJDA().updateCommands().queue(); // Creating a global command using the command data
     }
 }
