@@ -18,8 +18,6 @@ public class AvatarCommand extends Command {
         this.description = "Returns the avatar (or pfp) of a user";
         this.category = Category.FUN;
 
-        this.devOnly = true;
-
         this.args.add(new OptionData(OptionType.USER, "user", "This user's avatar will be returned"));
     }
 

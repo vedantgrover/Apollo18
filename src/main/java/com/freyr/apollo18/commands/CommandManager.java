@@ -123,7 +123,7 @@ public class CommandManager extends ListenerAdapter {
         Command cmd = mapCommands.get(event.getName()); // Getting the command based off of the name received in the event
         if (cmd != null) {
             if (cmd.devOnly && !event.getUser().getId().equals("622506118551437322")) {
-                event.replyEmbeds(EmbedUtils.createError("This is a developer only command")).queue();
+                event.replyEmbeds(EmbedUtils.createError("This is a **developer only** command")).queue();
                 return;
             }
             if (!cmd.botPermission.isEmpty()) {
