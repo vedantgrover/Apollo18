@@ -27,7 +27,7 @@ public abstract class Command {
     public String name; // Name of the command
     public String description; // Description of the command
     public Category category; // The category it should be in within the help command
-    public boolean devOnly = false;
+    public boolean devOnly = false; // Will restrict a command so that it can only be run by the developer
     public List<OptionData> args; // Any options the command needs goes here
     public List<Permission> userPermission; // Permissions for the user
     public List<Permission> botPermission; // Permissions the bot needs
