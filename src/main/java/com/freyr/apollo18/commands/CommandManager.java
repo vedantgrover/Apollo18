@@ -122,6 +122,10 @@ public class CommandManager extends ListenerAdapter {
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
         Command cmd = mapCommands.get(event.getName()); // Getting the command based off of the name received in the event
         if (cmd != null) {
+            if (cmd.devOnly && !event.getUser().getId().equals("622506118551437322")) {
+                event.replyEmbeds(EmbedUtils.createError("This is a developer only command")).queue();
+                return;
+            }
             if (!cmd.botPermission.isEmpty()) {
                 if (!hasPermission(event.getGuild().getBotRole(), cmd.botPermission)) {
                     event.replyEmbeds(EmbedUtils.createError(buildMissingPermString(cmd.botPermission))).queue();

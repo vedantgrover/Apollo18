@@ -26,7 +26,8 @@ public abstract class Command {
     public Apollo18 bot; // This gives us access to the config file which is in the main class
     public String name; // Name of the command
     public String description; // Description of the command
-    public Category category;
+    public Category category; // The category it should be in within the help command
+    public boolean devOnly = false;
     public List<OptionData> args; // Any options the command needs goes here
     public List<Permission> userPermission; // Permissions for the user
     public List<Permission> botPermission; // Permissions the bot needs
