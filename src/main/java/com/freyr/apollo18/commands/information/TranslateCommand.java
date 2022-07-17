@@ -37,6 +37,7 @@ public class TranslateCommand extends Command {
 
         this.args.add(new OptionData(OptionType.STRING, "language", "ISO Language Code", true));
         this.args.add(new OptionData(OptionType.STRING, "text", "The text you want translated", true));
+        this.args.add(new OptionData(OptionType.STRING, "from", "The language you are translating from", false));
 
         // Adding all the languages and their ISO language codes into the map.
         for (String lang : Locale.getISOLanguages()) {
@@ -53,8 +54,8 @@ public class TranslateCommand extends Command {
      * @return The translated text
      * @throws IOException when the text cannot be encoded due to an invalid encoder
      */
-    private static String translate(String langTo, String text) throws IOException {
-        String urlStr = "https://script.google.com/macros/s/AKfycbwGTyjBTwcPLAdt2EErzRdVA9CN-cngEglSEg0XcpzS6YZopWfuq-RcYl_fCe8kXVnk/exec?q=" + URLEncoder.encode(text, "UTF-8") + "&target=" + langTo + "&source=";
+    private static String translate(String langTo, String langFrom, String text) throws IOException {
+        String urlStr = "https://script.google.com/macros/s/AKfycbwGTyjBTwcPLAdt2EErzRdVA9CN-cngEglSEg0XcpzS6YZopWfuq-RcYl_fCe8kXVnk/exec?q=" + URLEncoder.encode(text, "UTF-8") + "&target=" + langTo + "&source=" + langFrom;
         URL url = new URL(urlStr);
         StringBuilder response = new StringBuilder();
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
@@ -80,7 +81,7 @@ public class TranslateCommand extends Command {
 
             embed.setAuthor(event.getUser().getName(), null, event.getUser().getAvatarUrl());
             embed.addField("Original", text, false);
-            embed.addField("Translated `(" + lang.toUpperCase() + ")`", translate(languages.get(lang.toLowerCase()).trim(), text).replace("&#39;", "'"), false);
+            embed.addField("Translated `(" + lang.toUpperCase() + ")`", translate(languages.get(lang.toLowerCase()).trim(), (event.getOption("from") == null) ? "":languages.get(event.getOption("from").getAsString()), text).replace("&#39;", "'"), false);
             embed.setColor(EmbedColor.DEFAULT_COLOR);
 
             event.getHook().sendMessageEmbeds(embed.build()).queue();
