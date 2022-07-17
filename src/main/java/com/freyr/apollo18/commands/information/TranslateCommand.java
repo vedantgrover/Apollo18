@@ -56,7 +56,7 @@ public class TranslateCommand extends Command {
      */
     private static String translate(String langTo, String langFrom, String text) throws Exception {
 
-        if (!languages.containsValue(langTo) && !languages.containsKey(langTo)) throw new Exception("Incorrect Language");
+        if ((!languages.containsValue(langTo) && !languages.containsKey(langTo)) || (!languages.containsValue(langFrom) && !languages.containsKey(langFrom))) throw new Exception("Incorrect Language");
 
         String urlStr = "https://script.google.com/macros/s/AKfycbwGTyjBTwcPLAdt2EErzRdVA9CN-cngEglSEg0XcpzS6YZopWfuq-RcYl_fCe8kXVnk/exec?q=" + URLEncoder.encode(text, "UTF-8") + "&target=" + langTo + "&source=" + langFrom;
         URL url = new URL(urlStr);
