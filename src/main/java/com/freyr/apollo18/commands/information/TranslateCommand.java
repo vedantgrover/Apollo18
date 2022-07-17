@@ -50,7 +50,7 @@ public class TranslateCommand extends Command {
      * Using an API that I made, the bot translates the text into a language and returns the string (the translated text).
      *
      * @param langTo The ISO Language code. This tells the API what language to translate to.
-     * @param text The text you want to translate
+     * @param text   The text you want to translate
      * @return The translated text
      * @throws IOException when the text cannot be encoded due to an invalid encoder
      */
@@ -79,9 +79,11 @@ public class TranslateCommand extends Command {
         try {
             EmbedBuilder embed = new EmbedBuilder();
 
+            String language = (event.getOption("from") != null) ? event.getOption("from").getAsString().toUpperCase() : "";
+
             embed.setAuthor(event.getUser().getName(), null, event.getUser().getAvatarUrl());
-            embed.addField("Original", text, false);
-            embed.addField("Translated `(" + lang.toUpperCase() + ")`", translate(languages.get(lang.toLowerCase()).trim(), (event.getOption("from") == null) ? "":languages.get(event.getOption("from").getAsString()), text).replace("&#39;", "'"), false);
+            embed.addField("Original `(" + language + ")`", text, false);
+            embed.addField("Translated `(" + lang.toUpperCase() + ")`", translate(languages.get(lang.toLowerCase()), (event.getOption("from") == null) ? "" : languages.get(event.getOption("from").getAsString()), text).replace("&#39;", "'"), false);
             embed.setColor(EmbedColor.DEFAULT_COLOR);
 
             event.getHook().sendMessageEmbeds(embed.build()).queue();
