@@ -54,7 +54,10 @@ public class TranslateCommand extends Command {
      * @return The translated text
      * @throws IOException when the text cannot be encoded due to an invalid encoder
      */
-    private static String translate(String langTo, String langFrom, String text) throws IOException {
+    private static String translate(String langTo, String langFrom, String text) throws Exception {
+
+        if (!languages.containsValue(langTo)) throw new Exception("Incorrect Language");
+
         String urlStr = "https://script.google.com/macros/s/AKfycbwGTyjBTwcPLAdt2EErzRdVA9CN-cngEglSEg0XcpzS6YZopWfuq-RcYl_fCe8kXVnk/exec?q=" + URLEncoder.encode(text, "UTF-8") + "&target=" + langTo + "&source=" + langFrom;
         URL url = new URL(urlStr);
         StringBuilder response = new StringBuilder();
