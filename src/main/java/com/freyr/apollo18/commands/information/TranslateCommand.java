@@ -7,6 +7,7 @@ import com.freyr.apollo18.util.embeds.EmbedColor;
 import com.freyr.apollo18.util.embeds.EmbedUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
@@ -56,7 +57,8 @@ public class TranslateCommand extends Command {
      */
     private static String translate(String langTo, String langFrom, String text) throws Exception {
 
-        if (!languages.containsValue(langTo) && !languages.containsKey(langTo)) throw new Exception("Incorrect Language");
+        if ((!languages.containsValue(langTo) && !languages.containsKey(langTo)) || (!languages.containsValue(langFrom) && !languages.containsKey(langFrom)))
+            throw new Exception("Incorrect Language");
 
         String urlStr = "https://script.google.com/macros/s/AKfycbwGTyjBTwcPLAdt2EErzRdVA9CN-cngEglSEg0XcpzS6YZopWfuq-RcYl_fCe8kXVnk/exec?q=" + URLEncoder.encode(text, "UTF-8") + "&target=" + langTo + "&source=" + langFrom;
         URL url = new URL(urlStr);
@@ -79,14 +81,21 @@ public class TranslateCommand extends Command {
         String lang = event.getOption("language").getAsString();
         String text = event.getOption("text").getAsString();
 
+        OptionMapping langFrom = event.getOption("from");
+
         try {
             EmbedBuilder embed = new EmbedBuilder();
 
-            String language = (event.getOption("from") != null) ? event.getOption("from").getAsString().toUpperCase() : "";
+            String language = (langFrom != null) ? langFrom.getAsString().toUpperCase() : "";
+
+            if (!language.equals("") && languages.get(language) != null) {
+                language = languages.get(language);
+            }
+
 
             embed.setAuthor(event.getUser().getName(), null, event.getUser().getAvatarUrl());
             embed.addField("Original `(" + language + ")`", text, false);
-            embed.addField("Translated `(" + lang.toUpperCase() + ")`", translate((languages.get(lang.toLowerCase()) != null) ? languages.get(lang.toLowerCase()):lang.toLowerCase(), (event.getOption("from") == null) ? "" : languages.get(event.getOption("from").getAsString()), text).replace("&#39;", "'"), false);
+            embed.addField("Translated `(" + lang.toUpperCase() + ")`", translate((languages.get(lang.toLowerCase()) != null) ? languages.get(lang.toLowerCase()) : lang.toLowerCase(), (event.getOption("from") == null) ? "" : languages.get(event.getOption("from").getAsString()), text).replace("&#39;", "'"), false);
             embed.setColor(EmbedColor.DEFAULT_COLOR);
 
             event.getHook().sendMessageEmbeds(embed.build()).queue();
