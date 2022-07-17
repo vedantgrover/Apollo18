@@ -6,7 +6,7 @@ import com.freyr.apollo18.commands.Command;
 import com.freyr.apollo18.util.embeds.EmbedColor;
 import com.freyr.apollo18.util.embeds.EmbedUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Emote;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -17,17 +17,7 @@ import java.util.List;
 
 public class PollCommand extends Command {
 
-    private static final List<String> NUMBER_EMOJIS = Arrays.asList(
-            "\u0031\u20E3",
-            "\u0032\u20E3",
-            "\u0033\u20E3",
-            "\u0034\u20E3",
-            "\u0035\u20E3",
-            "\u0036\u20E3",
-            "\u0037\u20E3",
-            "\u0038\u20E3",
-            "\u0039\u20E3",
-            "\uD83D\uDD1F");
+    private static final List<String> NUMBER_EMOJIS = Arrays.asList("\u0031\u20E3", "\u0032\u20E3", "\u0033\u20E3", "\u0034\u20E3", "\u0035\u20E3", "\u0036\u20E3", "\u0037\u20E3", "\u0038\u20E3", "\u0039\u20E3", "\uD83D\uDD1F");
 
     public PollCommand(Apollo18 bot) {
         super(bot);
@@ -72,7 +62,7 @@ public class PollCommand extends Command {
 
         event.getHook().sendMessageEmbeds(embed.build()).queue(msg -> {
             for (int i = 0; i < choicesArray.length; i++) {
-                msg.addReaction(NUMBER_EMOJIS.get(i)).queue();
+                msg.addReaction(Emoji.fromUnicode(NUMBER_EMOJIS.get(i))).queue();
             }
         });
     }
