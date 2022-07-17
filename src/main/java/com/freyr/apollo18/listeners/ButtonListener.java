@@ -1,8 +1,8 @@
 package com.freyr.apollo18.listeners;
 
-import net.dv8tion.jda.api.entities.Emoji;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.exceptions.ErrorHandler;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -95,7 +95,7 @@ public class ButtonListener extends ListenerAdapter {
      * @return A list of components to use on a reset embed.
      */
     private static List<Button> getResetButtons(String uuid, String systemName) {
-        return Arrays.asList(Button.success("reset:yes:" + uuid + ":" + systemName, Emoji.fromMarkdown("\u2714")), Button.danger("reset:no:" + uuid + ":" + systemName, Emoji.fromUnicode("\u2716")));
+        return Arrays.asList(Button.success("reset:yes:" + uuid + ":" + systemName, Emoji.fromUnicode("\u2714")), Button.danger("reset:no:" + uuid + ":" + systemName, Emoji.fromUnicode("\u2716")));
     }
 
     /**
