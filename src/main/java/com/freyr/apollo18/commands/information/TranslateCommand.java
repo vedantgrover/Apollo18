@@ -83,12 +83,12 @@ public class TranslateCommand extends Command {
 
             embed.setAuthor(event.getUser().getName(), null, event.getUser().getAvatarUrl());
             embed.addField("Original `(" + language + ")`", text, false);
-            embed.addField("Translated `(" + lang.toUpperCase() + ")`", translate(languages.get(lang.toLowerCase()), (event.getOption("from") == null) ? "" : languages.get(event.getOption("from").getAsString()), text).replace("&#39;", "'"), false);
+            embed.addField("Translated `(" + lang.toUpperCase() + ")`", translate((languages.get(lang.toLowerCase()) != null) ? languages.get(lang.toLowerCase()):lang.toLowerCase(), (event.getOption("from") == null) ? "" : languages.get(event.getOption("from").getAsString()), text).replace("&#39;", "'"), false);
             embed.setColor(EmbedColor.DEFAULT_COLOR);
 
             event.getHook().sendMessageEmbeds(embed.build()).queue();
         } catch (Exception e) {
-            event.getHook().sendMessageEmbeds(EmbedUtils.createError("`" + lang + "` is not a Language")).queue();
+            event.getHook().sendMessageEmbeds(EmbedUtils.createError("`" + lang + "` is not a language")).queue();
         }
 
     }
