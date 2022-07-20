@@ -34,7 +34,7 @@ public class Database {
         );
     }
 
-    public void createUserData(User user) {
+    public boolean createUserData(User user) {
         List<Document> items = new ArrayList<>();
         List<Document> playlists = new ArrayList<>();
         List<Document> songs = new ArrayList<>();
@@ -43,8 +43,18 @@ public class Database {
         Document economyData = new Document("balance", 0).append("bank", 0).append("job", new Document("business", null).append("job", null)).append("card", new Document("debit-card", false).append("credit-card", new Document("hasCard", false).append("currentBalance", 0).append("totalBalance", 0).append("expirationDate", null))).append("items", items);
         Document musicData = new Document("playlists", playlists);
 
+        if (!checkIfUserExists(user)) {
+            return false;
+        }
+
         userData.insertOne(
                 new Document("userID", user.getIdLong()).append("leveling", levelingData).append("economy", economyData).append("music", musicData)
         );
+
+        return true;
+    }
+
+    private boolean checkIfUserExists(User user) {
+        return userData.find(new Document("userID", user.getIdLong())) != null;
     }
 }

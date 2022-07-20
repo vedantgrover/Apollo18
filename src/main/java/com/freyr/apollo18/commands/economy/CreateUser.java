@@ -26,8 +26,10 @@ public class CreateUser extends Command {
         event.deferReply().queue();
         Database db = bot.getDatabase();
 
-        db.createUserData(event.getUser());
-
-        event.getHook().sendMessage(event.getUser().getName() + "'s data has been created.").queue();
+        if (db.createUserData(event.getOption("user").getAsUser())) {
+            event.getHook().sendMessage(event.getOption("user").getAsUser().getName() + "'s data has been created.").queue();
+        } else {
+            event.getHook().sendMessage(event.getOption("user").getAsUser().getName() + "'s data already exists.").queue();
+        }
     }
 }
