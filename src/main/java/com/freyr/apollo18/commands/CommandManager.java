@@ -1,6 +1,8 @@
 package com.freyr.apollo18.commands;
 
 import com.freyr.apollo18.Apollo18;
+import com.freyr.apollo18.commands.economy.CreateGuild;
+import com.freyr.apollo18.commands.economy.CreateUser;
 import com.freyr.apollo18.commands.fun.AvatarCommand;
 import com.freyr.apollo18.commands.fun.EmoteCommand;
 import com.freyr.apollo18.commands.fun.MemeCommand;
@@ -70,6 +72,10 @@ public class CommandManager extends ListenerAdapter {
                 new EmoteCommand(bot),
                 new AvatarCommand(bot),
 
+                // Economy Commands
+                new CreateUser(bot),
+                new CreateGuild(bot),
+
                 // Help command should come at the bottom
                 new HelpCommand(bot)
         );
@@ -125,7 +131,7 @@ public class CommandManager extends ListenerAdapter {
         Command cmd = mapCommands.get(event.getName()); // Getting the command based off of the name received in the event
         if (cmd != null) {
             if (cmd.devOnly && !event.getUser().getId().equals("622506118551437322")) {
-                event.replyEmbeds(EmbedUtils.createError("This is a **developer only** command")).queue();
+                event.replyEmbeds(EmbedUtils.createError("This is a **developer only** command")).setEphemeral(true).queue();
                 return;
             }
             if (!cmd.botPermission.isEmpty()) {

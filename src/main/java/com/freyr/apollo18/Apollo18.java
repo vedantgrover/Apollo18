@@ -1,6 +1,7 @@
 package com.freyr.apollo18;
 
 import com.freyr.apollo18.commands.CommandManager;
+import com.freyr.apollo18.data.Database;
 import com.freyr.apollo18.listeners.ButtonListener;
 import com.freyr.apollo18.listeners.GuildListener;
 import io.github.cdimascio.dotenv.Dotenv;
@@ -25,9 +26,11 @@ public class Apollo18 {
 
     private final @NotNull Dotenv config; // Getting all of my sensitive info from environment file
     private final @NotNull ShardManager shardManager; // Allows bot to run on multiple servers. Bot "builder"
+    private final @NotNull Database database;
 
     public Apollo18() throws LoginException {
         config = Dotenv.configure().ignoreIfMissing().load(); // Initializing and loading the .env file if it exists in the classpath.
+        database = new Database(config.get("DATABASE", System.getenv("DATABASE")));
 
         DefaultShardManagerBuilder builder = DefaultShardManagerBuilder.createDefault(config.get("TOKEN", System.getenv("TOKEN"))); // Creating a basic instance of the bot and logging in with token
         builder.setStatus(OnlineStatus.ONLINE); // Setting the bot status to ONLINE (Green Dot)
@@ -72,5 +75,9 @@ public class Apollo18 {
      */
     public @NotNull Dotenv getConfig() {
         return config;
+    }
+
+    public @NotNull Database getDatabase() {
+        return database;
     }
 }
