@@ -3,6 +3,7 @@ package com.freyr.apollo18.data;
 import com.freyr.apollo18.Apollo18;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import net.dv8tion.jda.api.entities.Guild;
@@ -43,7 +44,7 @@ public class Database {
         Document economyData = new Document("balance", 0).append("bank", 0).append("job", new Document("business", null).append("job", null)).append("card", new Document("debit-card", false).append("credit-card", new Document("hasCard", false).append("currentBalance", 0).append("totalBalance", 0).append("expirationDate", null))).append("items", items);
         Document musicData = new Document("playlists", playlists);
 
-        if (!checkIfUserExists(user)) {
+        if (checkIfUserExists(user)) {
             return false;
         }
 
@@ -55,6 +56,7 @@ public class Database {
     }
 
     private boolean checkIfUserExists(User user) {
-        return userData.find(new Document("userID", user.getIdLong())) != null;
+        FindIterable<Document> interable = userData.find(new Document("userID", user.getIdLong()));
+        return interable.first() != null;
     }
 }
