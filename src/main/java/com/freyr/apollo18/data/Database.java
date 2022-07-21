@@ -180,8 +180,8 @@ public class Database {
                 Updates.set("welcomeChannel", null),
                 Updates.set("leaveChannel", null),
                 Updates.set("memberCountChannel", null),
-                Updates.set("welcomeMessage", ""),
-                Updates.set("leaveMessage", "")
+                Updates.set("welcomeMessage", "[member] has joined [server]!"),
+                Updates.set("leaveMessage", "[member] has left [server].")
         );
 
         UpdateOptions options = new UpdateOptions().upsert(true);
