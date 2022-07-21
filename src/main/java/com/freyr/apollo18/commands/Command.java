@@ -4,6 +4,7 @@ import com.freyr.apollo18.Apollo18;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -28,8 +29,9 @@ public abstract class Command {
     public Category category; // The category it should be in within the help command
     public boolean devOnly = false; // Will restrict a command so that it can only be run by the developer
     public List<OptionData> args; // Any options the command needs goes here
-    public List<Permission> userPermission; // Permissions for the user
-    public List<Permission> botPermission; // Permissions the bot needs
+    public List<SubcommandData> subCommands; // Any subcommands that the command has
+    public Permission permission; // Permissions for the user
+    public Permission botPermission; // Permissions the bot needs
 
     /**
      * Command Constructor.
@@ -38,8 +40,7 @@ public abstract class Command {
     public Command(Apollo18 bot) {
         this.bot = bot;
         this.args = new ArrayList<>();
-        this.botPermission = new ArrayList<>();
-        this.userPermission = new ArrayList<>();
+        this.subCommands = new ArrayList<>();
     }
 
     /**

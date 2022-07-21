@@ -13,6 +13,7 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction;
 
 import java.util.ArrayList;
@@ -20,15 +21,9 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-/**
- * This is a dynamic help command. As more commands are added and mapped in {@link CommandManager}, it will automatically
- * add them to the help page.
- *
- * @author Freyr
- */
 public class HelpCommand extends Command {
 
-    private static final int COMMANDS_PER_PAGE = 6; // Sets the max number of commands per page
+    private static final int COMMANDS_PER_PAGE = 6;
 
     public HelpCommand(Apollo18 bot) {
         super(bot);
@@ -36,7 +31,6 @@ public class HelpCommand extends Command {
         this.description = "Display a list of all commands and categories.";
         this.category = Category.UTILITY;
         OptionData data = new OptionData(OptionType.STRING, "category", "See commands under this category");
-        // Getting all the categories and adding them as choices for the user to choose from
         for (Category c : Category.values()) {
             String name = c.name.toLowerCase();
             data.addChoice(name, name);
@@ -66,7 +60,10 @@ public class HelpCommand extends Command {
             List<MessageEmbed> embeds = buildCategoryMenu(category, categories.get(category));
             if (embeds.isEmpty()) {
                 // No commands for this category
-                EmbedBuilder embed = new EmbedBuilder().setTitle(category.emoji + "  **%s Commands**".formatted(category.name)).setDescription("Coming soon...").setColor(EmbedColor.DEFAULT_COLOR);
+                EmbedBuilder embed = new EmbedBuilder()
+                        .setTitle(category.emoji + "  **%s Commands**".formatted(category.name))
+                        .setDescription("Coming soon...")
+                        .setColor(EmbedColor.DEFAULT_COLOR);
                 event.replyEmbeds(embed.build()).queue();
                 return;
             }
@@ -84,8 +81,15 @@ public class HelpCommand extends Command {
                 builder.setTitle("Command: " + cmd.name);
                 builder.setDescription(cmd.description);
                 StringBuilder usages = new StringBuilder();
-                usages.append("`").append(getUsage(cmd)).append("`");
+                if (cmd.subCommands.isEmpty()) {
+                    usages.append("`").append(getUsage(cmd)).append("`");
+                } else {
+                    for (SubcommandData sub : cmd.subCommands) {
+                        usages.append("`").append(getUsage(sub, cmd.name)).append("`\n");
+                    }
+                }
                 builder.addField("Usage:", usages.toString(), false);
+                builder.addField("Permission:", getPermissions(cmd), false);
                 event.replyEmbeds(builder.build()).queue();
             } else {
                 // Command specified doesn't exist.
@@ -93,7 +97,7 @@ public class HelpCommand extends Command {
             }
         } else {
             // Display default menu
-            builder.setTitle("Apollo's Commands");
+            builder.setTitle("Apollo18 Commands");
             categories.forEach((category, commands) -> {
                 String categoryName = category.name().toLowerCase();
                 String value = "`/help " + categoryName + "`";
@@ -118,12 +122,24 @@ public class HelpCommand extends Command {
 
         int counter = 0;
         for (Command cmd : commands) {
-            embed.appendDescription("`" + getUsage(cmd) + "`\n" + cmd.description + "\n\n");
-            counter++;
-            if (counter % COMMANDS_PER_PAGE == 0) {
-                embeds.add(embed.build());
-                embed.setDescription("");
-                counter = 0;
+            if (cmd.subCommands.isEmpty()) {
+                embed.appendDescription("`" + getUsage(cmd) + "`\n" + cmd.description + "\n\n");
+                counter++;
+                if (counter % COMMANDS_PER_PAGE == 0) {
+                    embeds.add(embed.build());
+                    embed.setDescription("");
+                    counter = 0;
+                }
+            } else {
+                for (SubcommandData sub : cmd.subCommands) {
+                    embed.appendDescription("`" + getUsage(sub, cmd.name) + "`\n" + sub.getDescription() + "\n\n");
+                    counter++;
+                    if (counter % COMMANDS_PER_PAGE == 0) {
+                        embeds.add(embed.build());
+                        embed.setDescription("");
+                        counter = 0;
+                    }
+                }
             }
         }
         if (counter != 0) embeds.add(embed.build());
@@ -154,5 +170,44 @@ public class HelpCommand extends Command {
             }
         }
         return usage.toString();
+    }
+
+    /**
+     * Creates a string of subcommand usage.
+     *
+     * @param cmd sub command data from a command.
+     * @return String with name and args stitched together.
+     */
+    public String getUsage(SubcommandData cmd, String commandName) {
+        StringBuilder usage = new StringBuilder("/" + commandName + " " + cmd.getName());
+        if (cmd.getOptions().isEmpty()) return usage.toString();
+        for (OptionData arg : cmd.getOptions()) {
+            boolean isRequired = arg.isRequired();
+            if (isRequired) {
+                usage.append(" <");
+            } else {
+                usage.append(" [");
+            }
+            usage.append(arg.getName());
+            if (isRequired) {
+                usage.append(">");
+            } else {
+                usage.append("]");
+            }
+        }
+        return usage.toString();
+    }
+
+    /**
+     * Builds a string of permissions from command.
+     *
+     * @param cmd the command to draw perms from.
+     * @return A string of command perms.
+     */
+    private String getPermissions(Command cmd) {
+        if (cmd.permission == null) {
+            return "None";
+        }
+        return cmd.permission.getName();
     }
 }

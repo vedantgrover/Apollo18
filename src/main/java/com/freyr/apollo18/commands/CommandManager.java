@@ -16,6 +16,7 @@ import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import org.jetbrains.annotations.NotNull;
@@ -101,24 +102,10 @@ public class CommandManager extends ListenerAdapter {
     public List<CommandData> unpackCommandData() {
         List<CommandData> commandData = new ArrayList<>();
         for (Command cmd : commands) {
-            commandData.add(Commands.slash(cmd.name, cmd.description).addOptions(cmd.args)); // Creating a new slash command with the properties located within the command
+            commandData.add(Commands.slash(cmd.name, cmd.description).addOptions(cmd.args).addSubcommands(cmd.subCommands).setDefaultPermissions(DefaultMemberPermissions.enabledFor(cmd.permission))); // Creating a new slash command with the properties located within the command
         }
 
         return commandData;
-    }
-
-    private boolean hasPermission(Role role, List<Permission> botPerms) {
-        return role.hasPermission(botPerms) || role.hasPermission(Permission.ADMINISTRATOR);
-    }
-
-    private String buildMissingPermString(List<Permission> perms) {
-        StringBuilder result = new StringBuilder("Missing permissions: ");
-
-        for (int i = 0; i < perms.size(); i++) {
-            result.append("`").append(perms.get(i).getName()).append("`").append((i == perms.size() - 1) ? "" : ", ");
-        }
-
-        return result.toString();
     }
 
     /**
@@ -134,16 +121,11 @@ public class CommandManager extends ListenerAdapter {
                 event.replyEmbeds(EmbedUtils.createError("This is a **developer only** command")).setEphemeral(true).queue();
                 return;
             }
-            if (!cmd.botPermission.isEmpty()) {
-                if (!hasPermission(event.getGuild().getBotRole(), cmd.botPermission)) {
-                    event.replyEmbeds(EmbedUtils.createError(buildMissingPermString(cmd.botPermission))).queue();
-                    return;
-                }
-            }
-            if (!cmd.userPermission.isEmpty()) {
-                if (!event.getMember().hasPermission(cmd.userPermission) && !event.getMember().hasPermission(Permission.ADMINISTRATOR)) {
-                    event.replyEmbeds(EmbedUtils.createError(buildMissingPermString(cmd.userPermission))).queue();
-                    return;
+            Role botRole = event.getGuild().getBotRole();
+            if (cmd.botPermission != null) {
+                if (!botRole.hasPermission(cmd.botPermission) && !botRole.hasPermission(Permission.ADMINISTRATOR)) {
+                    String text = "I need the `" + cmd.botPermission.getName().toUpperCase() + "` permission to execute that command.";
+                    event.replyEmbeds(EmbedUtils.createError(text)).setEphemeral(true).queue();
                 }
             }
             cmd.execute(event); // Executing the execute method.
@@ -158,7 +140,7 @@ public class CommandManager extends ListenerAdapter {
      */
     @Override
     public void onGuildReady(@NotNull GuildReadyEvent event) {
-        event.getGuild().updateCommands().addCommands(unpackCommandData()).queue(); // Creating a guild command using the command data
+        event.getGuild().updateCommands().queue(); // Creating a guild command using the command data
     }
 
     /**
@@ -169,6 +151,6 @@ public class CommandManager extends ListenerAdapter {
      */
     @Override
     public void onReady(@NotNull ReadyEvent event) {
-        event.getJDA().updateCommands().queue(); // Creating a global command using the command data
+        event.getJDA().updateCommands().addCommands(unpackCommandData()).queue(); // Creating a global command using the command data
     }
 }

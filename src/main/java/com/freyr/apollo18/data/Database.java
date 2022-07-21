@@ -1,6 +1,5 @@
 package com.freyr.apollo18.data;
 
-import com.freyr.apollo18.Apollo18;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.client.FindIterable;
@@ -56,7 +55,7 @@ public class Database {
     }
 
     private boolean checkIfUserExists(User user) {
-        FindIterable<Document> interable = userData.find(new Document("userID", user.getIdLong()));
-        return interable.first() != null;
+        FindIterable<Document> iterable = userData.find(new Document("userID", user.getIdLong()));
+        return iterable.first() != null;
     }
 }
