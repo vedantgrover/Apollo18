@@ -176,12 +176,12 @@ public class Database {
         Document query = new Document("guildID", guildId);
 
         Bson updates = Updates.combine(
-                Updates.set("onOff", false),
-                Updates.set("welcomeChannel", null),
-                Updates.set("leaveChannel", null),
-                Updates.set("memberCountChannel", null),
-                Updates.set("welcomeMessage", "[member] has joined [server]!"),
-                Updates.set("leaveMessage", "[member] has left [server].")
+                Updates.set("greetings.onOff", false),
+                Updates.set("greetings.welcomeChannel", null),
+                Updates.set("greetings.leaveChannel", null),
+                Updates.set("greetings.memberCountChannel", null),
+                Updates.set("greetings.welcomeMessage", "[member] has joined [server]!"),
+                Updates.set("greetings.leaveMessage", "[member] has left [server].")
         );
 
         UpdateOptions options = new UpdateOptions().upsert(true);
