@@ -2,12 +2,16 @@ package com.freyr.apollo18.data;
 
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
+import com.mongodb.MongoException;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.UpdateOptions;
+import com.mongodb.client.model.Updates;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 import org.bson.Document;
+import org.bson.conversions.Bson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,5 +61,114 @@ public class Database {
     private boolean checkIfUserExists(User user) {
         FindIterable<Document> iterable = userData.find(new Document("userID", user.getIdLong()));
         return iterable.first() != null;
+    }
+
+    // Welcome System
+    public boolean getWelcomeSystemToggle(long guildId) {
+        return guildData.find(new Document("guildID", guildId)).first().get("greetings", Document.class).getBoolean("onOff");
+    }
+
+    public long getWelcomeChannel(long guildId) {
+        return guildData.find(new Document("guildID", guildId)).first().get("greetings", Document.class).getLong("welcomeChannel");
+    }
+
+    public long getLeaveChannel(long guildId) {
+        return guildData.find(new Document("guildID", guildId)).first().get("greetings", Document.class).getLong("leaveChannel");
+    }
+
+    public String getWelcomeMessage(long guildId) {
+        return guildData.find(new Document("guildID", guildId)).first().get("greetings", Document.class).getString("welcomeMessage");
+    }
+
+    public String getLeaveMessage(long guildId) {
+        return guildData.find(new Document("guildID", guildId)).first().get("greetings", Document.class).getString("leaveMessage");
+    }
+
+    public long getMemberCountChannel(long guildId) {
+        return guildData.find(new Document("guildID", guildId)).first().get("greetings", Document.class).getLong("memberCountChannel");
+    }
+
+    public void toggleWelcomeSystem(long guildId) {
+        Document query = new Document("guildID", guildId);
+
+        Bson updates = Updates.set("greetings.onOff", !getWelcomeSystemToggle(guildId));
+
+        UpdateOptions options = new UpdateOptions().upsert(true);
+
+        try {
+            guildData.updateOne(query, updates, options);
+        } catch (MongoException me) {
+            me.printStackTrace();
+        }
+    }
+
+    public void setWelcomeChannel(long guildId, long channelId) {
+        Document query = new Document("guildID", guildId);
+
+        Bson updates = Updates.set("greetings.welcomeChannel", channelId);
+
+        UpdateOptions options = new UpdateOptions().upsert(true);
+
+        try {
+            guildData.updateOne(query, updates, options);
+        } catch (MongoException me) {
+            me.printStackTrace();
+        }
+    }
+
+    public void setLeaveChannel(long guildId, long channelId) {
+        Document query = new Document("guildID", guildId);
+
+        Bson updates = Updates.set("greetings.leaveChannel", channelId);
+
+        UpdateOptions options = new UpdateOptions().upsert(true);
+
+        try {
+            guildData.updateOne(query, updates, options);
+        } catch (MongoException me) {
+            me.printStackTrace();
+        }
+    }
+
+    public void setMemberCountChannel(long guildId, long channelId) {
+        Document query = new Document("guildID", guildId);
+
+        Bson updates = Updates.set("greetings.memberCountChannel", channelId);
+
+        UpdateOptions options = new UpdateOptions().upsert(true);
+
+        try {
+            guildData.updateOne(query, updates, options);
+        } catch (MongoException me) {
+            me.printStackTrace();
+        }
+    }
+
+    public void setWelcomeMessage(long guildId, String message) {
+        Document query = new Document("guildID", guildId);
+
+        Bson updates = Updates.set("greetings.welcomeMessage", message);
+
+        UpdateOptions options = new UpdateOptions().upsert(true);
+
+        try {
+            guildData.updateOne(query, updates, options);
+        } catch (MongoException me) {
+            me.printStackTrace();
+        }
+    }
+
+    public void setLeaveMessage(long guildId, String message) {
+        Document query = new Document("guildID", guildId);
+
+        Bson updates = Updates.set("greetings.leaveMessage", message);
+
+        UpdateOptions options = new UpdateOptions().upsert(true);
+
+        try {
+            guildData.updateOne(query, updates, options);
+        } catch (MongoException me) {
+            me.printStackTrace();
+        }
     }
 }

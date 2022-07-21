@@ -8,6 +8,7 @@ import com.freyr.apollo18.commands.fun.EmoteCommand;
 import com.freyr.apollo18.commands.fun.MemeCommand;
 import com.freyr.apollo18.commands.information.*;
 import com.freyr.apollo18.commands.music.*;
+import com.freyr.apollo18.commands.settings.WelcomeSettings;
 import com.freyr.apollo18.commands.utility.*;
 import com.freyr.apollo18.util.embeds.EmbedUtils;
 import net.dv8tion.jda.api.Permission;
@@ -76,6 +77,9 @@ public class CommandManager extends ListenerAdapter {
                 // Economy Commands
                 new CreateUser(bot),
                 new CreateGuild(bot),
+
+                // Settings Commands
+                new WelcomeSettings(bot),
 
                 // Help command should come at the bottom
                 new HelpCommand(bot)
