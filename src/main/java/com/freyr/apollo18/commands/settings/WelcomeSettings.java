@@ -34,6 +34,7 @@ public class WelcomeSettings extends Command {
         this.subCommands.add(new SubcommandData("set-leave-channel", "Set the channel you want leave messages to go into.").addOptions(channelOption));
         this.subCommands.add(new SubcommandData("set-leave-message", "Set the leave message for your server.").addOption(OptionType.STRING, "message", "Use [member] for the leaving member's name and [server] for your server name.", true));
         this.subCommands.add(new SubcommandData("set-membercount-channel", "Set the channel you want member count to happen in").addOptions(memberCountChannelOption));
+        this.subCommands.add(new SubcommandData("reset", "Resets all of the welcome setting info for your server"));
     }
 
     @Override
@@ -107,6 +108,11 @@ public class WelcomeSettings extends Command {
                 db.setMemberCountChannel(event.getGuild().getIdLong(), channel.getIdLong());
 
                 event.getHook().sendMessageEmbeds(EmbedUtils.createSuccess("The Member Count Channel has been set to " + channel.getAsMention())).queue();
+            }
+
+            case "reset" -> {
+                db.resetWelcomeSystem(event.getGuild().getIdLong());
+                event.getHook().sendMessageEmbeds(EmbedUtils.createSuccess("Successfully reset Welcome System.")).queue();
             }
         }
     }

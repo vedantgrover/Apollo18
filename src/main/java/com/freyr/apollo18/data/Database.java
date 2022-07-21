@@ -171,4 +171,25 @@ public class Database {
             me.printStackTrace();
         }
     }
+
+    public void resetWelcomeSystem(long guildId) {
+        Document query = new Document("guildID", guildId);
+
+        Bson updates = Updates.combine(
+                Updates.set("onOff", false),
+                Updates.set("welcomeChannel", null),
+                Updates.set("leaveChannel", null),
+                Updates.set("memberCountChannel", null),
+                Updates.set("welcomeMessage", ""),
+                Updates.set("leaveMessage", "")
+        );
+
+        UpdateOptions options = new UpdateOptions().upsert(true);
+
+        try {
+            guildData.updateOne(query, updates, options);
+        } catch (MongoException me) {
+            me.printStackTrace();
+        }
+    }
 }
