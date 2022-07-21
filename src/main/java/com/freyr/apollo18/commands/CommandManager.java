@@ -102,7 +102,11 @@ public class CommandManager extends ListenerAdapter {
     public List<CommandData> unpackCommandData() {
         List<CommandData> commandData = new ArrayList<>();
         for (Command cmd : commands) {
-            commandData.add(Commands.slash(cmd.name, cmd.description).addOptions(cmd.args).addSubcommands(cmd.subCommands).setDefaultPermissions(DefaultMemberPermissions.enabledFor(cmd.permission))); // Creating a new slash command with the properties located within the command
+            CommandData data = Commands.slash(cmd.name, cmd.description).addOptions(cmd.args).addSubcommands(cmd.subCommands); // Creating a new slash command with the properties located within the command
+            if (cmd.permission != null) {
+                data.setDefaultPermissions(DefaultMemberPermissions.enabledFor(cmd.permission));
+            }
+            commandData.add(data);
         }
 
         return commandData;
