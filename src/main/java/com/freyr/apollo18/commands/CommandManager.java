@@ -1,6 +1,7 @@
 package com.freyr.apollo18.commands;
 
 import com.freyr.apollo18.Apollo18;
+import com.freyr.apollo18.commands.dev.CreateProfile;
 import com.freyr.apollo18.commands.economy.CreateGuild;
 import com.freyr.apollo18.commands.economy.CreateUser;
 import com.freyr.apollo18.commands.fun.AvatarCommand;
@@ -8,6 +9,7 @@ import com.freyr.apollo18.commands.fun.EmoteCommand;
 import com.freyr.apollo18.commands.fun.MemeCommand;
 import com.freyr.apollo18.commands.information.*;
 import com.freyr.apollo18.commands.music.*;
+import com.freyr.apollo18.commands.settings.LevelingSettings;
 import com.freyr.apollo18.commands.settings.WelcomeSettings;
 import com.freyr.apollo18.commands.utility.*;
 import com.freyr.apollo18.util.embeds.EmbedUtils;
@@ -80,6 +82,10 @@ public class CommandManager extends ListenerAdapter {
 
                 // Settings Commands
                 new WelcomeSettings(bot),
+                new LevelingSettings(bot),
+
+                // Dev only
+                new CreateProfile(bot),
 
                 // Help command should come at the bottom
                 new HelpCommand(bot)

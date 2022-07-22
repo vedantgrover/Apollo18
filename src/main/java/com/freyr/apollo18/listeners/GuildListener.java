@@ -55,6 +55,8 @@ public class GuildListener extends ListenerAdapter {
                 memberCountChannel.getManager().setName("Member Count: " + event.getGuild().getMemberCount()).queue();
             }
         }
+
+        db.createUserData(event.getUser());
     }
 
     @Override

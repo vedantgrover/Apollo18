@@ -6,6 +6,7 @@ import com.mongodb.MongoException;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.UpdateOptions;
 import com.mongodb.client.model.Updates;
 import net.dv8tion.jda.api.entities.Guild;
@@ -14,6 +15,7 @@ import org.bson.Document;
 import org.bson.conversions.Bson;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Database {
@@ -33,17 +35,16 @@ public class Database {
         Document levelingData = new Document("onOff", true).append("channel", null).append("levelingMessage", "Congratulations [member], you have leveled up to [level]!");
         Document greetingData = new Document("onOff", false).append("welcomeChannel", null).append("leaveChannel", null).append("memberCountChannel", null).append("welcomeMessage", "[member] has joined [server]!").append("leaveMessage", "[member] has left [server].");
 
-        guildData.insertOne(
-                new Document("guildID", guild.getIdLong()).append("leveling", levelingData).append("greetings", greetingData)
-        );
+        guildData.insertOne(new Document("guildID", guild.getIdLong()).append("leveling", levelingData).append("greetings", greetingData));
     }
 
     public boolean createUserData(User user) {
+        List<Document> xp = new ArrayList<>();
+
         List<Document> items = new ArrayList<>();
         List<Document> playlists = new ArrayList<>();
         List<Document> songs = new ArrayList<>();
 
-        Document levelingData = new Document("xp", 0);
         Document economyData = new Document("balance", 0).append("bank", 0).append("job", new Document("business", null).append("job", null)).append("card", new Document("debit-card", false).append("credit-card", new Document("hasCard", false).append("currentBalance", 0).append("totalBalance", 0).append("expirationDate", null))).append("items", items);
         Document musicData = new Document("playlists", playlists);
 
@@ -51,9 +52,7 @@ public class Database {
             return false;
         }
 
-        userData.insertOne(
-                new Document("userID", user.getIdLong()).append("leveling", levelingData).append("economy", economyData).append("music", musicData)
-        );
+        userData.insertOne(new Document("userID", user.getIdLong()).append("leveling", xp).append("economy", economyData).append("music", musicData));
 
         return true;
     }
@@ -176,14 +175,7 @@ public class Database {
     public void resetWelcomeSystem(long guildId) {
         Document query = new Document("guildID", guildId);
 
-        Bson updates = Updates.combine(
-                Updates.set("greetings.onOff", false),
-                Updates.set("greetings.welcomeChannel", null),
-                Updates.set("greetings.leaveChannel", null),
-                Updates.set("greetings.memberCountChannel", null),
-                Updates.set("greetings.welcomeMessage", "[member] has joined [server]!"),
-                Updates.set("greetings.leaveMessage", "[member] has left [server].")
-        );
+        Bson updates = Updates.combine(Updates.set("greetings.onOff", false), Updates.set("greetings.welcomeChannel", null), Updates.set("greetings.leaveChannel", null), Updates.set("greetings.memberCountChannel", null), Updates.set("greetings.welcomeMessage", "[member] has joined [server]!"), Updates.set("greetings.leaveMessage", "[member] has left [server]."));
 
         UpdateOptions options = new UpdateOptions().upsert(true);
 
@@ -194,4 +186,140 @@ public class Database {
         }
     }
     // endregion
+
+    // Leveling System
+    public void createLevelingProfile(long userId, long guildId) {
+        if (checkIfUserXpExists(userId, guildId)) {
+            return;
+        }
+
+        Document query = new Document("userID", userId);
+
+        Document newXPData = new Document("guildID", guildId).append("xp", 0).append("level", 1).append("totalXp", 0);
+
+        Bson updates = Updates.push("leveling", newXPData);
+
+        UpdateOptions options = new UpdateOptions().upsert(true);
+
+        try {
+            userData.updateOne(query, updates, options);
+        } catch (MongoException me) {
+            me.printStackTrace();
+        }
+    }
+
+    private boolean checkIfUserXpExists(long userId, long guildId) {
+        Document userDoc = userData.find(new Document("userID", userId)).first();
+
+        List<Document> xp = userDoc.getList("leveling", Document.class);
+
+        for (Document doc : xp) {
+            if (doc.getLong("guildID") == guildId) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public boolean getLevelingSystemToggle(long guildId) {
+        return guildData.find(new Document("guildID", guildId)).first().get("leveling", Document.class).getBoolean("onOff");
+    }
+
+    public void toggleLevelingSystem(long guildId) {
+        Document query = new Document("guildID", guildId);
+
+        Bson updates = Updates.set("leveling.onOff", !getLevelingSystemToggle(guildId));
+
+        UpdateOptions options = new UpdateOptions().upsert(true);
+
+        try {
+            guildData.updateOne(query, updates, options);
+        } catch (MongoException me) {
+            me.printStackTrace();
+        }
+    }
+
+    public long getLevelingChannel(long guildId) {
+        return guildData.find(new Document("guildID", guildId)).first().get("leveling", Document.class).getLong("channel");
+    }
+
+    public void setLevelingChannel(long guildId, long channelId) {
+        Document query = new Document("guildID", guildId);
+
+        Bson updates = Updates.set("leveling.channel", channelId);
+
+        UpdateOptions options = new UpdateOptions().upsert(true);
+
+        try {
+            guildData.updateOne(query, updates, options);
+        } catch (MongoException me) {
+            me.printStackTrace();
+        }
+    }
+
+    public String getLevelingMessage(long guildId) {
+        return guildData.find(new Document("guildID", guildId)).first().get("leveling", Document.class).getString("levelingMessage");
+    }
+
+    public void setLevelingMessage(long guildId, String message) {
+        Document query = new Document("guildID", guildId);
+
+        Bson updates = Updates.set("leveling.levelingMessage", message);
+
+        UpdateOptions options = new UpdateOptions().upsert(true);
+
+        try {
+            guildData.updateOne(query, updates, options);
+        } catch (MongoException me) {
+            me.printStackTrace();
+        }
+    }
+
+    public Document getUserLevelingProfile(long userId, long guildId) {
+        Document userDoc = userData.find(new Document("userID", userId)).first();
+        Document guildUserXpData = null;
+        for (Document doc : userDoc.getList("leveling", Document.class)) {
+            if (doc.getLong("guildID") == guildId) {
+                guildUserXpData = doc;
+                break;
+            }
+        }
+
+        return guildUserXpData;
+    }
+
+    public void addXptoUser(long userId, long guildId) {
+        Bson filter = Filters.and(Filters.eq("userID", userId));
+        UpdateOptions options = new UpdateOptions().arrayFilters(List.of(Filters.eq("ele.guildID", guildId)));
+
+        int xpIncrease = (int) (Math.random() * ((15 - 10) + 1)) + 10;
+
+        Bson update = Updates.combine(
+                Updates.inc("leveling.$[ele].xp", xpIncrease),
+                Updates.inc("leveling.$[ele].totalXp", xpIncrease)
+        );
+
+        try {
+            userData.updateOne(filter, update, options);
+        } catch (MongoException me) {
+            me.printStackTrace();
+        }
+    }
+
+    public void levelUp(long userId, long guildId) {
+        Bson filter = Filters.and(Filters.eq("userID", userId));
+        UpdateOptions options = new UpdateOptions().arrayFilters(List.of(Filters.eq("ele.guildID", guildId)));
+
+        Bson update = Updates.combine(
+                Updates.inc("leveling.$[ele].level", 1),
+                Updates.set("leveling.$[ele].xp", 0)
+        );
+
+        try {
+            userData.updateOne(filter, update, options);
+        } catch (MongoException me) {
+            me.printStackTrace();
+        }
+    }
 }
