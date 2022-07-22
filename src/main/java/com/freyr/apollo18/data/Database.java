@@ -64,6 +64,7 @@ public class Database {
     }
 
     // Welcome System
+    // region
     public boolean getWelcomeSystemToggle(long guildId) {
         return guildData.find(new Document("guildID", guildId)).first().get("greetings", Document.class).getBoolean("onOff");
     }
@@ -192,4 +193,5 @@ public class Database {
             me.printStackTrace();
         }
     }
+    // endregion
 }
