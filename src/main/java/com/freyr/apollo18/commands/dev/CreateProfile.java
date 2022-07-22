@@ -2,6 +2,7 @@ package com.freyr.apollo18.commands.dev;
 
 import com.freyr.apollo18.Apollo18;
 import com.freyr.apollo18.commands.Command;
+import com.freyr.apollo18.util.embeds.EmbedUtils;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -17,7 +18,7 @@ public class CreateProfile extends Command {
 
     @Override
     public void execute(SlashCommandInteractionEvent event) {
-        event.deferReply().queue();
+        event.deferReply().setEphemeral(true).queue();
 
         for (Guild guild : event.getJDA().getGuilds()) {
             for (Member member : guild.getMembers()) {
@@ -25,5 +26,7 @@ public class CreateProfile extends Command {
             }
             bot.getDatabase().createGuildData(guild);
         }
+
+        event.getHook().sendMessageEmbeds(EmbedUtils.createSuccess("All user and guild data has been created.")).queue();
     }
 }

@@ -15,7 +15,6 @@ import org.bson.Document;
 import org.bson.conversions.Bson;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class Database {
@@ -35,10 +34,11 @@ public class Database {
         Document levelingData = new Document("onOff", true).append("channel", null).append("levelingMessage", "Congratulations [member], you have leveled up to [level]!");
         Document greetingData = new Document("onOff", false).append("welcomeChannel", null).append("leaveChannel", null).append("memberCountChannel", null).append("welcomeMessage", "[member] has joined [server]!").append("leaveMessage", "[member] has left [server].");
 
-        guildData.insertOne(new Document("guildID", guild.getIdLong()).append("leveling", levelingData).append("greetings", greetingData));
+        guildData.insertOne(new Document("guildID", guild.getId()).append("leveling", levelingData).append("greetings", greetingData));
     }
 
     public boolean createUserData(User user) {
+        if (user.isBot()) return false;
         List<Document> xp = new ArrayList<>();
 
         List<Document> items = new ArrayList<>();
@@ -52,43 +52,43 @@ public class Database {
             return false;
         }
 
-        userData.insertOne(new Document("userID", user.getIdLong()).append("leveling", xp).append("economy", economyData).append("music", musicData));
+        userData.insertOne(new Document("userID", user.getId()).append("leveling", xp).append("economy", economyData).append("music", musicData));
 
         return true;
     }
 
     private boolean checkIfUserExists(User user) {
-        FindIterable<Document> iterable = userData.find(new Document("userID", user.getIdLong()));
+        FindIterable<Document> iterable = userData.find(new Document("userID", user.getId()));
         return iterable.first() != null;
     }
 
     // Welcome System
     // region
-    public boolean getWelcomeSystemToggle(long guildId) {
+    public boolean getWelcomeSystemToggle(String guildId) {
         return guildData.find(new Document("guildID", guildId)).first().get("greetings", Document.class).getBoolean("onOff");
     }
 
-    public long getWelcomeChannel(long guildId) {
-        return guildData.find(new Document("guildID", guildId)).first().get("greetings", Document.class).getLong("welcomeChannel");
+    public String getWelcomeChannel(String guildId) {
+        return guildData.find(new Document("guildID", guildId)).first().get("greetings", Document.class).getString("welcomeChannel");
     }
 
-    public long getLeaveChannel(long guildId) {
-        return guildData.find(new Document("guildID", guildId)).first().get("greetings", Document.class).getLong("leaveChannel");
+    public String getLeaveChannel(String guildId) {
+        return guildData.find(new Document("guildID", guildId)).first().get("greetings", Document.class).getString("leaveChannel");
     }
 
-    public String getWelcomeMessage(long guildId) {
+    public String getWelcomeMessage(String guildId) {
         return guildData.find(new Document("guildID", guildId)).first().get("greetings", Document.class).getString("welcomeMessage");
     }
 
-    public String getLeaveMessage(long guildId) {
+    public String getLeaveMessage(String guildId) {
         return guildData.find(new Document("guildID", guildId)).first().get("greetings", Document.class).getString("leaveMessage");
     }
 
-    public long getMemberCountChannel(long guildId) {
-        return guildData.find(new Document("guildID", guildId)).first().get("greetings", Document.class).getLong("memberCountChannel");
+    public String getMemberCountChannel(String guildId) {
+        return guildData.find(new Document("guildID", guildId)).first().get("greetings", Document.class).getString("memberCountChannel");
     }
 
-    public void toggleWelcomeSystem(long guildId) {
+    public void toggleWelcomeSystem(String guildId) {
         Document query = new Document("guildID", guildId);
 
         Bson updates = Updates.set("greetings.onOff", !getWelcomeSystemToggle(guildId));
@@ -102,7 +102,7 @@ public class Database {
         }
     }
 
-    public void setWelcomeChannel(long guildId, long channelId) {
+    public void setWelcomeChannel(String guildId, String channelId) {
         Document query = new Document("guildID", guildId);
 
         Bson updates = Updates.set("greetings.welcomeChannel", channelId);
@@ -116,7 +116,7 @@ public class Database {
         }
     }
 
-    public void setLeaveChannel(long guildId, long channelId) {
+    public void setLeaveChannel(String guildId, String channelId) {
         Document query = new Document("guildID", guildId);
 
         Bson updates = Updates.set("greetings.leaveChannel", channelId);
@@ -130,7 +130,7 @@ public class Database {
         }
     }
 
-    public void setMemberCountChannel(long guildId, long channelId) {
+    public void setMemberCountChannel(String guildId, String channelId) {
         Document query = new Document("guildID", guildId);
 
         Bson updates = Updates.set("greetings.memberCountChannel", channelId);
@@ -144,7 +144,7 @@ public class Database {
         }
     }
 
-    public void setWelcomeMessage(long guildId, String message) {
+    public void setWelcomeMessage(String guildId, String message) {
         Document query = new Document("guildID", guildId);
 
         Bson updates = Updates.set("greetings.welcomeMessage", message);
@@ -158,7 +158,7 @@ public class Database {
         }
     }
 
-    public void setLeaveMessage(long guildId, String message) {
+    public void setLeaveMessage(String guildId, String message) {
         Document query = new Document("guildID", guildId);
 
         Bson updates = Updates.set("greetings.leaveMessage", message);
@@ -172,7 +172,7 @@ public class Database {
         }
     }
 
-    public void resetWelcomeSystem(long guildId) {
+    public void resetWelcomeSystem(String guildId) {
         Document query = new Document("guildID", guildId);
 
         Bson updates = Updates.combine(Updates.set("greetings.onOff", false), Updates.set("greetings.welcomeChannel", null), Updates.set("greetings.leaveChannel", null), Updates.set("greetings.memberCountChannel", null), Updates.set("greetings.welcomeMessage", "[member] has joined [server]!"), Updates.set("greetings.leaveMessage", "[member] has left [server]."));
@@ -188,7 +188,7 @@ public class Database {
     // endregion
 
     // Leveling System
-    public void createLevelingProfile(long userId, long guildId) {
+    public void createLevelingProfile(String userId, String guildId) {
         if (checkIfUserXpExists(userId, guildId)) {
             return;
         }
@@ -208,13 +208,13 @@ public class Database {
         }
     }
 
-    private boolean checkIfUserXpExists(long userId, long guildId) {
+    private boolean checkIfUserXpExists(String userId, String guildId) {
         Document userDoc = userData.find(new Document("userID", userId)).first();
 
         List<Document> xp = userDoc.getList("leveling", Document.class);
 
         for (Document doc : xp) {
-            if (doc.getLong("guildID") == guildId) {
+            if (doc.getString("guildID").equals(guildId)) {
                 return true;
             }
         }
@@ -222,11 +222,11 @@ public class Database {
         return false;
     }
 
-    public boolean getLevelingSystemToggle(long guildId) {
+    public boolean getLevelingSystemToggle(String guildId) {
         return guildData.find(new Document("guildID", guildId)).first().get("leveling", Document.class).getBoolean("onOff");
     }
 
-    public void toggleLevelingSystem(long guildId) {
+    public void toggleLevelingSystem(String guildId) {
         Document query = new Document("guildID", guildId);
 
         Bson updates = Updates.set("leveling.onOff", !getLevelingSystemToggle(guildId));
@@ -240,11 +240,11 @@ public class Database {
         }
     }
 
-    public long getLevelingChannel(long guildId) {
-        return guildData.find(new Document("guildID", guildId)).first().get("leveling", Document.class).getLong("channel");
+    public String getLevelingChannel(String guildId) {
+        return guildData.find(new Document("guildID", guildId)).first().get("leveling", Document.class).getString("channel");
     }
 
-    public void setLevelingChannel(long guildId, long channelId) {
+    public void setLevelingChannel(String guildId, String channelId) {
         Document query = new Document("guildID", guildId);
 
         Bson updates = Updates.set("leveling.channel", channelId);
@@ -258,11 +258,11 @@ public class Database {
         }
     }
 
-    public String getLevelingMessage(long guildId) {
+    public String getLevelingMessage(String guildId) {
         return guildData.find(new Document("guildID", guildId)).first().get("leveling", Document.class).getString("levelingMessage");
     }
 
-    public void setLevelingMessage(long guildId, String message) {
+    public void setLevelingMessage(String guildId, String message) {
         Document query = new Document("guildID", guildId);
 
         Bson updates = Updates.set("leveling.levelingMessage", message);
@@ -276,11 +276,11 @@ public class Database {
         }
     }
 
-    public Document getUserLevelingProfile(long userId, long guildId) {
+    public Document getUserLevelingProfile(String userId, String guildId) {
         Document userDoc = userData.find(new Document("userID", userId)).first();
         Document guildUserXpData = null;
         for (Document doc : userDoc.getList("leveling", Document.class)) {
-            if (doc.getLong("guildID") == guildId) {
+            if (doc.getString("guildID").equals(guildId)) {
                 guildUserXpData = doc;
                 break;
             }
@@ -289,7 +289,7 @@ public class Database {
         return guildUserXpData;
     }
 
-    public void addXptoUser(long userId, long guildId) {
+    public void addXptoUser(String userId, String guildId) {
         Bson filter = Filters.and(Filters.eq("userID", userId));
         UpdateOptions options = new UpdateOptions().arrayFilters(List.of(Filters.eq("ele.guildID", guildId)));
 
@@ -307,7 +307,7 @@ public class Database {
         }
     }
 
-    public void levelUp(long userId, long guildId) {
+    public void levelUp(String userId, String guildId) {
         Bson filter = Filters.and(Filters.eq("userID", userId));
         UpdateOptions options = new UpdateOptions().arrayFilters(List.of(Filters.eq("ele.guildID", guildId)));
 

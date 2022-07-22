@@ -46,72 +46,72 @@ public class WelcomeSettings extends Command {
 
         switch (Objects.requireNonNull(subCommand)) {
             case "toggle" -> {
-                db.toggleWelcomeSystem(event.getGuild().getIdLong());
-                event.getHook().sendMessageEmbeds(EmbedUtils.createSuccess("The Welcome System has been __" + (db.getWelcomeSystemToggle(event.getGuild().getIdLong()) ? "enabled":"disabled") + "__")).queue();
+                db.toggleWelcomeSystem(event.getGuild().getId());
+                event.getHook().sendMessageEmbeds(EmbedUtils.createSuccess("The Welcome System has been __" + (db.getWelcomeSystemToggle(event.getGuild().getId()) ? "enabled":"disabled") + "__")).queue();
             }
 
             case "set-welcome-channel" -> {
-                if (!db.getWelcomeSystemToggle(event.getGuild().getIdLong())) {
+                if (!db.getWelcomeSystemToggle(event.getGuild().getId())) {
                     event.getHook().sendMessageEmbeds(EmbedUtils.createError("You have not turned on the Welcome System yet. Please use `/welcome-settings toggle` to turn it on.")).queue();
                     return;
                 }
 
                 GuildChannel channel = event.getOption("channel").getAsChannel();
-                db.setWelcomeChannel(event.getGuild().getIdLong(), channel.getIdLong());
+                db.setWelcomeChannel(event.getGuild().getId(), channel.getId());
 
                 event.getHook().sendMessageEmbeds(EmbedUtils.createSuccess("The Welcome Channel has been set to " + channel.getAsMention())).queue();
             }
 
             case "set-welcome-message" -> {
-                if (!db.getWelcomeSystemToggle(event.getGuild().getIdLong())) {
+                if (!db.getWelcomeSystemToggle(event.getGuild().getId())) {
                     event.getHook().sendMessageEmbeds(EmbedUtils.createError("You have not turned on the Welcome System yet. Please use `/welcome-settings toggle` to turn it on.")).queue();
                     return;
                 }
 
                 String welcomeMessage = event.getOption("message").getAsString();
-                db.setWelcomeMessage(event.getGuild().getIdLong(), welcomeMessage);
+                db.setWelcomeMessage(event.getGuild().getId(), welcomeMessage);
 
                 event.getHook().sendMessageEmbeds(EmbedUtils.createSuccess("Welcome Message Successfully set")).queue();
             }
 
             case "set-leave-channel" -> {
-                if (!db.getWelcomeSystemToggle(event.getGuild().getIdLong())) {
+                if (!db.getWelcomeSystemToggle(event.getGuild().getId())) {
                     event.getHook().sendMessageEmbeds(EmbedUtils.createError("You have not turned on the Welcome System yet. Please use `/welcome-settings toggle` to turn it on.")).queue();
                     return;
                 }
 
                 GuildChannel channel = event.getOption("channel").getAsChannel();
-                db.setLeaveChannel(event.getGuild().getIdLong(), channel.getIdLong());
+                db.setLeaveChannel(event.getGuild().getId(), channel.getId());
 
                 event.getHook().sendMessageEmbeds(EmbedUtils.createSuccess("The Leave Channel has been set to " + channel.getAsMention())).queue();
             }
 
             case "set-leave-message" -> {
-                if (!db.getWelcomeSystemToggle(event.getGuild().getIdLong())) {
+                if (!db.getWelcomeSystemToggle(event.getGuild().getId())) {
                     event.getHook().sendMessageEmbeds(EmbedUtils.createError("You have not turned on the Welcome System yet. Please use `/welcome-settings toggle` to turn it on.")).queue();
                     return;
                 }
 
                 String welcomeMessage = event.getOption("message").getAsString();
-                db.setLeaveMessage(event.getGuild().getIdLong(), welcomeMessage);
+                db.setLeaveMessage(event.getGuild().getId(), welcomeMessage);
 
                 event.getHook().sendMessageEmbeds(EmbedUtils.createSuccess("Leave Message Successfully set")).queue();
             }
 
             case "set-membercount-channel" -> {
-                if (!db.getWelcomeSystemToggle(event.getGuild().getIdLong())) {
+                if (!db.getWelcomeSystemToggle(event.getGuild().getId())) {
                     event.getHook().sendMessageEmbeds(EmbedUtils.createError("You have not turned on the Welcome System yet. Please use `/welcome-settings toggle` to turn it on.")).queue();
                     return;
                 }
 
                 GuildChannel channel = event.getOption("channel").getAsChannel();
-                db.setMemberCountChannel(event.getGuild().getIdLong(), channel.getIdLong());
+                db.setMemberCountChannel(event.getGuild().getId(), channel.getId());
 
                 event.getHook().sendMessageEmbeds(EmbedUtils.createSuccess("The Member Count Channel has been set to " + channel.getAsMention())).queue();
             }
 
             case "reset" -> {
-                db.resetWelcomeSystem(event.getGuild().getIdLong());
+                db.resetWelcomeSystem(event.getGuild().getId());
                 event.getHook().sendMessageEmbeds(EmbedUtils.createSuccess("Successfully reset Welcome System.")).queue();
             }
         }

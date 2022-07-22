@@ -40,20 +40,20 @@ public class LevelingSettings extends Command {
 
         switch (Objects.requireNonNull(subCommand)) {
             case "toggle" -> {
-                db.toggleLevelingSystem(event.getGuild().getIdLong());
-                event.getHook().sendMessageEmbeds(EmbedUtils.createSuccess("The leveling system has been __" + ((db.getLevelingSystemToggle(event.getGuild().getIdLong())) ? "enabled":"disabled") + "__")).queue();
+                db.toggleLevelingSystem(event.getGuild().getId());
+                event.getHook().sendMessageEmbeds(EmbedUtils.createSuccess("The leveling system has been __" + ((db.getLevelingSystemToggle(event.getGuild().getId())) ? "enabled":"disabled") + "__")).queue();
             }
 
             case "set-channel" -> {
                 MessageChannel channel = (MessageChannel) event.getOption("channel").getAsChannel();
-                db.setLevelingChannel(event.getGuild().getIdLong(), channel.getIdLong());
+                db.setLevelingChannel(event.getGuild().getId(), channel.getId());
 
                 event.getHook().sendMessageEmbeds(EmbedUtils.createSuccess("The leveling channel has been set to " + channel.getAsMention())).queue();
             }
 
             case "set-message" -> {
                 String message = event.getOption("message").getAsString();
-                db.setLevelingMessage(event.getGuild().getIdLong(), message);
+                db.setLevelingMessage(event.getGuild().getId(), message);
 
                 event.getHook().sendMessageEmbeds(EmbedUtils.createSuccess("Leveling message has been set.")).queue();
             }
