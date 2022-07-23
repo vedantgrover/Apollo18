@@ -60,10 +60,7 @@ public class HelpCommand extends Command {
             List<MessageEmbed> embeds = buildCategoryMenu(category, categories.get(category));
             if (embeds.isEmpty()) {
                 // No commands for this category
-                EmbedBuilder embed = new EmbedBuilder()
-                        .setTitle(category.emoji + "  **%s Commands**".formatted(category.name))
-                        .setDescription("Coming soon...")
-                        .setColor(EmbedColor.DEFAULT_COLOR);
+                EmbedBuilder embed = new EmbedBuilder().setTitle(category.emoji + "  **%s Commands**".formatted(category.name)).setDescription("Coming soon...").setColor(EmbedColor.DEFAULT_COLOR);
                 event.replyEmbeds(embed.build()).queue();
                 return;
             }
@@ -97,7 +94,7 @@ public class HelpCommand extends Command {
             }
         } else {
             // Display default menu
-            builder.setTitle("Apollo18 Commands");
+            builder.setTitle("TechnoBot Commands");
             categories.forEach((category, commands) -> {
                 String categoryName = category.name().toLowerCase();
                 String value = "`/help " + categoryName + "`";

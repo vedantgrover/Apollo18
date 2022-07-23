@@ -194,6 +194,7 @@ public class Database {
     // endregion
 
     // Leveling System
+    // region
     public void createLevelingProfile(String userId, String guildId) {
         if (checkIfUserXpExists(userId, guildId)) {
             return;
@@ -313,7 +314,7 @@ public class Database {
         }
     }
 
-    public void levelUp(String userId, String guildId) {
+    public void levelUp(String userId, String guildId, int bytesAdded) {
         Bson filter = Filters.and(Filters.eq("userID", userId));
         UpdateOptions options = new UpdateOptions().arrayFilters(List.of(Filters.eq("ele.guildID", guildId)));
 
@@ -322,10 +323,46 @@ public class Database {
                 Updates.set("leveling.$[ele].xp", 0)
         );
 
+        addBytes(userId, bytesAdded);
+
         try {
             userData.updateOne(filter, update, options);
         } catch (MongoException me) {
             me.printStackTrace();
         }
     }
+    // endregion
+
+    // Economy System
+    // region
+    public int getBalance(String userId) {
+        return userData.find(new Document("userID", userId)).first().get("economy", Document.class).getInteger("balance");
+    }
+
+    public int getBank(String userId) {
+        return userData.find(new Document("userID", userId)).first().get("economy", Document.class).getInteger("bank");
+    }
+
+    public int getNetWorth(String userId) {
+        return getBalance(userId) + getBank(userId);
+    }
+
+    public void addBytes(String userId, int amount) {
+        Document query = new Document("userID", userId);
+
+        Bson updates = Updates.inc("economy.balance", amount);
+        UpdateOptions options = new UpdateOptions().upsert(true);
+
+        try {
+            userData.updateOne(query, updates, options);
+        } catch (MongoException me) {
+            me.printStackTrace();
+        }
+    }
+
+    public void removeBytes(String userId, int amount) {
+        addBytes(userId, -amount);
+    }
+
+    // endregion
 }

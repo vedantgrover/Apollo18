@@ -1,4 +1,4 @@
-package com.freyr.apollo18.commands.economy;
+package com.freyr.apollo18.commands.dev;
 
 import com.freyr.apollo18.Apollo18;
 import com.freyr.apollo18.commands.Category;

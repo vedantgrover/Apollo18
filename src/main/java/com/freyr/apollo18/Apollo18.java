@@ -2,6 +2,7 @@ package com.freyr.apollo18;
 
 import com.freyr.apollo18.commands.CommandManager;
 import com.freyr.apollo18.data.Database;
+import com.freyr.apollo18.listeners.BotListener;
 import com.freyr.apollo18.listeners.ButtonListener;
 import com.freyr.apollo18.listeners.GuildListener;
 import com.freyr.apollo18.listeners.LevelingListener;
@@ -46,7 +47,7 @@ public class Apollo18 {
         shardManager = builder.build(); // Creating the bot
 
         // Registering Listeners
-        shardManager.addEventListener(new GuildListener(this), new ButtonListener(), new LevelingListener(this), new CommandManager(this));
+        shardManager.addEventListener(new GuildListener(this), new ButtonListener(), new LevelingListener(this), new CommandManager(this), new BotListener(this));
     }
 
     public static void main(String[] args) {

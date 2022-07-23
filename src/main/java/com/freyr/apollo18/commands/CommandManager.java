@@ -2,8 +2,9 @@ package com.freyr.apollo18.commands;
 
 import com.freyr.apollo18.Apollo18;
 import com.freyr.apollo18.commands.dev.CreateProfile;
-import com.freyr.apollo18.commands.economy.CreateGuild;
-import com.freyr.apollo18.commands.economy.CreateUser;
+import com.freyr.apollo18.commands.economy.BalanceCommand;
+import com.freyr.apollo18.commands.dev.CreateGuild;
+import com.freyr.apollo18.commands.dev.CreateUser;
 import com.freyr.apollo18.commands.fun.AvatarCommand;
 import com.freyr.apollo18.commands.fun.EmoteCommand;
 import com.freyr.apollo18.commands.fun.MemeCommand;
@@ -15,8 +16,6 @@ import com.freyr.apollo18.commands.settings.WelcomeSettings;
 import com.freyr.apollo18.commands.utility.*;
 import com.freyr.apollo18.util.embeds.EmbedUtils;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
@@ -86,8 +85,7 @@ public class CommandManager extends ListenerAdapter {
                 new RankCommand(bot),
 
                 // Economy Commands
-                new CreateUser(bot),
-                new CreateGuild(bot),
+                new BalanceCommand(bot),
 
                 // Settings Commands
                 new WelcomeSettings(bot),
@@ -95,6 +93,8 @@ public class CommandManager extends ListenerAdapter {
 
                 // Dev only
                 new CreateProfile(bot),
+                new CreateUser(bot),
+                new CreateGuild(bot),
 
                 // Help command should come at the bottom
                 new HelpCommand(bot)

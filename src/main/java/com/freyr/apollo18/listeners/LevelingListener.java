@@ -32,8 +32,9 @@ public class LevelingListener extends ListenerAdapter {
             int maxXp = LevelingHandler.calculateLevelGoal(userDoc.getInteger("level"));
 
             if (userDoc.getInteger("xp") >= maxXp) {
-                db.levelUp(event.getAuthor().getId(), event.getGuild().getId());
-                channel.sendMessage(db.getLevelingMessage(event.getGuild().getId()).replace("[member]", event.getAuthor().getAsMention()).replace("[level]", String.valueOf(userDoc.getInteger("level") + 1)).replace("[server]", event.getGuild().getName())).queue();
+                int bytesAdded = (int) (Math.random() * ((10 - 5) + 1)) + 5;
+                db.levelUp(event.getAuthor().getId(), event.getGuild().getId(), bytesAdded);
+                channel.sendMessage(db.getLevelingMessage(event.getGuild().getId()).replace("[member]", event.getAuthor().getAsMention()).replace("[level]", String.valueOf(userDoc.getInteger("level") + 1)).replace("[server]", event.getGuild().getName()).replace("[bytes]", String.valueOf(bytesAdded))).queue();
             }
         }
     }
