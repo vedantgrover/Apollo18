@@ -3,6 +3,7 @@ package com.freyr.apollo18.listeners;
 import com.freyr.apollo18.Apollo18;
 import com.freyr.apollo18.util.embeds.EmbedColor;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -28,5 +29,16 @@ public class BotListener extends ListenerAdapter {
     @Override
     public void onGuildJoin(@NotNull GuildJoinEvent event) {
         bot.getDatabase().createGuildData(event.getGuild());
+
+        for (Member member : event.getGuild().getMembers()) {
+            bot.getDatabase().createUserData(member.getUser());
+        }
+
+        System.out.println("Joined " + event.getGuild().getName() + ". Data creation successful");
+    }
+
+    @Override
+    public void onMessageReceived(@NotNull MessageReceivedEvent event) {
+        bot.getDatabase().createUserData(event.getAuthor());
     }
 }

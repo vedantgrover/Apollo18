@@ -31,6 +31,7 @@ public class Database {
     }
 
     public void createGuildData(Guild guild) {
+        if (checkIfGuildExists(guild)) return;
         Document levelingData = new Document("onOff", true).append("channel", null).append("levelingMessage", "Congratulations [member], you have leveled up to [level]!");
         Document greetingData = new Document("onOff", false).append("welcomeChannel", null).append("leaveChannel", null).append("memberCountChannel", null).append("welcomeMessage", "[member] has joined [server]!").append("leaveMessage", "[member] has left [server].");
 
@@ -39,6 +40,10 @@ public class Database {
 
     public boolean createUserData(User user) {
         if (user.isBot()) return false;
+        if (checkIfUserExists(user)) {
+            return false;
+        }
+
         List<Document> xp = new ArrayList<>();
 
         List<Document> items = new ArrayList<>();
@@ -48,10 +53,6 @@ public class Database {
         Document economyData = new Document("balance", 0).append("bank", 0).append("job", new Document("business", null).append("job", null)).append("card", new Document("debit-card", false).append("credit-card", new Document("hasCard", false).append("currentBalance", 0).append("totalBalance", 0).append("expirationDate", null))).append("items", items);
         Document musicData = new Document("playlists", playlists);
 
-        if (checkIfUserExists(user)) {
-            return false;
-        }
-
         userData.insertOne(new Document("userID", user.getId()).append("leveling", xp).append("economy", economyData).append("music", musicData));
 
         return true;
@@ -59,6 +60,11 @@ public class Database {
 
     private boolean checkIfUserExists(User user) {
         FindIterable<Document> iterable = userData.find(new Document("userID", user.getId()));
+        return iterable.first() != null;
+    }
+
+    private boolean checkIfGuildExists(Guild guild) {
+        FindIterable<Document> iterable = guildData.find(new Document("guildID", guild.getId()));
         return iterable.first() != null;
     }
 

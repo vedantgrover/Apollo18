@@ -15,6 +15,8 @@ import com.freyr.apollo18.commands.settings.WelcomeSettings;
 import com.freyr.apollo18.commands.utility.*;
 import com.freyr.apollo18.util.embeds.EmbedUtils;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
@@ -44,7 +46,10 @@ public class CommandManager extends ListenerAdapter {
 
     public static final Map<String, Command> mapCommands = new HashMap<>(); // Contains all the commands with their identifiers (names)
 
+    private final Apollo18 bot;
+
     public CommandManager(Apollo18 bot) {
+        this.bot = bot;
         mapCommands(
                 // Utility Commands
                 new PingCommand(bot),
@@ -133,6 +138,7 @@ public class CommandManager extends ListenerAdapter {
      */
     @Override
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
+        bot.getDatabase().createUserData(event.getUser());
         Command cmd = mapCommands.get(event.getName()); // Getting the command based off of the name received in the event
         if (cmd != null) {
             if (cmd.devOnly && !event.getUser().getId().equals("622506118551437322")) {
