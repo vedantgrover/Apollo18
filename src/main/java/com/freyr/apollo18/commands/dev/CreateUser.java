@@ -15,7 +15,6 @@ public class CreateUser extends Command {
 
         this.name = "create-user";
         this.description = "Creates a user within the database";
-        this.category = Category.ECONOMY;
         this.devOnly = true;
 
         this.args.add(new OptionData(OptionType.USER, "user", "User you want to add", true));

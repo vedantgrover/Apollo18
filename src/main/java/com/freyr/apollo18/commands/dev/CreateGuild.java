@@ -14,7 +14,6 @@ public class CreateGuild extends Command {
 
         this.name = "create-guild";
         this.description = "Creates a user within the database";
-        this.category = Category.ECONOMY;
         this.devOnly = true;
     }
 
