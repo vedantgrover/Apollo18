@@ -85,7 +85,7 @@ public class CommandManager extends ListenerAdapter {
                 new RankCommand(bot),
 
                 // Economy Commands
-                new BalanceCommand(bot),
+                //new BalanceCommand(bot),
 
                 // Settings Commands
                 new WelcomeSettings(bot),
