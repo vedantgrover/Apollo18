@@ -47,7 +47,9 @@ public class HelpCommand extends Command {
             categories.put(category, new ArrayList<>());
         }
         for (Command cmd : CommandManager.commands) {
-            categories.get(cmd.category).add(cmd);
+            if (cmd.category != null) {
+                categories.get(cmd.category).add(cmd);
+            }
         }
 
         OptionMapping option = event.getOption("category");
