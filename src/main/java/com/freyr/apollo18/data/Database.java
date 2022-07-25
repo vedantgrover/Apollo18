@@ -15,7 +15,9 @@ import org.bson.Document;
 import org.bson.conversions.Bson;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Filter;
 
 public class Database {
 
@@ -56,6 +58,22 @@ public class Database {
         userData.insertOne(new Document("userID", user.getId()).append("leveling", xp).append("economy", economyData).append("music", musicData));
 
         return true;
+    }
+
+    public FindIterable<Document> getAllUsers() {
+        return userData.find();
+    }
+
+    public FindIterable<Document> getAllGuilds() {
+        return guildData.find();
+    }
+
+    public Document getUser(String userId) {
+        return userData.find(new Document("userID", userId)).first();
+    }
+
+    public Document getGuild(String guildId) {
+        return guildData.find(new Document("guildID", guildId)).first();
     }
 
     private boolean checkIfUserExists(User user) {

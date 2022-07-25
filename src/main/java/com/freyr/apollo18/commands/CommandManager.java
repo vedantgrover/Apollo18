@@ -9,6 +9,7 @@ import com.freyr.apollo18.commands.fun.AvatarCommand;
 import com.freyr.apollo18.commands.fun.EmoteCommand;
 import com.freyr.apollo18.commands.fun.MemeCommand;
 import com.freyr.apollo18.commands.information.*;
+import com.freyr.apollo18.commands.leveling.LeaderboardCommand;
 import com.freyr.apollo18.commands.leveling.RankCommand;
 import com.freyr.apollo18.commands.music.*;
 import com.freyr.apollo18.commands.settings.LevelingSettings;
@@ -83,6 +84,7 @@ public class CommandManager extends ListenerAdapter {
 
                 // Leveling Commands
                 new RankCommand(bot),
+                new LeaderboardCommand(bot),
 
                 // Economy Commands
                 //new BalanceCommand(bot),
