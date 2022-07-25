@@ -2,7 +2,6 @@ package com.freyr.apollo18.commands;
 
 import com.freyr.apollo18.Apollo18;
 import com.freyr.apollo18.commands.dev.CreateProfile;
-import com.freyr.apollo18.commands.economy.BalanceCommand;
 import com.freyr.apollo18.commands.dev.CreateGuild;
 import com.freyr.apollo18.commands.dev.CreateUser;
 import com.freyr.apollo18.commands.fun.AvatarCommand;

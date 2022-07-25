@@ -40,7 +40,7 @@ public class LeaderboardCommand extends Command {
             embed.setTitle(event.getGuild().getName() + "'s Leaderboards");
             embed.setThumbnail(event.getGuild().getIconUrl());
             embed.setColor(EmbedColor.DEFAULT_COLOR);
-            embed.addField("\uD83D\uDCC8 Leveling", buildLevelingLeaderboard(event.getGuild(), 5, "leveling", getLevelingLeaderboard(event.getGuild())), false);
+            embed.addField("\uD83D\uDCC8 Leveling", buildLeaderboard(event.getGuild(), 5, false), false);
             embed.addField("<:byte:858172448900644874> Economy", "Coming soon!", false);
 
             event.getHook().sendMessageEmbeds(embed.build()).queue();
@@ -50,7 +50,7 @@ public class LeaderboardCommand extends Command {
             embed.setTitle(event.getGuild().getName() + "'s Leveling Leaderboard");
             embed.setThumbnail(event.getGuild().getIconUrl());
             embed.setColor(EmbedColor.DEFAULT_COLOR);
-            embed.setDescription(buildLevelingLeaderboard(event.getGuild(), 10, "leveling", getLevelingLeaderboard(event.getGuild())));
+            embed.setDescription(buildLeaderboard(event.getGuild(), 10, false));
 
             event.getHook().sendMessageEmbeds(embed.build()).queue();
         } else {
@@ -58,46 +58,20 @@ public class LeaderboardCommand extends Command {
         }
     }
 
-    private String buildLevelingLeaderboard(Guild guild, int limit, String type, HashMap<String, Integer> data) {
-        StringBuilder leaderboard = new StringBuilder();
+    private String buildLeaderboard(Guild guild, int limit, boolean isEconomy) {
+        StringBuilder result = new StringBuilder();
+        FindIterable<Document> data = (isEconomy) ? null:bot.getDatabase().getLevelingLeaderboard(guild.getId(), limit);
 
-        int counter = 0;
-        for (Map.Entry<String, Integer> mapElement : data.entrySet()) {
-            leaderboard.append("`").append(counter + 1).append(")` **").append(guild.getMemberById(mapElement.getKey()).getEffectiveName()).append("** - `").append(mapElement.getValue()).append(" xp`\n");
-            counter++;
-            if (counter >= limit) {
-                leaderboard.append("\uD83C\uDF1F More? `/leaderboard ").append(type.toLowerCase()).append("`");
-                break;
+        if (data == null) {
+            result = new StringBuilder("Coming soon!");
+        } else {
+            int num = 0;
+            for (Document doc : data) {
+                result.append("`").append(num).append(")` **").append(guild.getMemberById(doc.getString("userID"))).append("** - `XP: ").append(doc.getInteger("leveling.totalXp")).append("`");
+                num ++;
             }
         }
 
-        return leaderboard.toString();
-    }
-
-    private HashMap<String, Integer> getLevelingLeaderboard(Guild guild) {
-        HashMap<String, Integer> userData = new HashMap<>();
-
-        for (Member member : guild.getMembers()) {
-            if (bot.getDatabase().getUser(member.getId()) != null && bot.getDatabase().getUserLevelingProfile(member.getId(), guild.getId()) != null) {
-                userData.put(member.getId(), bot.getDatabase().getUserLevelingProfile(member.getId(), guild.getId()).getInteger("totalXp"));
-            }
-        }
-
-        return sortByValue(userData);
-    }
-
-    private HashMap<String, Integer> sortByValue(HashMap<String, Integer> hm) {
-        // Create a list from elements of HashMap
-        List<Map.Entry<String, Integer>> list = new LinkedList<>(hm.entrySet());
-
-        // Sort the list
-        list.sort((o1, o2) -> (o2.getValue()).compareTo(o1.getValue()));
-
-        // put data from sorted list to hashmap
-        HashMap<String, Integer> temp = new LinkedHashMap<>();
-        for (Map.Entry<String, Integer> aa : list) {
-            temp.put(aa.getKey(), aa.getValue());
-        }
-        return temp;
+        return result.toString();
     }
 }

@@ -7,6 +7,7 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Sorts;
 import com.mongodb.client.model.UpdateOptions;
 import com.mongodb.client.model.Updates;
 import net.dv8tion.jda.api.entities.Guild;
@@ -348,6 +349,10 @@ public class Database {
         } catch (MongoException me) {
             me.printStackTrace();
         }
+    }
+
+    public FindIterable<Document> getLevelingLeaderboard(String guildId, int limit) {
+        return userData.find(new Document("leveling.guildID", guildId)).sort(Sorts.descending("leveling.totalXp")).limit(limit);
     }
     // endregion
 
