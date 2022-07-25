@@ -63,7 +63,7 @@ public class LeaderboardCommand extends Command {
         } else {
             int num = 0;
             for (Document doc : data) {
-                result.append("`").append(num + 1).append(")` **").append(guild.getMemberById(doc.getString("userID")).getEffectiveName()).append("** - `**XP:** ").append(bot.getDatabase().getUserLevelingProfile(doc.getString("userID"), guild.getId()).getInteger("totalXp")).append("`\n");
+                result.append("`").append(num + 1).append(")` **__").append(guild.getMemberById(doc.getString("userID")).getEffectiveName()).append("__** - **XP:** `").append(bot.getDatabase().getUserLevelingProfile(doc.getString("userID"), guild.getId()).getInteger("totalXp")).append("`\n");
                 num++;
             }
         }
