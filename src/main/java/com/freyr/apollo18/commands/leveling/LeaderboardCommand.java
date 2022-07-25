@@ -8,15 +8,11 @@ import com.freyr.apollo18.util.embeds.EmbedUtils;
 import com.mongodb.client.FindIterable;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.bson.Document;
-
-import java.util.*;
 
 public class LeaderboardCommand extends Command {
     public LeaderboardCommand(Apollo18 bot) {
@@ -60,15 +56,15 @@ public class LeaderboardCommand extends Command {
 
     private String buildLeaderboard(Guild guild, int limit, boolean isEconomy) {
         StringBuilder result = new StringBuilder();
-        FindIterable<Document> data = (isEconomy) ? null:bot.getDatabase().getLevelingLeaderboard(guild.getId(), limit);
+        FindIterable<Document> data = (isEconomy) ? null : bot.getDatabase().getLevelingLeaderboard(guild.getId(), limit);
 
         if (data == null) {
             result = new StringBuilder("Coming soon!");
         } else {
             int num = 0;
             for (Document doc : data) {
-                result.append("`").append(num + 1).append(")` **").append(guild.getMemberById(doc.getString("userID")).getEffectiveName()).append("** - `XP: ").append(bot.getDatabase().getUserLevelingProfile(doc.getString("userID"), guild.getId()).getInteger("totalXp")).append("`\n");
-                num ++;
+                result.append("`").append(num + 1).append(")` **").append(guild.getMemberById(doc.getString("userID")).getEffectiveName()).append("** - `**XP:** ").append(bot.getDatabase().getUserLevelingProfile(doc.getString("userID"), guild.getId()).getInteger("totalXp")).append("`\n");
+                num++;
             }
         }
 
