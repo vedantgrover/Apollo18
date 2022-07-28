@@ -22,6 +22,6 @@ public class LevelingHandler {
      * @return
      */
     public static int randomNumBytes() {
-        return (int) (Math.random() * ((10 - 5) + 1)) + 5;
+        return (int) (Math.random() * ((3 - 1) + 1)) + 1;
     }
 }

@@ -36,7 +36,7 @@ public class BalanceCommand extends Command {
         embed.setThumbnail(user.getAvatarUrl());
         embed.addField("Balance", "<:byte:858172448900644874> " + db.getBalance(user.getId()) + " bytes", true);
         embed.addField("Bank", "<:byte:858172448900644874> " + db.getBank(user.getId()) + " bytes", true);
-        //embed.addField("Net Worth", "<:byte:858172448900644874> " + db.getNetWorth(user.getId()) + " bytes", true);
+        embed.addField("Net Worth", "<:byte:858172448900644874> " + db.getNetWorth(user.getId()) + " bytes", true);
 
         event.getHook().sendMessageEmbeds(embed.build()).queue();
     }
