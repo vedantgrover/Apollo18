@@ -61,7 +61,7 @@ public class PlayCommand extends Command {
         OptionMapping songOption = event.getOption("song");
         OptionMapping playlistOption = event.getOption("playlist");
 
-        if ((songOption.getAsString() == null && playlistOption.getAsString() == null) || (songOption.getAsString() != null && playlistOption.getAsString() != null)) {
+        if ((songOption == null && playlistOption == null) || (songOption != null && playlistOption != null)) {
             event.getHook().sendMessageEmbeds(EmbedUtils.createError("Please pick 1 of the options.")).queue();
         } else if (songOption.getAsString() != null) {
             String song = event.getOption("song").getAsString();
