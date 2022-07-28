@@ -19,11 +19,22 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * This class handles everything that is connected to databases.
+ * THIS IS THE ONLY CLASS THAT HAS DIRECT ACCESS TO THE DATABASE
+ *
+ * @author Freyr
+ */
 public class Database {
 
-    private final MongoCollection<Document> guildData;
-    private final MongoCollection<Document> userData;
+    private final MongoCollection<Document> guildData; // The collection of documents for guilds
+    private final MongoCollection<Document> userData; // The collection of documents for users
 
+    /**
+     * Creates a connection to the database and the collections
+     *
+     * @param srv The connection string
+     */
     public Database(String srv) {
         MongoClient mongoClient = new MongoClient(new MongoClientURI(srv));
         MongoDatabase database = mongoClient.getDatabase("apollo");
@@ -463,7 +474,7 @@ public class Database {
                 userPlaylist = doc;
                 break;
             }
-        }
+        };
 
         return userPlaylist.getList("songs", Document.class);
     }
