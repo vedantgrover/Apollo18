@@ -3,6 +3,7 @@ package com.freyr.apollo18.commands.music;
 import com.freyr.apollo18.Apollo18;
 import com.freyr.apollo18.commands.Category;
 import com.freyr.apollo18.commands.Command;
+import com.freyr.apollo18.data.Database;
 import com.freyr.apollo18.util.embeds.EmbedColor;
 import com.freyr.apollo18.util.embeds.EmbedUtils;
 import com.freyr.apollo18.util.music.PlayerManager;
@@ -12,12 +13,15 @@ import net.dv8tion.jda.api.entities.AudioChannel;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.managers.AudioManager;
+import org.bson.Document;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 
 /**
  * This command connects to a voice channel and plays music
@@ -32,7 +36,8 @@ public class PlayCommand extends Command {
         this.category = Category.MUSIC;
         this.botPermission = Permission.VOICE_CONNECT;
 
-        this.args.add(new OptionData(OptionType.STRING, "song", "Enter in a song search or song/playlist link", true));
+        this.args.add(new OptionData(OptionType.STRING, "song", "Enter in a song search or song/playlist link"));
+        this.args.add(new OptionData(OptionType.STRING, "playlist", "Enter in the name of your playlist."));
     }
 
     @SuppressWarnings("ConstantConditions")
@@ -54,13 +59,27 @@ public class PlayCommand extends Command {
             return;
         }
 
-        String link = String.join(" ", song);
+        OptionMapping songOption = event.getOption("song");
+        OptionMapping playlistOption = event.getOption("playlist");
 
-        if (!isUrl(link)) {
-            link = "ytsearch:" + link;
+        if ((songOption.getAsString() == null && playlistOption.getAsString() == null) || (songOption.getAsString() != null && playlistOption.getAsString() != null)) {
+            event.getHook().sendMessageEmbeds(EmbedUtils.createError("Please pick 1 of the options.")).queue();
+        } else if (songOption.getAsString() != null) {
+            String link = String.join(" ", song);
+
+            if (!isUrl(link)) {
+                link = "ytsearch:" + link;
+            }
+
+            PlayerManager.getInstance().loadAndPlay(event, event.getChannel(), link);
+        } else {
+            Database db = bot.getDatabase();
+            List<Document> songs = db.getSongs(event.getUser().getId(), event.getOption("playlist").getAsString().toLowerCase());
+
+            for (Document songData : songs) {
+                PlayerManager.getInstance().loadAndPlay(event, event.getChannel(), songData.getString("uri"));
+            }
         }
-
-        PlayerManager.getInstance().loadAndPlay(event, event.getChannel(), link);
     }
 
     private void join(SlashCommandInteractionEvent event) {

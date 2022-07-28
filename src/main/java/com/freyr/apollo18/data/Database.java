@@ -6,19 +6,18 @@ import com.mongodb.MongoException;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.Filters;
-import com.mongodb.client.model.Sorts;
-import com.mongodb.client.model.UpdateOptions;
-import com.mongodb.client.model.Updates;
+import com.mongodb.client.model.*;
+import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
+import javax.print.Doc;
+import java.sql.Array;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Filter;
 
 public class Database {
 
@@ -51,7 +50,6 @@ public class Database {
 
         List<Document> items = new ArrayList<>();
         List<Document> playlists = new ArrayList<>();
-        List<Document> songs = new ArrayList<>();
 
         Document economyData = new Document("balance", 0).append("bank", 0).append("job", new Document("business", null).append("job", null)).append("card", new Document("debit-card", false).append("credit-card", new Document("hasCard", false).append("currentBalance", 0).append("totalBalance", 0).append("expirationDate", null))).append("items", items);
         Document musicData = new Document("playlists", playlists);
@@ -321,10 +319,7 @@ public class Database {
 
         int xpIncrease = (int) (Math.random() * ((15 - 10) + 1)) + 10;
 
-        Bson update = Updates.combine(
-                Updates.inc("leveling.$[ele].xp", xpIncrease),
-                Updates.inc("leveling.$[ele].totalXp", xpIncrease)
-        );
+        Bson update = Updates.combine(Updates.inc("leveling.$[ele].xp", xpIncrease), Updates.inc("leveling.$[ele].totalXp", xpIncrease));
 
         try {
             userData.updateOne(filter, update, options);
@@ -337,10 +332,7 @@ public class Database {
         Bson filter = Filters.and(Filters.eq("userID", userId));
         UpdateOptions options = new UpdateOptions().arrayFilters(List.of(Filters.eq("ele.guildID", guildId)));
 
-        Bson update = Updates.combine(
-                Updates.inc("leveling.$[ele].level", 1),
-                Updates.set("leveling.$[ele].xp", 0)
-        );
+        Bson update = Updates.combine(Updates.inc("leveling.$[ele].level", 1), Updates.set("leveling.$[ele].xp", 0));
 
         addBytes(userId, bytesAdded);
 
@@ -385,6 +377,99 @@ public class Database {
 
     public void removeBytes(String userId, int amount) {
         addBytes(userId, -amount);
+    }
+
+    // endregion
+
+    // Music
+    // region
+    public void createPlaylist(String userId, String playlistName) {
+        Document query = new Document("userID", userId);
+
+        Document data = new Document("playlistName", playlistName.toLowerCase()).append("songs", new ArrayList<Document>());
+
+        Bson updates = Updates.push("music.playlists", data);
+
+        UpdateOptions options = new UpdateOptions().upsert(true);
+
+        try {
+            userData.updateOne(query, updates, options);
+        } catch (MongoException me) {
+            me.printStackTrace();
+        }
+    }
+
+    public void addSong(String userId, String playlist, AudioTrack song) {
+        Bson filter = Filters.and(Filters.eq("userID", userId));
+        UpdateOptions options = new UpdateOptions().arrayFilters(List.of(Filters.eq("ele.playlistName", playlist)));
+
+        Document data = new Document("songName", song.getInfo().title).append("uri", song.getInfo().uri).append("position", getSongs(userId, playlist).size());
+
+        Bson update = Updates.push("music.playlists.$[ele].songs", data);
+
+        try {
+            userData.updateOne(filter, update, options);
+        } catch (MongoException me) {
+            me.printStackTrace();
+        }
+    }
+
+    public boolean removeSong(String userId, String playlist, String songName) {
+        if (!checkIfSongExists(userId, playlist, songName)) {
+            return false;
+        }
+
+        Bson filter = Filters.and(Filters.eq("userID", userId));
+        UpdateOptions options = new UpdateOptions().arrayFilters(List.of(Filters.eq("ele.playlistName", playlist)));
+
+        Bson update = Updates.pull("music.playlists.$[ele].songs", new Document("songName", songName));
+
+        try {
+            userData.updateOne(filter, update, options);
+        } catch (MongoException me) {
+            me.printStackTrace();
+            return false;
+        }
+
+        return true;
+    }
+
+    public void moveSong(String userId, String playlist, String songName, int newPos) {
+        if (!checkIfSongExists(userId, playlist, songName)) {
+            return;
+        }
+
+        Document query = new Document("userID", userId);
+        UpdateOptions options = new UpdateOptions().arrayFilters(List.of(Filters.eq("ele.playlistName", playlist)));
+
+        Bson updates = Updates.set("music.playlists.$[ele].position", newPos);
+
+        try {
+            userData.updateOne(query, updates, options);
+        } catch (MongoException me) {
+            me.printStackTrace();
+        }
+    }
+
+    public List<Document> getPlaylists(String userId) {
+        return userData.find(new Document("userID", userId)).first().get("music", Document.class).getList("playlists", Document.class);
+    }
+
+    public List<Document> getSongs(String userId, String playlist) {
+        Document userDoc = userData.find(new Document("userID", userId)).first();
+        Document userPlaylist = null;
+        for (Document doc : userDoc.get("music", Document.class).getList("playlists", Document.class)) {
+            if (doc.getString("playlistName").equals(playlist)) {
+                userPlaylist = doc;
+                break;
+            }
+        }
+
+        return userPlaylist.getList("songs", Document.class);
+    }
+
+    private boolean checkIfSongExists(String userId, String playlist, String songName) {
+        return userData.find(new Document("userID", userId).append("music.playlists.playlistName", playlist).append("music.playlists.songs.songName", songName)).first() != null;
     }
 
     // endregion
