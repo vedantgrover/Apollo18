@@ -65,7 +65,7 @@ public class QueueCommand extends Command {
             long totalTime = 0;
             for (int i = 0; i < queue.size(); i++) {
                 if (i <= 10) {
-                    nextUpText.append(i).append(". ").append(queue.get(i).getInfo().title).append("\n");
+                    nextUpText.append(i + 1).append(". ").append(queue.get(i).getInfo().title).append("\n");
                 }
                 totalTime += queue.get(i).getInfo().length;
             }
