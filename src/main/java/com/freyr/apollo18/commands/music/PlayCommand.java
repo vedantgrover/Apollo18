@@ -45,7 +45,6 @@ public class PlayCommand extends Command {
     public void execute(SlashCommandInteractionEvent event) {
         event.deferReply().queue();
         final Member self = event.getGuild().getSelfMember();
-        String song = event.getOption("song").getAsString();
 
         if (!self.getVoiceState().inAudioChannel()) {
             join(event);
@@ -65,6 +64,7 @@ public class PlayCommand extends Command {
         if ((songOption.getAsString() == null && playlistOption.getAsString() == null) || (songOption.getAsString() != null && playlistOption.getAsString() != null)) {
             event.getHook().sendMessageEmbeds(EmbedUtils.createError("Please pick 1 of the options.")).queue();
         } else if (songOption.getAsString() != null) {
+            String song = event.getOption("song").getAsString();
             String link = String.join(" ", song);
 
             if (!isUrl(link)) {
@@ -72,7 +72,7 @@ public class PlayCommand extends Command {
             }
 
             PlayerManager.getInstance().loadAndPlay(event, event.getChannel(), link);
-        } else {
+        } else if (playlistOption.getAsString() != null) {
             Database db = bot.getDatabase();
             List<Document> songs = db.getSongs(event.getUser().getId(), event.getOption("playlist").getAsString().toLowerCase());
 

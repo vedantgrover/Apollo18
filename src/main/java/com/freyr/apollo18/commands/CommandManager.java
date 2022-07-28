@@ -68,6 +68,7 @@ public class CommandManager extends ListenerAdapter {
                 new VolumeCommand(bot),
                 new PauseCommand(bot),
                 new ResumeCommand(bot),
+                new PlaylistCommand(bot),
                 // Information Commands
                 new WeatherCommand(bot),
                 new YouTubeCommand(bot),
