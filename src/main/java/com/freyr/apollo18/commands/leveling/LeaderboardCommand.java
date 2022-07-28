@@ -36,8 +36,8 @@ public class LeaderboardCommand extends Command {
             embed.setTitle(event.getGuild().getName() + "'s Leaderboards");
             embed.setThumbnail(event.getGuild().getIconUrl());
             embed.setColor(EmbedColor.DEFAULT_COLOR);
-            embed.addField("\uD83D\uDCC8 Leveling", buildLeaderboard(event.getGuild(), 5, false), false);
-            embed.addField("<:byte:858172448900644874> Economy", "Coming soon!", false);
+            embed.addField("\uD83D\uDCC8 Leveling", buildLeaderboard(event.getGuild(), 5, false), true);
+            embed.addField("<:byte:858172448900644874> Economy", "Coming soon!", true);
 
             event.getHook().sendMessageEmbeds(embed.build()).queue();
         } else if (choice.getAsString().equals("leveling")) {
