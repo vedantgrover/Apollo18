@@ -1,8 +1,8 @@
 package com.freyr.apollo18.commands;
 
 import com.freyr.apollo18.Apollo18;
-import com.freyr.apollo18.commands.dev.CreateProfile;
 import com.freyr.apollo18.commands.dev.CreateGuild;
+import com.freyr.apollo18.commands.dev.CreateProfile;
 import com.freyr.apollo18.commands.dev.CreateUser;
 import com.freyr.apollo18.commands.fun.AvatarCommand;
 import com.freyr.apollo18.commands.fun.EmoteCommand;
@@ -51,56 +51,29 @@ public class CommandManager extends ListenerAdapter {
         this.bot = bot;
         mapCommands(
                 // Utility Commands
-                new PingCommand(bot),
-                new InviteCommand(bot),
-                new ReportBugCommand(bot),
-                new SuggestCommand(bot),
-                new VoteCommand(bot),
-                new PollCommand(bot),
-                new MathCommand(bot),
+                new PingCommand(bot), new InviteCommand(bot), new ReportBugCommand(bot), new SuggestCommand(bot), new VoteCommand(bot), new PollCommand(bot), new MathCommand(bot),
                 // Music Commands
-                new PlayCommand(bot),
-                new StopCommand(bot),
-                new SkipCommand(bot),
-                new NowPlayingCommand(bot),
-                new QueueCommand(bot),
-                new LoopCommand(bot),
-                new VolumeCommand(bot),
-                new PauseCommand(bot),
-                new ResumeCommand(bot),
-                new PlaylistCommand(bot),
+                new PlayCommand(bot), new StopCommand(bot), new SkipCommand(bot), new NowPlayingCommand(bot), new QueueCommand(bot), new LoopCommand(bot), new VolumeCommand(bot), new PauseCommand(bot), new ResumeCommand(bot), new PlaylistCommand(bot),
                 // Information Commands
-                new WeatherCommand(bot),
-                new YouTubeCommand(bot),
-                new TwitterCommand(bot),
-                new ServerInfoCommand(bot),
-                new UserInfoCommand(bot),
-                new TranslateCommand(bot),
+                new WeatherCommand(bot), new YouTubeCommand(bot), new TwitterCommand(bot), new ServerInfoCommand(bot), new UserInfoCommand(bot), new TranslateCommand(bot),
 
                 // Fun Commands
-                new MemeCommand(bot),
-                new EmoteCommand(bot),
-                new AvatarCommand(bot),
+                new MemeCommand(bot), new EmoteCommand(bot), new AvatarCommand(bot),
 
                 // Leveling Commands
-                new RankCommand(bot),
-                new LeaderboardCommand(bot),
+                new RankCommand(bot), new LeaderboardCommand(bot),
 
                 // Economy Commands
                 //new BalanceCommand(bot),
 
                 // Settings Commands
-                new WelcomeSettings(bot),
-                new LevelingSettings(bot),
+                new WelcomeSettings(bot), new LevelingSettings(bot),
 
                 // Dev only
-                new CreateProfile(bot),
-                new CreateUser(bot),
-                new CreateGuild(bot),
+                new CreateProfile(bot), new CreateUser(bot), new CreateGuild(bot),
 
                 // Help command should come at the bottom
-                new HelpCommand(bot)
-        );
+                new HelpCommand(bot));
     }
 
     /**

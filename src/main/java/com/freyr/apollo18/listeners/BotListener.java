@@ -30,10 +30,6 @@ public class BotListener extends ListenerAdapter {
     public void onGuildJoin(@NotNull GuildJoinEvent event) {
         bot.getDatabase().createGuildData(event.getGuild());
 
-        for (Member member : event.getGuild().getMembers()) {
-            bot.getDatabase().createUserData(member.getUser());
-        }
-
         System.out.println("Joined " + event.getGuild().getName() + ". Data creation successful");
     }
 
