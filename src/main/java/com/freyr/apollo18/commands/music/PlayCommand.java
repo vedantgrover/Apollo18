@@ -63,7 +63,7 @@ public class PlayCommand extends Command {
 
         if ((songOption == null && playlistOption == null) || (songOption != null && playlistOption != null)) {
             event.getHook().sendMessageEmbeds(EmbedUtils.createError("Please pick 1 of the options.")).queue();
-        } else if (songOption.getAsString() != null) {
+        } else if (songOption != null) {
             String song = event.getOption("song").getAsString();
             String link = String.join(" ", song);
 
@@ -72,7 +72,7 @@ public class PlayCommand extends Command {
             }
 
             PlayerManager.getInstance().loadAndPlay(event, event.getChannel(), link);
-        } else if (playlistOption.getAsString() != null) {
+        } else if (playlistOption != null) {
             Database db = bot.getDatabase();
             List<Document> songs = db.getSongs(event.getUser().getId(), event.getOption("playlist").getAsString().toLowerCase());
 
