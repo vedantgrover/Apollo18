@@ -26,7 +26,7 @@ public class PlaylistCommand extends Command {
         this.name = "playlist";
         this.description = "Interact with your saved playlists!";
         this.category = Category.MUSIC;
-        this.devOnly = true;
+        this.devOnly = false;
 
         this.subCommands.add(new SubcommandData("see", "See all of your playlists!").addOption(OptionType.STRING, "playlist", "List a playlist you want to see."));
         this.subCommands.add(new SubcommandData("create", "Create a new playlist to store all of your great songs!").addOption(OptionType.STRING, "name", "Your new playlist name", true));
