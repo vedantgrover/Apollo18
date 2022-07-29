@@ -40,6 +40,11 @@ public class DepositCommand extends Command {
             return;
         }
 
+        if (amount < 0) {
+            event.getHook().sendMessageEmbeds(EmbedUtils.createError("You cannot deposit negative bytes!")).queue();
+            return;
+        }
+
         if (amount > db.getBalance(event.getUser().getId())) {
             event.getHook().sendMessageEmbeds(EmbedUtils.createError("You don't have that many bytes!")).queue();
             return;

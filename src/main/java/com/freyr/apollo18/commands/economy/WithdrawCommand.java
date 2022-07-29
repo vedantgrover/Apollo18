@@ -40,6 +40,11 @@ public class WithdrawCommand extends Command {
             return;
         }
 
+        if (amount < 0) {
+            event.getHook().sendMessageEmbeds(EmbedUtils.createError("You cannot withdraw negative bytes!")).queue();
+            return;
+        }
+
         if (amount > db.getBank(event.getUser().getId())) {
             event.getHook().sendMessageEmbeds(EmbedUtils.createError("You don't have that many bytes!")).queue();
             return;

@@ -31,6 +31,11 @@ public class RankCommand extends Command {
 
         User user = (event.getOption("user") == null) ? event.getUser():event.getOption("user").getAsUser();
 
+        if (user.isBot()) {
+            event.getHook().sendMessageEmbeds(EmbedUtils.createError(user.getAsMention() + " is a bot and has no levels")).queue();
+            return;
+        }
+
         try {
             EmbedBuilder embed = new EmbedBuilder();
 
