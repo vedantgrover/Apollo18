@@ -48,7 +48,7 @@ public class LevelingListener extends ListenerAdapter {
             int maxXp = LevelingHandler.calculateLevelGoal(userDoc.getInteger("level")); // Calculating the number of xp the user needs to level up
 
             if (userDoc.getInteger("xp") >= maxXp) { // If the user's current xp exceeds that, then they level up
-                int bytesAdded = (int) (Math.random() * ((10 - 5) + 1)) + 5; // The number of bytes that the user gets when they level up.
+                int bytesAdded = LevelingHandler.randomNumBytes(); // The number of bytes that the user gets when they level up.
                 db.levelUp(event.getAuthor().getId(), event.getGuild().getId(), bytesAdded); // Leveling the user up
                 channel.sendMessage(db.getLevelingMessage(event.getGuild().getId()).replace("[member]", event.getAuthor().getAsMention()).replace("[level]", String.valueOf(userDoc.getInteger("level") + 1)).replace("[server]", event.getGuild().getName()).replace("[bytes]", String.valueOf(bytesAdded))).queue(); // Grabbing the leveling up message and replacing placeholders with their values
             }

@@ -390,6 +390,33 @@ public class Database {
         addBytes(userId, -amount);
     }
 
+    public void depositBytes(String userId, int amount) {
+        removeBytes(userId, amount);
+
+        Document query = new Document("userID", userId);
+
+        Bson updates = Updates.inc("economy.bank", amount);
+
+        UpdateOptions options = new UpdateOptions().upsert(true);
+
+        try {
+            userData.updateOne(query, updates, options);
+        } catch (MongoException me) {
+            me.printStackTrace();
+        }
+    }
+
+    public void withdrawBytes(String userId, int amount) {
+        addBytes(userId, amount);
+
+        Document query = new Document("userID", userId);
+
+        Bson updates = Updates.inc("economy.bank", -amount);
+
+        UpdateOptions options = new UpdateOptions().upsert(true);
+
+        userData.updateOne(query, updates, options);
+    }
     // endregion
 
     // Music
