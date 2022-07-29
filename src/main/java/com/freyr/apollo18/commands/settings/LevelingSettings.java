@@ -28,7 +28,7 @@ public class LevelingSettings extends Command {
 
         this.subCommands.add(new SubcommandData("toggle", "Turn leveling on or off for your server."));
         this.subCommands.add(new SubcommandData("set-channel", "Set a channel for leveling messages.").addOptions(channelOption));
-        this.subCommands.add(new SubcommandData("set-message", "Sets the message sent when a user levels up.").addOption(OptionType.STRING, "message", "Use [member] for the member name and [level] for the level.", true));
+        this.subCommands.add(new SubcommandData("set-message", "Sets the message sent when a user levels up.").addOption(OptionType.STRING, "message", "Use [member] for the member name and [level] for the level. You can add [bytes] for the number of bytes added", true));
     }
 
     @Override
