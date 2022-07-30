@@ -65,9 +65,9 @@ public class ButtonListener extends ListenerAdapter {
     /**
      * Adds reset buttons to a deferred reply message action.
      *
-     * @param userID the ID of the user who is accessing this menu.
+     * @param userID     the ID of the user who is accessing this menu.
      * @param systemName the name of the system to reset.
-     * @param action the WebhookMessageAction<Message> to add components to.
+     * @param action     the WebhookMessageAction<Message> to add components to.
      */
     public static void sendResetMenu(String userID, String systemName, WebhookMessageAction<Message> action) {
         String uuid = userID + ":" + UUID.randomUUID();
@@ -79,30 +79,23 @@ public class ButtonListener extends ListenerAdapter {
     /**
      * Get a list of buttons for paginated embeds.
      *
-     * @param uuid the unique ID generated for these buttons.
+     * @param uuid     the unique ID generated for these buttons.
      * @param maxPages the total number of embed pages.
      * @return A list of components to use on a paginated embed.
      */
     private static List<Button> getPaginationButtons(String uuid, int maxPages) {
-        return Arrays.asList(
-                Button.primary("pagination:prev:"+uuid, "Previous").asDisabled(),
-                Button.of(ButtonStyle.SECONDARY, "pagination:page:0", "1/"+maxPages).asDisabled(),
-                Button.primary("pagination:next:"+uuid, "Next")
-        );
+        return Arrays.asList(Button.primary("pagination:prev:" + uuid, "Previous").asDisabled(), Button.of(ButtonStyle.SECONDARY, "pagination:page:0", "1/" + maxPages).asDisabled(), Button.primary("pagination:next:" + uuid, "Next"));
     }
 
     /**
      * Get a list of buttons for reset embeds (selectable yes and no).
      *
-     * @param uuid the unique ID generated for these buttons.
+     * @param uuid       the unique ID generated for these buttons.
      * @param systemName the name of the system being reset.
      * @return A list of components to use on a reset embed.
      */
     private static List<Button> getResetButtons(String uuid, String systemName) {
-        return Arrays.asList(
-                Button.success("reset:yes:"+uuid+":"+systemName, Emoji.fromUnicode("\u2714")),
-                Button.danger("reset:no:"+uuid+":"+systemName, Emoji.fromUnicode("\u2716"))
-        );
+        return Arrays.asList(Button.success("reset:yes:" + uuid + ":" + systemName, Emoji.fromUnicode("\u2714")), Button.danger("reset:no:" + uuid + ":" + systemName, Emoji.fromUnicode("\u2716")));
     }
 
     /**
@@ -155,7 +148,7 @@ public class ButtonListener extends ListenerAdapter {
         if (userID != event.getUser().getIdLong()) return;
 
         // Get other buttons
-        String uuid = userID+":"+pressedArgs[3];
+        String uuid = userID + ":" + pressedArgs[3];
         List<Button> components = buttons.get(uuid);
         if (components == null) return;
         String[] storedArgs = components.get(0).getId().split(":");
@@ -167,7 +160,7 @@ public class ButtonListener extends ListenerAdapter {
                 List<MessageEmbed> embeds = menus.get(uuid);
                 if (page < embeds.size()) {
                     // Update buttons
-                    components.set(1, components.get(1).withId("pagination:page:" + page).withLabel((page + 1) + "/" + embeds.size()));
+                    components.set(1, components.get(1).withId("pagination:page:" + (page - 1)).withLabel((page + 1) + "/" + embeds.size()));
                     components.set(0, components.get(0).asEnabled());
                     if (page == embeds.size() - 1) {
                         components.set(2, components.get(2).asDisabled());
@@ -181,7 +174,7 @@ public class ButtonListener extends ListenerAdapter {
                 List<MessageEmbed> embeds = menus.get(uuid);
                 if (page >= 0) {
                     // Update buttons
-                    components.set(1, components.get(1).withId("pagination:page:" + page).withLabel((page + 1) + "/" + embeds.size()));
+                    components.set(1, components.get(1).withId("pagination:page:" + (page + 1)).withLabel((page + 1) + "/" + embeds.size()));
                     components.set(2, components.get(2).asEnabled());
                     if (page == 0) {
                         components.set(0, components.get(0).asDisabled());
