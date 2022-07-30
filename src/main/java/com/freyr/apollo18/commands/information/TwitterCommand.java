@@ -12,12 +12,6 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.json.JSONObject;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-
 public class TwitterCommand extends Command {
 
     public TwitterCommand(Apollo18 bot) {
@@ -43,9 +37,9 @@ public class TwitterCommand extends Command {
             embed.setThumbnail(data.getString("profile_image_url"));
             embed.setDescription(data.getString("description") + "\n\n**__Statistics__**");
 
-            embed.addField("Tweet Count", NumberFormatter.format(data.getJSONObject("public_metrics").getInt("tweet_count")), true);
-            embed.addField("Following", NumberFormatter.format(data.getJSONObject("public_metrics").getInt("following_count")), true);
-            embed.addField("Followers", NumberFormatter.format(data.getJSONObject("public_metrics").getInt("followers_count")), true);
+            embed.addField("Tweet Count", NumberFormatter.formatLongNumber(data.getJSONObject("public_metrics").getInt("tweet_count")), true);
+            embed.addField("Following", NumberFormatter.formatLongNumber(data.getJSONObject("public_metrics").getInt("following_count")), true);
+            embed.addField("Followers", NumberFormatter.formatLongNumber(data.getJSONObject("public_metrics").getInt("followers_count")), true);
 
             event.getHook().sendMessageEmbeds(embed.build()).queue();
         } catch (Exception e) {

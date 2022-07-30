@@ -38,10 +38,10 @@ public class YouTubeCommand extends Command {
             embed.setTitle(youtubeData.getString("channelTitle"));
             embed.setDescription(youtubeData.getString("description") + "\n\n**Published on: **`" + youtubeData.getString("publishTime") + "`\n\n**__Statistics__**");
 
-            embed.addField("Video Count", NumberFormatter.format(Double.parseDouble(youtubeStats.getString("videoCount"))), true);
-            embed.addField("Subscribers", NumberFormatter.format(Double.parseDouble(youtubeStats.getString("subscriberCount"))), true);
+            embed.addField("Video Count", NumberFormatter.formatLongNumber(Double.parseDouble(youtubeStats.getString("videoCount"))), true);
+            embed.addField("Subscribers", NumberFormatter.formatLongNumber(Double.parseDouble(youtubeStats.getString("subscriberCount"))), true);
 
-            embed.setFooter("View Count: " + NumberFormatter.format(Double.parseDouble(youtubeStats.getString("viewCount"))) + " views", youtubeData.getJSONObject("thumbnails").getJSONObject("default").getString("url"));
+            embed.setFooter("View Count: " + NumberFormatter.formatLongNumber(Double.parseDouble(youtubeStats.getString("viewCount"))) + " views", youtubeData.getJSONObject("thumbnails").getJSONObject("default").getString("url"));
 
             event.getHook().sendMessageEmbeds(embed.build()).queue();
         } catch (Exception e) {

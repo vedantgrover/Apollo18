@@ -19,6 +19,7 @@ import com.freyr.apollo18.commands.settings.LevelingSettings;
 import com.freyr.apollo18.commands.settings.WelcomeSettings;
 import com.freyr.apollo18.commands.utility.*;
 import com.freyr.apollo18.util.embeds.EmbedUtils;
+import com.freyr.apollo18.util.textFormatters.NumberFormatter;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.ReadyEvent;
@@ -115,16 +116,16 @@ public class CommandManager extends ListenerAdapter {
         return commandData;
     }
 
-    private String secondsToDhms(long seconds) {
+    private String secondsToDhms(double seconds) {
         double d = Math.floor(seconds / (3600 * 24));
         double h = Math.floor(seconds % (3600 * 24) / 3600);
         double m = Math.floor(seconds % 3600 / 60);
         double s = Math.floor(seconds % 60);
 
-        String dDisplay = d > 0 ? d + (d == 1 ? " day, " : " days ") : "";
-        String hDisplay = h > 0 ? h + (h == 1 ? " hour, " : " hours ") : "";
-        String mDisplay = m > 0 ? m + (m == 1 ? " minute, " : " minutes ") : "";
-        String sDisplay = s > 0 ? s + (s == 1 ? " second" : " seconds") : "";
+        String dDisplay = d > 0 ? NumberFormatter.formatDoubleToString(d) + (d == 1 ? " day, " : " days ") : "";
+        String hDisplay = h > 0 ? NumberFormatter.formatDoubleToString(h) + (h == 1 ? " hour, " : " hours ") : "";
+        String mDisplay = m > 0 ? NumberFormatter.formatDoubleToString(m) + (m == 1 ? " minute, " : " minutes ") : "";
+        String sDisplay = s > 0 ? NumberFormatter.formatDoubleToString(s) + (s == 1 ? " second" : " seconds") : "";
         return dDisplay + hDisplay + mDisplay + sDisplay;
     }
 
@@ -160,7 +161,7 @@ public class CommandManager extends ListenerAdapter {
                 if (currentTime < expirationTime) {
                     final long timeLeft = (expirationTime - currentTime) / 1000;
 
-                    event.replyEmbeds(EmbedUtils.createError("Please wait **" + secondsToDhms(timeLeft) + "** before using the " + cmd.name + " command")).queue();
+                    event.replyEmbeds(EmbedUtils.createError("Please wait **" + secondsToDhms(timeLeft) + "** before using the `/" + cmd.name + "` command!")).queue();
                     return;
                 }
             }

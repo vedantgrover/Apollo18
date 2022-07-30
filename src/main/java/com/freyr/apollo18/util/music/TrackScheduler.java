@@ -57,7 +57,7 @@ public class TrackScheduler extends AudioEventAdapter {
         AudioTrack track = this.queue.remove(0); // Grabbing the next song in the queue
         this.player.startTrack(track, false); // Stopping the current song and playing the new song.
 
-        // The next 4 lines of code just help format the length of the song (returned in milliseconds) into an aesthetically pleasing format.
+        // The next 4 lines of code just help formatLongNumber the length of the song (returned in milliseconds) into an aesthetically pleasing formatLongNumber.
         Date date = new Date(track.getInfo().length);
         DateFormat formatter = new SimpleDateFormat("mm:ss");
         formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
