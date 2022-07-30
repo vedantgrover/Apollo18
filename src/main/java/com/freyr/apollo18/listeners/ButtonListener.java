@@ -142,6 +142,7 @@ public class ButtonListener extends ListenerAdapter {
     public void onButtonInteraction(ButtonInteractionEvent event) {
         // Check that these are 'help' buttons
         String[] pressedArgs = event.getComponentId().split(":");
+        System.out.println(Arrays.toString(pressedArgs));
 
         // Check if user owns this menu
         long userID = Long.parseLong(pressedArgs[2]);
@@ -166,7 +167,8 @@ public class ButtonListener extends ListenerAdapter {
                         components.set(2, components.get(2).asDisabled());
                     }
                     buttons.put(uuid, components);
-                    event.editComponents(ActionRow.of(components)).setEmbeds(embeds.get(page)).queue();
+                    //event.editComponents(ActionRow.of(components)).setEmbeds(embeds.get(page)).queue();
+                    event.getHook().editOriginalComponents(ActionRow.of(components)).setEmbeds(embeds.get(page)).queue();
                 }
             } else if (pressedArgs[1].equals("prev")) {
                 // Move to previous embed
