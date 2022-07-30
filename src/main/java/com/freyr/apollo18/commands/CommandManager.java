@@ -169,7 +169,7 @@ public class CommandManager extends ListenerAdapter {
                 }
             }
 
-            if (!uses.containsKey(event.getUser().getId())) uses.put(event.getUser().getId(), 0);
+            if (!uses.containsKey(event.getUser().getId())) uses.put(event.getUser().getId(), 1);
 
             if (uses.get(event.getUser().getId()) >= cmd.uses) {
                 timeStamps.put(event.getUser().getId(), currentTime);
@@ -178,7 +178,7 @@ public class CommandManager extends ListenerAdapter {
                 timeout.schedule(() -> {
                     timeStamps.remove(event.getUser().getId());
                     uses.remove(event.getUser().getId());
-                    uses.put(event.getUser().getId(), 0);
+                    uses.put(event.getUser().getId(), 1);
                 }, cooldownAmount, TimeUnit.MILLISECONDS);
             }
 
