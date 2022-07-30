@@ -9,6 +9,7 @@ import com.freyr.apollo18.commands.economy.BegCommand;
 import com.freyr.apollo18.commands.economy.DepositCommand;
 import com.freyr.apollo18.commands.economy.WithdrawCommand;
 import com.freyr.apollo18.commands.fun.AvatarCommand;
+import com.freyr.apollo18.commands.fun.BinaryCommand;
 import com.freyr.apollo18.commands.fun.EmoteCommand;
 import com.freyr.apollo18.commands.fun.MemeCommand;
 import com.freyr.apollo18.commands.information.*;
@@ -68,7 +69,7 @@ public class CommandManager extends ListenerAdapter {
                 new WeatherCommand(bot), new YouTubeCommand(bot), new TwitterCommand(bot), new ServerInfoCommand(bot), new UserInfoCommand(bot), new TranslateCommand(bot),
 
                 // Fun Commands
-                new MemeCommand(bot), new EmoteCommand(bot), new AvatarCommand(bot),
+                new MemeCommand(bot), new EmoteCommand(bot), new AvatarCommand(bot), new BinaryCommand(bot),
 
                 // Leveling Commands
                 new RankCommand(bot), new LeaderboardCommand(bot),
