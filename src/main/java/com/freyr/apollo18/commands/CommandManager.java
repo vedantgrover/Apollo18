@@ -34,6 +34,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * This class will handle all the commands that I make and add them into Discord.
@@ -113,7 +115,7 @@ public class CommandManager extends ListenerAdapter {
         return commandData;
     }
 
-    private String secondsToDhms(double seconds) {
+    private String secondsToDhms(long seconds) {
         double d = Math.floor(seconds / (3600 * 24));
         double h = Math.floor(seconds % (3600 * 24) / 3600);
         double m = Math.floor(seconds % 3600 / 60);
@@ -150,7 +152,7 @@ public class CommandManager extends ListenerAdapter {
 
             final long currentTime = System.currentTimeMillis();
             final HashMap<String, Long> timeStamps = cooldowns.get(cmd.name);
-            final long cooldownAmount = (cmd.cooldown) * 1000;
+            final int cooldownAmount = (cmd.cooldown) * 1000;
 
             if (timeStamps.containsKey(event.getUser().getId())) {
                 final long expirationTime = timeStamps.get(event.getUser().getId()) + cooldownAmount;
@@ -158,9 +160,16 @@ public class CommandManager extends ListenerAdapter {
                 if (currentTime < expirationTime) {
                     final long timeLeft = (expirationTime - currentTime) / 1000;
 
-                    event.replyEmbeds(EmbedUtils.createError("Please wait " + secondsToDhms(timeLeft) + " before using the " + cmd.name + " command")).queue();
+                    event.replyEmbeds(EmbedUtils.createError("Please wait **" + secondsToDhms(timeLeft) + "** before using the " + cmd.name + " command")).queue();
+                    return;
                 }
             }
+
+            timeStamps.put(event.getUser().getId(), currentTime);
+
+            ScheduledThreadPoolExecutor timeout = new ScheduledThreadPoolExecutor(2);
+            timeout.schedule(() -> timeStamps.remove(event.getUser().getId()), cooldownAmount, TimeUnit.MILLISECONDS);
+
             cmd.execute(event); // Executing the execute method.
         }
     }

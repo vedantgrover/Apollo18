@@ -32,7 +32,7 @@ public abstract class Command {
     public List<SubcommandData> subCommands; // Any subcommands that the command has
     public Permission permission; // Permissions for the user
     public Permission botPermission; // Permissions the bot needs
-    public long cooldown = 0;
+    public int cooldown = 0;
 
     /**
      * Command Constructor.
