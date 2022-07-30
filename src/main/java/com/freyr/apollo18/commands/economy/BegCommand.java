@@ -20,7 +20,8 @@ public class BegCommand extends Command {
         this.name = "beg";
         this.description = "Beg for some bytes!";
         this.category = Category.ECONOMY;
-        this.cooldown = 60;
+        this.cooldown = 30;
+        this.uses = 3;
     }
 
     @Override

@@ -33,6 +33,7 @@ public abstract class Command {
     public Permission permission; // Permissions for the user
     public Permission botPermission; // Permissions the bot needs
     public int cooldown = 0;
+    public int uses = 1;
 
     /**
      * Command Constructor.

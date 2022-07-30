@@ -53,6 +53,7 @@ public class CommandManager extends ListenerAdapter {
     public static final Map<String, Command> mapCommands = new HashMap<>(); // Contains all the commands with their identifiers (names)
 
     private static final Map<String, HashMap<String, Long>> cooldowns = new HashMap<>();
+    private static final Map<String, HashMap<String, Integer>> numUsers = new HashMap<>();
 
     private final Apollo18 bot;
 
@@ -95,6 +96,7 @@ public class CommandManager extends ListenerAdapter {
             mapCommands.put(cmd.name, cmd);
             commands.add(cmd);
             cooldowns.put(cmd.name, new HashMap<>());
+            numUsers.put(cmd.name, new HashMap<>());
         }
     }
 
@@ -153,6 +155,7 @@ public class CommandManager extends ListenerAdapter {
 
             final long currentTime = System.currentTimeMillis();
             final HashMap<String, Long> timeStamps = cooldowns.get(cmd.name);
+            final HashMap<String, Integer> uses = numUsers.get(cmd.name);
             final int cooldownAmount = (cmd.cooldown) * 1000;
 
             if (timeStamps.containsKey(event.getUser().getId())) {
@@ -166,10 +169,22 @@ public class CommandManager extends ListenerAdapter {
                 }
             }
 
-            timeStamps.put(event.getUser().getId(), currentTime);
+            if (!uses.containsKey(event.getUser().getId())) uses.put(event.getUser().getId(), 0);
 
-            ScheduledThreadPoolExecutor timeout = new ScheduledThreadPoolExecutor(2);
-            timeout.schedule(() -> timeStamps.remove(event.getUser().getId()), cooldownAmount, TimeUnit.MILLISECONDS);
+            if (uses.get(event.getUser().getId()) >= cmd.uses) {
+                timeStamps.put(event.getUser().getId(), currentTime);
+
+                ScheduledThreadPoolExecutor timeout = new ScheduledThreadPoolExecutor(2);
+                timeout.schedule(() -> {
+                    timeStamps.remove(event.getUser().getId());
+                    uses.remove(event.getUser().getId());
+                    uses.put(event.getUser().getId(), 0);
+                }, cooldownAmount, TimeUnit.MILLISECONDS);
+            }
+
+            int newUse = uses.get(event.getUser().getId()) + 1;
+            uses.remove(event.getUser().getId());
+            uses.put(event.getUser().getId(), newUse);
 
             cmd.execute(event); // Executing the execute method.
         }
