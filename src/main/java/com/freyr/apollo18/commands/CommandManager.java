@@ -5,6 +5,7 @@ import com.freyr.apollo18.commands.dev.CreateGuild;
 import com.freyr.apollo18.commands.dev.CreateProfile;
 import com.freyr.apollo18.commands.dev.CreateUser;
 import com.freyr.apollo18.commands.economy.BalanceCommand;
+import com.freyr.apollo18.commands.economy.BegCommand;
 import com.freyr.apollo18.commands.economy.DepositCommand;
 import com.freyr.apollo18.commands.economy.WithdrawCommand;
 import com.freyr.apollo18.commands.fun.AvatarCommand;
@@ -67,9 +68,7 @@ public class CommandManager extends ListenerAdapter {
                 new RankCommand(bot), new LeaderboardCommand(bot),
 
                 // Economy Commands
-                new BalanceCommand(bot),
-                new DepositCommand(bot),
-                new WithdrawCommand(bot),
+                new BalanceCommand(bot), new DepositCommand(bot), new WithdrawCommand(bot), new BegCommand(bot),
 
                 // Settings Commands
                 new WelcomeSettings(bot), new LevelingSettings(bot),

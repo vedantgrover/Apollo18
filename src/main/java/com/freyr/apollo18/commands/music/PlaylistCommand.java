@@ -31,7 +31,8 @@ public class PlaylistCommand extends Command {
         this.subCommands.add(new SubcommandData("see", "See all of your playlists!").addOption(OptionType.STRING, "playlist", "List a playlist you want to see."));
         this.subCommands.add(new SubcommandData("create", "Create a new playlist to store all of your great songs!").addOption(OptionType.STRING, "name", "Your new playlist name", true));
         this.subCommands.add(new SubcommandData("add", "Add the currently playing tune to your playlist").addOption(OptionType.STRING, "playlist", "The playlist you want to add this song to.", true));
-        this.subCommands.add(new SubcommandData("remove", "Remove a song from your playlist").addOption(OptionType.STRING, "playlist", "The playlist you want to remove the song from", true).addOption(OptionType.STRING, "song", "The song you want to remove", true));
+        this.subCommands.add(new SubcommandData("remove-song", "Remove a song from your playlist").addOption(OptionType.STRING, "playlist", "The playlist you want to remove the song from", true).addOption(OptionType.STRING, "song", "The song you want to remove", true));
+        this.subCommands.add(new SubcommandData("remove", "Remove a playlist").addOption(OptionType.STRING, "playlist", "The playlist you want to remove", true));
     }
 
     @Override
@@ -111,9 +112,13 @@ public class PlaylistCommand extends Command {
                 event.getHook().sendMessageEmbeds(EmbedUtils.createSuccess(musicManager.audioPlayer.getPlayingTrack().getInfo().title + " has been added to " + event.getOption("playlist").getAsString())).queue();
             }
 
-            case "remove" -> {
+            case "remove-song" -> {
                 db.removeSong(event.getUser().getId(), event.getOption("playlist").getAsString(), event.getOption("song").getAsString());
                 event.getHook().sendMessageEmbeds(EmbedUtils.createSuccess(event.getOption("song").getAsString() + " has been removed from the playlist.")).queue();
+            }
+
+            case "remove" -> {
+
             }
         }
 

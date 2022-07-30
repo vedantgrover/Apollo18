@@ -437,6 +437,16 @@ public class Database {
         }
     }
 
+    public void deletePlaylist(String userId, String playlistName) {
+        Document query = new Document("userID", userId);
+
+        Bson updates = Updates.pull("music.playlists", playlistName.toLowerCase());
+
+        UpdateOptions options = new UpdateOptions().upsert(true);
+
+        userData.updateOne(query, updates, options);
+    }
+
     public void addSong(String userId, String playlist, AudioTrack song) {
         Bson filter = Filters.and(Filters.eq("userID", userId));
         UpdateOptions options = new UpdateOptions().arrayFilters(List.of(Filters.eq("ele.playlistName", playlist)));
