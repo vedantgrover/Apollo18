@@ -160,7 +160,7 @@ public class ButtonListener extends ListenerAdapter {
                 List<MessageEmbed> embeds = menus.get(uuid);
                 if (page < embeds.size()) {
                     // Update buttons
-                    components.set(1, components.get(1).withId("pagination:page:" + (page - 1)).withLabel((page + 1) + "/" + embeds.size()));
+                    components.set(1, components.get(1).withId("pagination:page:" + page).withLabel((page + 1) + "/" + embeds.size()));
                     components.set(0, components.get(0).asEnabled());
                     if (page == embeds.size() - 1) {
                         components.set(2, components.get(2).asDisabled());
@@ -174,7 +174,7 @@ public class ButtonListener extends ListenerAdapter {
                 List<MessageEmbed> embeds = menus.get(uuid);
                 if (page >= 0) {
                     // Update buttons
-                    components.set(1, components.get(1).withId("pagination:page:" + (page + 1)).withLabel((page + 1) + "/" + embeds.size()));
+                    components.set(1, components.get(1).withId("pagination:page:" + page).withLabel((page + 1) + "/" + embeds.size()));
                     components.set(2, components.get(2).asEnabled());
                     if (page == 0) {
                         components.set(0, components.get(0).asDisabled());
