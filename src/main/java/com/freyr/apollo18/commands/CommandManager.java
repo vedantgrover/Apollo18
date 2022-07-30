@@ -49,6 +49,8 @@ public class CommandManager extends ListenerAdapter {
 
     public static final Map<String, Command> mapCommands = new HashMap<>(); // Contains all the commands with their identifiers (names)
 
+    private static final Map<String, HashMap<String, Long>> cooldowns = new HashMap<>();
+
     private final Apollo18 bot;
 
     public CommandManager(Apollo18 bot) {
@@ -89,6 +91,7 @@ public class CommandManager extends ListenerAdapter {
         for (Command cmd : cmds) {
             mapCommands.put(cmd.name, cmd);
             commands.add(cmd);
+            cooldowns.put(cmd.name, new HashMap<>());
         }
     }
 
@@ -110,6 +113,19 @@ public class CommandManager extends ListenerAdapter {
         return commandData;
     }
 
+    private String secondsToDhms(double seconds) {
+        double d = Math.floor(seconds / (3600 * 24));
+        double h = Math.floor(seconds % (3600 * 24) / 3600);
+        double m = Math.floor(seconds % 3600 / 60);
+        double s = Math.floor(seconds % 60);
+
+        String dDisplay = d > 0 ? d + (d == 1 ? " day, " : " days ") : "";
+        String hDisplay = h > 0 ? h + (h == 1 ? " hour, " : " hours ") : "";
+        String mDisplay = m > 0 ? m + (m == 1 ? " minute, " : " minutes ") : "";
+        String sDisplay = s > 0 ? s + (s == 1 ? " second" : " seconds") : "";
+        return dDisplay + hDisplay + mDisplay + sDisplay;
+    }
+
     /**
      * This method fires everytime someone uses a slash command.
      *
@@ -129,6 +145,20 @@ public class CommandManager extends ListenerAdapter {
                 if (!botRole.hasPermission(cmd.botPermission) && !botRole.hasPermission(Permission.ADMINISTRATOR)) {
                     String text = "I need the `" + cmd.botPermission.getName().toUpperCase() + "` permission to execute that command.";
                     event.replyEmbeds(EmbedUtils.createError(text)).setEphemeral(true).queue();
+                }
+            }
+
+            final long currentTime = System.currentTimeMillis();
+            final HashMap<String, Long> timeStamps = cooldowns.get(cmd.name);
+            final long cooldownAmount = (cmd.cooldown) * 1000;
+
+            if (timeStamps.containsKey(event.getUser().getId())) {
+                final long expirationTime = timeStamps.get(event.getUser().getId()) + cooldownAmount;
+
+                if (currentTime < expirationTime) {
+                    final long timeLeft = (expirationTime - currentTime) / 1000;
+
+                    event.replyEmbeds(EmbedUtils.createError("Please wait " + secondsToDhms(timeLeft) + " before using the " + cmd.name + " command")).queue();
                 }
             }
             cmd.execute(event); // Executing the execute method.

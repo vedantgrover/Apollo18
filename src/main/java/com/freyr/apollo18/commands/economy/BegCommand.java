@@ -1,17 +1,15 @@
 package com.freyr.apollo18.commands.economy;
 
-import com.fasterxml.jackson.core.JsonParser;
 import com.freyr.apollo18.Apollo18;
 import com.freyr.apollo18.commands.Category;
 import com.freyr.apollo18.commands.Command;
 import com.freyr.apollo18.data.Database;
 import com.freyr.apollo18.util.embeds.EmbedColor;
-import com.freyr.apollo18.util.embeds.EmbedUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-
-import org.json.*;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.json.JSONTokener;
 
 import java.io.InputStream;
 
@@ -22,6 +20,7 @@ public class BegCommand extends Command {
         this.name = "beg";
         this.description = "Beg for some bytes!";
         this.category = Category.ECONOMY;
+        this.cooldown = 60;
     }
 
     @Override
