@@ -19,5 +19,24 @@
     "You got too desperate",
     "Too bad they were a karen. Your ears were ringing for over an hour.",
     "The police came and you had to run."
+  ],
+
+  "robSuccess": [
+    "You got away but just barely.",
+    "The owner caught you but luckily he was Bill Gates",
+    "You escaped through the unlocked door just in time.",
+    "How do you feel now that you know you've stolen something that isn't yours?",
+    "You scared the bytes out of the couple you were robbing.",
+    "[member] worked for a Chick-Fil-A",
+    "You were robbing your parents' house."
+  ],
+  "robFail": [
+    "You were caught leaving the house.",
+    "You made way too much noise! The neighbors woke up and called the police.",
+    "An officer was patrolling the area and saw you jump out the window.",
+    "You left a money trail all the way back to HQ and had to give all the money back.",
+    "The owner woke up right as you were leaving their room with the money!",
+    "You were robbing a teenager...and they were pulling an all-nighter for school.",
+    "The people you were robbing were black belt...at everything."
   ]
 }
