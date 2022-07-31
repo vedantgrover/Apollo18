@@ -67,7 +67,7 @@ public class LeaderboardCommand extends Command {
         int num = 0;
         if (data == null) {
             for (Document doc : bot.getDatabase().getEconomyLeaderboard(guild.getId(), limit)) {
-                result.append("`").append(num + 1).append(")` **__").append(guild.getMemberById(doc.getString("userID")).getEffectiveName()).append("__** - **Net Worth:** `").append(bot.getDatabase().getNetWorth(doc.getString("userID"))).append("`\n");
+                result.append("`").append(num + 1).append(")` **__").append(guild.getMemberById(doc.getString("userID")).getEffectiveName()).append("__** - **Net Worth:** <:byte:858172448900644874> `").append(bot.getDatabase().getNetWorth(doc.getString("userID"))).append(" bytes`\n");
                 num++;
             }
         } else {
