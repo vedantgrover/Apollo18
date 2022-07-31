@@ -1,5 +1,6 @@
 package com.freyr.apollo18.data;
 
+import com.mongodb.BasicDBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.MongoException;
@@ -93,6 +94,16 @@ public class Database {
     private boolean checkIfGuildExists(Guild guild) {
         FindIterable<Document> iterable = guildData.find(new Document("guildID", guild.getId()));
         return iterable.first() != null;
+    }
+
+    public void updateServerStatus(String userId, String guildId, boolean l) {
+        Document query = new Document("userID", userId);
+
+        UpdateOptions options = new UpdateOptions().arrayFilters(List.of(Filters.eq("ele.guildID", guildId)));
+
+        Bson updates = Updates.set("leveling.$[ele].inServer", l);
+
+        userData.updateOne(query, updates, options);
     }
 
 
@@ -361,6 +372,9 @@ public class Database {
 
     // Economy System
     // region
+    public Document getEconomyUser(String userId) {
+        return userData.find(new Document("userID", userId)).first().get("economy", Document.class);
+    }
     public int getBalance(String userId) {
         return userData.find(new Document("userID", userId)).first().get("economy", Document.class).getInteger("balance");
     }
@@ -418,8 +432,8 @@ public class Database {
         userData.updateOne(query, updates, options);
     }
 
-    public AggregateIterable<Document> getEconomyLeaderboard(String guildId) {
-        return userData.aggregate(Arrays.asList(Aggregates.match(Filters.and(Filters.eq("leveling.guildID", guildId), Filters.eq("leveling.inServer", true))), Aggregates.addFields(new Field("sum", Filters.eq("$add", Arrays.asList("$balance", "$bank")))), Aggregates.sort(Sorts.descending("sum"))));
+    public AggregateIterable<Document> getEconomyLeaderboard(String guildId, int limit) {
+        return userData.aggregate(Arrays.asList(Aggregates.match(Filters.and(Filters.eq("leveling.guildID", guildId), Filters.eq("leveling.inServer", true))), Aggregates.addFields(new Field("sum", Filters.eq("$add", Arrays.asList("$balance", "$bank")))), Aggregates.sort(Sorts.descending("sum")), Aggregates.limit(limit)));
     }
     // endregion
 

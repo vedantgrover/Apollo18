@@ -69,6 +69,8 @@ public class GuildListener extends ListenerAdapter {
         }
 
         db.createUserData(event.getUser()); // Creating the data for that user when they join
+        db.createLevelingProfile(event.getUser().getId(), event.getGuild().getId());
+        db.updateServerStatus(event.getUser().getId(), event.getGuild().getId(), true);
     }
 
     /**
@@ -95,6 +97,8 @@ public class GuildListener extends ListenerAdapter {
                 memberCountChannel.getManager().setName("Member Count: " + event.getGuild().getMemberCount()).queue(); // Editing the name of the channel and setting it to the new member count
             }
         }
+
+        db.updateServerStatus(event.getUser().getId(), event.getGuild().getId(), false);
     }
 
     /**
