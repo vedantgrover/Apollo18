@@ -66,7 +66,7 @@ public class CommandManager extends ListenerAdapter {
                 new MemeCommand(bot), new EmoteCommand(bot), new AvatarCommand(bot), new BinaryCommand(bot), new UrbanDictionaryCommand(bot),
 
                 // Leveling Commands
-                new RankCommand(bot), new LeaderboardCommand(bot),
+                new RankCommand(bot),
 
                 // Economy Commands
                 new BalanceCommand(bot), new DepositCommand(bot), new WithdrawCommand(bot), new BegCommand(bot), new DailyCommand(bot),

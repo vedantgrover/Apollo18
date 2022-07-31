@@ -3,6 +3,7 @@ package com.freyr.apollo18.data;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.MongoException;
+import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
@@ -13,8 +14,6 @@ import net.dv8tion.jda.api.entities.User;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
-import javax.print.Doc;
-import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -95,6 +94,7 @@ public class Database {
         FindIterable<Document> iterable = guildData.find(new Document("guildID", guild.getId()));
         return iterable.first() != null;
     }
+
 
     // Welcome System
     // region
@@ -230,7 +230,7 @@ public class Database {
 
         Document query = new Document("userID", userId);
 
-        Document newXPData = new Document("guildID", guildId).append("xp", 0).append("level", 1).append("totalXp", 0);
+        Document newXPData = new Document("guildID", guildId).append("xp", 0).append("level", 1).append("totalXp", 0).append("inServer", true);
 
         Bson updates = Updates.push("leveling", newXPData);
 
@@ -417,6 +417,10 @@ public class Database {
 
         userData.updateOne(query, updates, options);
     }
+
+    public AggregateIterable<Document> getEconomyLeaderboard(String guildId) {
+        return userData.aggregate(Arrays.asList(Aggregates.match(Filters.and(Filters.eq("leveling.guildID", guildId), Filters.eq("leveling.inServer", true))), Aggregates.addFields(new Field("sum", Filters.eq("$add", Arrays.asList("$balance", "$bank")))), Aggregates.sort(Sorts.descending("sum"))));
+    }
     // endregion
 
     // Music
@@ -511,7 +515,8 @@ public class Database {
                 userPlaylist = doc;
                 break;
             }
-        };
+        }
+        ;
 
         return userPlaylist.getList("songs", Document.class);
     }

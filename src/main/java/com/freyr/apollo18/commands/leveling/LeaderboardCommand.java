@@ -13,6 +13,10 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.bson.Document;
+import org.w3c.dom.stylesheets.LinkStyle;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class LeaderboardCommand extends Command {
     public LeaderboardCommand(Apollo18 bot) {
@@ -59,7 +63,7 @@ public class LeaderboardCommand extends Command {
         FindIterable<Document> data = (isEconomy) ? null : bot.getDatabase().getLevelingLeaderboard(guild.getId(), limit);
 
         if (data == null) {
-            result = new StringBuilder("Coming soon!");
+
         } else {
             int num = 0;
             for (Document doc : data) {
@@ -69,5 +73,12 @@ public class LeaderboardCommand extends Command {
         }
 
         return result.toString();
+    }
+
+    private List<String> getGuildIds(Guild guild) {
+        List<String> result = new ArrayList<>();
+        guild.getMembers().forEach(member -> result.add(member.getId()));
+
+        return result;
     }
 }
