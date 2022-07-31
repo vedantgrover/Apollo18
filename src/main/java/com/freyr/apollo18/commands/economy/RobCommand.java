@@ -58,7 +58,7 @@ public class RobCommand extends Command {
 
         int chance = (int) (Math.random() * 10) + 1;
         if (chance >= 1 && chance <= 3) {
-            String randomResponse = successResponses.getString((int) (Math.random() * successResponses.length()));
+            String randomResponse = successResponses.getString((int) (Math.random() * successResponses.length())).replace("[member]", event.getUser().getName());
             int bytesStolen = (int) (Math.random() * (12 - 5) + 1) + 5;
 
             db.addBytes(event.getUser().getId(), bytesStolen);
@@ -71,7 +71,7 @@ public class RobCommand extends Command {
 
             event.getHook().sendMessageEmbeds(embed.build()).queue();
         } else {
-            String randomResponse = failResponses.getString((int) (Math.random() * failResponses.length()));
+            String randomResponse = failResponses.getString((int) (Math.random() * failResponses.length())).replace("[member]", event.getUser().getName());
 
             EmbedBuilder embed = new EmbedBuilder();
             embed.setTitle("Failure");
