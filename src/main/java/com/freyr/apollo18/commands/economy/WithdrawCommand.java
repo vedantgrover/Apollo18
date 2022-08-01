@@ -18,7 +18,7 @@ public class WithdrawCommand extends Command {
         this.description = "Withdraw money from your bank!";
         this.category = Category.ECONOMY;
 
-        this.args.add(new OptionData(OptionType.INTEGER, "amount", "Specify an amount to deposit"));
+        this.args.add(new OptionData(OptionType.INTEGER, "amount", "Specify an amount to deposit").setMinValue(1));
     }
 
     @Override
