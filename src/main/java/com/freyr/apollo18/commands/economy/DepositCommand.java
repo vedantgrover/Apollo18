@@ -18,7 +18,7 @@ public class DepositCommand extends Command {
         this.description = "Deposit your bytes into your bank!";
         this.category = Category.ECONOMY;
 
-        this.args.add(new OptionData(OptionType.INTEGER, "amount", "The number of bytes you want to deposit"));
+        this.args.add(new OptionData(OptionType.INTEGER, "amount", "The number of bytes you want to deposit").setMinValue(1));
     }
 
     @Override
