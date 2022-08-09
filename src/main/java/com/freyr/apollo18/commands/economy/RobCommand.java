@@ -74,6 +74,10 @@ public class RobCommand extends Command {
 
             event.getHook().sendMessageEmbeds(embed.build()).queue();
 
+            if (db.getNotificationToggle(victim.getId())) {
+                event.getJDA().getUserById(victim.getId()).openPrivateChannel().flatMap(channel -> channel.sendMessageEmbeds(EmbedUtils.createNotification(event.getUser().getName() + " has just robbed <:byte:858172448900644874> " + bytesStolen + " bytes from you!"))).queue();
+            }
+
             db.createTransaction(event.getUser().getId(), "Robbery / Robber", robberOldBytes, db.getBalance(event.getUser().getId()));
             db.createTransaction(victim.getId(), "Robbery / Victim", victimOldBytes, db.getBalance(victim.getId()));
         } else {
