@@ -574,7 +574,12 @@ public class Database {
 
     // Notifications
     public boolean getNotificationToggle(String userId) {
-        return userData.find(new Document("userID", userId)).first().getBoolean("notifications");
+        try {
+            return userData.find(new Document("userID", userId)).first().getBoolean("notifications");
+        } catch (NullPointerException ne) {
+            userData.updateOne(new Document("userID", userId), Updates.set("notifications", true), new UpdateOptions().upsert(true));
+            return userData.find(new Document("userID", userId)).first().getBoolean("notifications");
+        }
     }
 
     public void toggleNotifications(String userId) {
