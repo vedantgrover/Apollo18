@@ -71,7 +71,7 @@ public class CommandManager extends ListenerAdapter {
                 new RankCommand(bot), new LeaderboardCommand(bot),
 
                 // Economy Commands
-                new BalanceCommand(bot), new DepositCommand(bot), new WithdrawCommand(bot), new BegCommand(bot), new DailyCommand(bot), new RobCommand(bot),
+                new BalanceCommand(bot), new DepositCommand(bot), new WithdrawCommand(bot), new BegCommand(bot), new DailyCommand(bot), new RobCommand(bot), new PayCommand(bot),
 
                 // Casino Commands
                 new CoinFlipGame(bot), new SlotMachineCommands(bot),
