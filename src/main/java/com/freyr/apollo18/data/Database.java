@@ -1,6 +1,5 @@
 package com.freyr.apollo18.data;
 
-import com.mongodb.BasicDBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.MongoException;
@@ -15,12 +14,10 @@ import net.dv8tion.jda.api.entities.User;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
-import java.sql.Time;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -73,7 +70,7 @@ public class Database {
         Document economyData = new Document("balance", 0).append("bank", 0).append("job", new Document("business", null).append("job", null)).append("card", new Document("debit-card", false).append("credit-card", new Document("hasCard", false).append("currentBalance", 0).append("totalBalance", 0).append("expirationDate", null))).append("items", items);
         Document musicData = new Document("playlists", playlists);
 
-        userData.insertOne(new Document("userID", user.getId()).append("leveling", xp).append("economy", economyData).append("music", musicData));
+        userData.insertOne(new Document("userID", user.getId()).append("notifications", true).append("leveling", xp).append("economy", economyData).append("music", musicData));
 
         return true;
     }
@@ -386,6 +383,7 @@ public class Database {
     public Document getEconomyUser(String userId) {
         return userData.find(new Document("userID", userId)).first().get("economy", Document.class);
     }
+
     public int getBalance(String userId) {
         return userData.find(new Document("userID", userId)).first().get("economy", Document.class).getInteger("balance");
     }
@@ -565,8 +563,33 @@ public class Database {
 
     // Businesses
     // region
-    public void createBusiness(String businessName, String ownerId) {
+    public void createBusiness(String businessName, String ownerId, String businessDescription) {
+        Document stockData = new Document("currentPrice", 0).append("previousPrice", 0).append("arrowEmoji", null);
 
+        Document document = new Document("businessName", businessName).append("owner", ownerId).append("businessDescription", businessDescription).append("public", false).append("jobs", new ArrayList<Document>()).append("stockPrice", stockData).append("items", new ArrayList<Document>());
+
+        businessData.insertOne(document);
     }
     // endregion
+
+    // Notifications
+    public boolean getNotificationToggle(String userId) {
+        return userData.find(new Document("userID", userId)).first().getBoolean("notifications");
+    }
+
+    public void toggleNotifications(String userId) {
+        Document query = new Document("userID", userId);
+        UpdateOptions options = new UpdateOptions().upsert(true);
+
+        try {
+            Bson updates = Updates.set("notifications", !getNotificationToggle(userId));
+            try {
+                userData.updateOne(query, updates, options);
+            } catch (MongoException me) {
+                me.printStackTrace();
+            }
+        } catch (NullPointerException ne) {
+            userData.updateOne(query, Updates.set("notifications", false), options);
+        }
+    }
 }
