@@ -41,6 +41,9 @@ public class BegCommand extends Command {
 
         int chance = (int) (Math.random() * 10) + 1;
         if (chance >= 1 && chance <= 3) {
+
+            int oldBal = db.getBalance(event.getUser().getId());
+
             int randBytes = (int) (Math.random() * (3 - 1) + 1) + 1;
             db.addBytes(event.getUser().getId(), randBytes);
 
@@ -51,6 +54,8 @@ public class BegCommand extends Command {
             embed.setColor(EmbedColor.DEFAULT_COLOR);
 
             event.getHook().sendMessageEmbeds(embed.build()).queue();
+
+            db.createTransaction(event.getUser().getId(), "Beg", oldBal, db.getBalance(event.getUser().getId()));
         } else {
             EmbedBuilder embed = new EmbedBuilder();
 

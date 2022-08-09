@@ -15,8 +15,12 @@ import net.dv8tion.jda.api.entities.User;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
+import java.sql.Time;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -29,6 +33,8 @@ public class Database {
 
     private final MongoCollection<Document> guildData; // The collection of documents for guilds
     private final MongoCollection<Document> userData; // The collection of documents for users
+    private final MongoCollection<Document> businessData;
+    private final MongoCollection<Document> transactionData;
 
     /**
      * Creates a connection to the database and the collections
@@ -41,6 +47,8 @@ public class Database {
 
         guildData = database.getCollection("guildData");
         userData = database.getCollection("userData");
+        businessData = database.getCollection("businesses");
+        transactionData = database.getCollection("transactions");
     }
 
     public void createGuildData(Guild guild) {
@@ -437,6 +445,17 @@ public class Database {
     }
     // endregion
 
+    // Transactions
+    // region
+
+    public void createTransaction(String userId, String transactionType, int oldBal, int newBal) {
+        Document transaction = new Document("userID", userId).append("byteExchange", (newBal - oldBal)).append("previousBal", oldBal).append("newBal", newBal).append("transactionType", transactionType).append("transactionDate", DateTimeFormatter.ofPattern("yyyy/MM/dd-HH:mm:ss").format(LocalDateTime.now()));
+
+        businessData.insertOne(transaction);
+    }
+
+    // endregion
+
     // Music
     // region
     public void createPlaylist(String userId, String playlistName) {
@@ -539,5 +558,12 @@ public class Database {
         return userData.find(new Document("userID", userId).append("music.playlists.playlistName", playlist).append("music.playlists.songs.songName", songName)).first() != null;
     }
 
+    // endregion
+
+    // Businesses
+    // region
+    public void createBusiness(String businessName, String ownerId) {
+
+    }
     // endregion
 }
