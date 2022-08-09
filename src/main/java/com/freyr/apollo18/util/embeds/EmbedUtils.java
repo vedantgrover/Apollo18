@@ -35,4 +35,19 @@ public class EmbedUtils {
 
         return embed.build();
     }
+
+    /**
+     * This method creates a simple notification message for the bot to send
+     *
+     * @param notif The text for the notification
+     * @return The fully built notification embed
+     */
+    public static MessageEmbed createNotification(String notif) {
+        EmbedBuilder embed = new EmbedBuilder();
+        embed.setTitle("Notification");
+        embed.setDescription(notif);
+        embed.setColor(EmbedColor.DEFAULT_COLOR);
+
+        return embed.build();
+    }
 }
