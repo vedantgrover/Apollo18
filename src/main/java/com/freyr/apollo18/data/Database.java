@@ -451,7 +451,7 @@ public class Database {
     public void createTransaction(String userId, String transactionType, int oldBal, int newBal) {
         Document transaction = new Document("userID", userId).append("byteExchange", (newBal - oldBal)).append("previousBal", oldBal).append("newBal", newBal).append("transactionType", transactionType).append("transactionDate", DateTimeFormatter.ofPattern("yyyy/MM/dd-HH:mm:ss").format(LocalDateTime.now()));
 
-        businessData.insertOne(transaction);
+        transactionData.insertOne(transaction);
     }
 
     // endregion
