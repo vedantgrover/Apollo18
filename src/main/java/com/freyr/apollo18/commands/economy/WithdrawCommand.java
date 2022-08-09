@@ -50,7 +50,11 @@ public class WithdrawCommand extends Command {
             return;
         }
 
+        int oldBytes = db.getBank(event.getUser().getId());
+
         db.withdrawBytes(event.getUser().getId(), amount);
         event.getHook().sendMessageEmbeds(EmbedUtils.createSuccess("Withdrawn <:byte:858172448900644874> " + amount + " bytes")).queue();
+
+        db.createTransaction(event.getUser().getId(), "Bank / Withdraw", oldBytes, db.getBank(event.getUser().getId()));
     }
 }

@@ -40,6 +40,8 @@ public class SlotMachineCommands extends Command {
 
         String text = "▪️ " + emojis.get((int) (Math.random() * emojis.size())) + " : " + emojis.get((int) (Math.random() * emojis.size())) + " : " + emojis.get((int) (Math.random() * emojis.size())) + "\n➡️ " + firstChoice + " : " + secondChoice + " : " + thirdChoice + " ⬅️ \n▪️ " + emojis.get((int) (Math.random() * emojis.size())) + " : " + emojis.get((int) (Math.random() * emojis.size())) + " : " + emojis.get((int) (Math.random() * emojis.size()));
 
+        int oldBal = db.getBalance(event.getUser().getId());
+
         EmbedBuilder embed = new EmbedBuilder();
         if (firstChoice.equals(secondChoice) && secondChoice.equals(thirdChoice)) {
             db.addBytes(event.getUser().getId(), bet * 20);
@@ -59,6 +61,6 @@ public class SlotMachineCommands extends Command {
 
         event.getHook().sendMessageEmbeds(embed.build()).queue();
 
-
+        db.createTransaction(event.getUser().getId(), "Casino / Slots", oldBal, db.getBalance(event.getUser().getId()));
     }
 }

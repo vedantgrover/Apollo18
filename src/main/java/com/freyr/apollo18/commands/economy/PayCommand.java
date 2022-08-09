@@ -19,7 +19,7 @@ public class PayCommand extends Command {
         this.category = Category.ECONOMY;
 
         this.args.add(new OptionData(OptionType.USER, "user", "The person you want to pay", true));
-        this.args.add(new OptionData(OptionType.INTEGER, "bytes", "The amount of bytes you want to pay", true));
+        this.args.add(new OptionData(OptionType.INTEGER, "bytes", "The amount of bytes you want to pay", true).setMinValue(1));
     }
 
     @Override
@@ -30,9 +30,20 @@ public class PayCommand extends Command {
         User user = event.getOption("user").getAsUser();
         int bytes = event.getOption("bytes").getAsInt();
 
+        if (db.getBalance(event.getUser().getId()) < bytes) {
+            event.getHook().sendMessageEmbeds(EmbedUtils.createError("You do not have enough bytes")).queue();
+            return;
+        }
+
+        int giverOldBal = db.getBalance(event.getUser().getId());
+        int receiverOldBal = db.getBalance(user.getId());
+
         db.addBytes(user.getId(), bytes);
         db.removeBytes(event.getUser().getId(), bytes);
 
         event.getHook().sendMessageEmbeds(EmbedUtils.createSuccess("Payed " + user.getName() + " <:byte:858172448900644874> " + bytes + " bytes!")).queue();
+
+        db.createTransaction(event.getUser().getId(), "Payment / Pay", giverOldBal, db.getBalance(event.getUser().getId()));
+        db.createTransaction(user.getId(), "Payment / Receive", receiverOldBal, db.getBalance(user.getId()));
     }
 }

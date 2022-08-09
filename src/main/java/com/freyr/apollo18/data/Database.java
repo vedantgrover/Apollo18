@@ -364,10 +364,13 @@ public class Database {
 
         Bson update = Updates.combine(Updates.inc("leveling.$[ele].level", 1), Updates.set("leveling.$[ele].xp", 0));
 
+        int oldBal = getBalance(userId);
+
         addBytes(userId, bytesAdded);
 
         try {
             userData.updateOne(filter, update, options);
+            createTransaction(userId, "Leveling / Level-up", oldBal, getBalance(userId));
         } catch (MongoException me) {
             me.printStackTrace();
         }

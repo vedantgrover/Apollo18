@@ -23,9 +23,13 @@ public class DailyCommand extends Command {
 
         Database db = bot.getDatabase();
 
+        int oldBal = db.getBalance(event.getUser().getId());
+
         int randBytes = (int) (Math.random() * (50 - 20) + 20);
         db.addBytes(event.getUser().getId(), randBytes);
 
         event.getHook().sendMessageEmbeds(EmbedUtils.createSuccess("Redeemed <:byte:858172448900644874> " + randBytes + " bytes")).queue();
+
+        db.createTransaction(event.getUser().getId(), "Redemption / Daily", oldBal, db.getBalance(event.getUser().getId()));
     }
 }

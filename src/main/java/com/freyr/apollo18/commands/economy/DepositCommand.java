@@ -50,7 +50,11 @@ public class DepositCommand extends Command {
             return;
         }
 
+        int oldBal = db.getBank(event.getUser().getId());
+
         db.depositBytes(event.getUser().getId(), amount);
         event.getHook().sendMessageEmbeds(EmbedUtils.createSuccess("Deposited <:byte:858172448900644874> " + amount + " bytes")).queue();
+
+        db.createTransaction(event.getUser().getId(), "Bank / Deposit", oldBal, db.getBank(event.getUser().getId()));
     }
 }
