@@ -1,9 +1,10 @@
 package com.freyr.apollo18.commands;
 
 import com.freyr.apollo18.Apollo18;
+import com.freyr.apollo18.commands.business.BusinessCommand;
 import com.freyr.apollo18.commands.casino.CoinFlipGame;
 import com.freyr.apollo18.commands.casino.SlotMachineCommands;
-import com.freyr.apollo18.commands.dev.CreateBusiness;
+import com.freyr.apollo18.commands.dev.CreateDefaultBusiness;
 import com.freyr.apollo18.commands.dev.CreateGuild;
 import com.freyr.apollo18.commands.dev.CreateProfile;
 import com.freyr.apollo18.commands.dev.CreateUser;
@@ -78,11 +79,14 @@ public class CommandManager extends ListenerAdapter {
                 // Casino Commands
                 new CoinFlipGame(bot), new SlotMachineCommands(bot),
 
+                // Business Commands
+                new BusinessCommand(bot),
+
                 // Settings Commands
                 new WelcomeSettings(bot), new LevelingSettings(bot), new NotificationSettings(bot),
 
                 // Dev only
-                new CreateProfile(bot), new CreateUser(bot), new CreateGuild(bot), new CreateBusiness(bot),
+                new CreateProfile(bot), new CreateUser(bot), new CreateGuild(bot), new CreateDefaultBusiness(bot),
 
                 // Help command should come at the bottom
                 new HelpCommand(bot));

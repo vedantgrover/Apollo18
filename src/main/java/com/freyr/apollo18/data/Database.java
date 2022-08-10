@@ -1,5 +1,6 @@
 package com.freyr.apollo18.data;
 
+import com.freyr.apollo18.handlers.BusinessHandler;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.MongoException;
@@ -8,16 +9,23 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.*;
+import com.mongodb.lang.Nullable;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.json.JSONObject;
 
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -563,16 +571,43 @@ public class Database {
 
     // Businesses
     // region
-    public void createBusiness(String businessName, String ownerId, String businessDescription) {
-        Document stockData = new Document("currentPrice", 0).append("previousPrice", 0).append("arrowEmoji", null);
+    public void createDefaultBusiness(String businessName, String businessDescription, String ticker, String stockCode, @Nullable String logo) {
+        try {
+            HttpRequest request = HttpRequest.newBuilder().uri(URI.create("https://twelve-data1.p.rapidapi.com/quote?symbol=" + ticker + "&interval=1day&outputsize=30&format=json")).header("X-RapidAPI-Key", "dd48617c70mshf70a88b8e810bf1p118954jsn51d2619fac68").header("X-RapidAPI-Host", "twelve-data1.p.rapidapi.com").method("GET", HttpRequest.BodyPublishers.noBody()).build();
+            HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+            JSONObject data = new JSONObject(response.body());
 
-        Document document = new Document("businessName", businessName).append("owner", ownerId).append("businessDescription", businessDescription).append("public", false).append("jobs", new ArrayList<Document>()).append("stockPrice", stockData).append("items", new ArrayList<Document>());
+            int change = (int) Double.parseDouble(data.getString("change"));
+            int currentPrice = (int) Double.parseDouble(data.getString("close")) / 4;
+            int previousPrice = currentPrice - change;
 
-        businessData.insertOne(document);
+            Document stockData = new Document("ticker", ticker).append("currentPrice", currentPrice).append("previousPrice", previousPrice).append("change", change).append("arrowEmoji", BusinessHandler.getArrow(change));
+            Document document = new Document("name", businessName).append("stockCode", stockCode).append("owner", "default").append("description", businessDescription).append("logo", (logo == null) ? "https://library.kissclipart.com/20181224/fww/kissclipart-free-vector-building-clipart-computer-icons-66d576fc7c1dd7ff.png" : logo).append("public", true).append("jobs", new ArrayList<Document>()).append("stock", stockData);
+
+            businessData.insertOne(document);
+        } catch (Exception e) {
+            System.err.println(e);
+        }
+    }
+
+    public Document getBusiness(String stockCode) {
+        return businessData.find(new Document("stockCode", stockCode)).first();
+    }
+
+    public HashMap<String, String> getBusinesses() {
+        HashMap<String, String> result = new HashMap<>();
+
+        FindIterable<Document> businesses = businessData.find(new Document("public", true));
+        for (Document business : businesses) {
+            result.put(business.getString("name"), "Price: <:byte:858172448900644874> `" + business.get("stock", Document.class).getInteger("currentPrice") + " bytes` " + business.get("stock", Document.class).getString("arrowEmoji") + " `(" + business.get("stock", Document.class).getInteger("change") + ")`\nCode: `" + business.getString("stockCode") + "`");
+        }
+
+        return result;
     }
     // endregion
 
     // Notifications
+    // region
     public boolean getNotificationToggle(String userId) {
         try {
             return userData.find(new Document("userID", userId)).first().getBoolean("notifications");
@@ -597,4 +632,5 @@ public class Database {
             userData.updateOne(query, Updates.set("notifications", false), options);
         }
     }
+    // endregion
 }
