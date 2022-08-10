@@ -80,7 +80,7 @@ public class CommandManager extends ListenerAdapter {
                 new CoinFlipGame(bot), new SlotMachineCommands(bot),
 
                 // Business Commands
-                new BusinessCommand(bot),
+//                new BusinessCommand(bot),
 
                 // Settings Commands
                 new WelcomeSettings(bot), new LevelingSettings(bot), new NotificationSettings(bot),

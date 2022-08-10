@@ -608,6 +608,22 @@ public class Database {
 
         return result;
     }
+
+    public void addStockToUser(Document business, String userId, int quantity) {
+        Document userBusiness = new Document("stockCode", business.getString("stockCode")).append("purchasePrice", business.get("stock", Document.class).getInteger("currentPrice")).append("quantity", quantity);
+        Document query = new Document("userID", userId);
+
+        Bson updates = Updates.push("economy.stocks", userBusiness);
+
+        UpdateOptions options = new UpdateOptions().upsert(true);
+
+        int oldBal = getBalance(userId);
+
+        userData.updateOne(query, updates, options);
+        removeBytes(userId, business.get("stock", Document.class).getInteger("currentPrice") * quantity);
+
+        createTransaction(userId, "Business / Stock / Buy", oldBal, getBalance(userId));
+    }
     // endregion
 
     // Notifications
