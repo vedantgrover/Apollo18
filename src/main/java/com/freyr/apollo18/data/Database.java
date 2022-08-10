@@ -2,6 +2,7 @@ package com.freyr.apollo18.data;
 
 import com.freyr.apollo18.Apollo18;
 import com.freyr.apollo18.handlers.BusinessHandler;
+import com.freyr.apollo18.util.textFormatters.RandomString;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.MongoException;
@@ -16,6 +17,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.bson.types.ObjectId;
 import org.json.JSONObject;
 
 import java.net.URI;
@@ -24,10 +26,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 /**
  * This class handles everything that is connected to databases.
@@ -598,19 +597,19 @@ public class Database {
         return businessData.find(new Document("stockCode", stockCode)).first();
     }
 
-    public HashMap<String, String> getBusinesses() {
-        HashMap<String, String> result = new HashMap<>();
+    public List<Document> getBusinesses() {
+        List<Document> result = new ArrayList<>();
 
         FindIterable<Document> businesses = businessData.find(new Document("public", true));
         for (Document business : businesses) {
-            result.put(business.getString("name"), "Price: <:byte:858172448900644874> `" + business.get("stock", Document.class).getInteger("currentPrice") + " bytes` " + business.get("stock", Document.class).getString("arrowEmoji") + " `(" + business.get("stock", Document.class).getInteger("change") + ")`\nCode: `" + business.getString("stockCode") + "`");
+            result.add(business);
         }
 
         return result;
     }
 
     public void addStockToUser(Document business, String userId, int quantity) {
-        Document userBusiness = new Document("stockCode", business.getString("stockCode")).append("purchasePrice", business.get("stock", Document.class).getInteger("currentPrice")).append("quantity", quantity);
+        Document userBusiness = new Document("_id", new RandomString(12).nextString()).append("stockCode", business.getString("stockCode")).append("purchasePrice", business.get("stock", Document.class).getInteger("currentPrice")).append("quantity", quantity);
         Document query = new Document("userID", userId);
 
         Bson updates = Updates.push("economy.stocks", userBusiness);
@@ -623,6 +622,70 @@ public class Database {
         removeBytes(userId, business.get("stock", Document.class).getInteger("currentPrice") * quantity);
 
         createTransaction(userId, "Business / Stock / Buy", oldBal, getBalance(userId));
+    }
+
+    public void removeStockFromUser(String userId, String stockCode, int quantity) {
+        List<Document> actions = getPurchasedStocks(userId, stockCode, quantity);
+        Document business = getBusiness(stockCode);
+        int currentPrice = business.get("stock", Document.class).getInteger("currentPrice");
+
+        int totalPrice = quantity * currentPrice;
+
+        for (int i = 0; i < actions.size(); i++) {
+            if (actions.get(i).getInteger("action") == 0) {
+                Document updates = new Document("$pull", new Document("economy.stocks", new Document("_id", actions.get(i).getString("_id"))));
+
+                userData.updateOne(new Document("userID", userId), updates, new UpdateOptions().upsert(true));
+            } else {
+                UpdateOptions options = new UpdateOptions().arrayFilters(List.of(Filters.eq("ele._id", actions.get(i).getString("_id"))));
+                Bson updates = Updates.set("economy.stocks.$[ele].quantity", actions.get(i).getInteger("quantity"));
+
+                userData.updateOne(new Document("userID", userId), updates, options);
+            }
+        }
+
+        addBytes(userId, totalPrice);
+        createTransaction(userId, "Business / Stock / Sell", getBalance(userId) - totalPrice, getBalance(userId));
+    }
+
+    private List<Document> getPurchasedStocks(String userId, String stockCode, int quantity) {
+        List<Document> result = new ArrayList<>();
+
+        Document userDoc = userData.find(new Document("userID", userId)).first();
+        List<Document> stocks = userDoc.get("economy", Document.class).getList("stocks", Document.class);
+        int tempQuantity = quantity;
+
+        System.out.println("Info: Building Document for Stock: " + stockCode + ", Quantity: " + tempQuantity);
+
+        for (int i = 0; i < stocks.size(); i++) {
+            if (stocks.get(i).getString("stockCode").equals(stockCode.toUpperCase()) && tempQuantity > 0) {
+                if (stocks.get(i).getInteger("quantity") <= tempQuantity && (tempQuantity - stocks.get(i).getInteger("quantity")) >= 0) {
+                    tempQuantity -= stocks.get(i).getInteger("quantity");
+                    System.out.println("Info: Action: Delete | SQ: " + stocks.get(i).getInteger("quantity") + " | TQ Left: " + tempQuantity);
+                    result.add(new Document("_id", stocks.get(i).getString("_id")).append("quantity", stocks.get(i).getInteger("quantity")).append("index", i).append("action", 0));
+                } else if (stocks.get(i).getInteger("quantity") > tempQuantity) {
+                    System.out.println("Info: Action: Update | SQ from: " + stocks.get(i).getInteger("quantity") + " to: " + (stocks.get(i).getInteger("quantity") - tempQuantity));
+                    result.add(new Document("_id", stocks.get(i).getString("_id")).append("quantity", (stocks.get(i).getInteger("quantity") - tempQuantity)).append("index", i).append("action", 1));
+                    tempQuantity -= tempQuantity;
+                    System.out.println("Info: TQ Left: " + tempQuantity);
+                }
+            }
+        }
+
+        System.out.println(result);
+        return result;
+    }
+
+    public int getTotalStocks(String userId, String stockCode) {
+        List<Document> purchasedStocks = userData.find(new Document("userID", userId)).first().get("economy", Document.class).getList("stocks", Document.class);
+        int totalStocks = 0;
+        for (Document purchasedStock : purchasedStocks) {
+            if (purchasedStock.getString("stockCode").equals(stockCode)) {
+                totalStocks += purchasedStock.getInteger("quantity");
+            }
+        }
+
+        return totalStocks;
     }
     // endregion
 

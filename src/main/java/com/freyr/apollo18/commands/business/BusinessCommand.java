@@ -25,7 +25,7 @@ public class BusinessCommand extends Command {
 
         OptionData quantity = new OptionData(OptionType.INTEGER, "quantity", "The amount you want to buy").setMinValue(1);
 
-        this.subCommands.add(new SubcommandData("show", "Shows all of the businesses"));
+        this.subCommands.add(new SubcommandData("market", "Shows all of the businesses"));
         this.subCommands.add(new SubcommandData("info", "Shows the info about a business").addOption(OptionType.STRING, "code", "The stock code", true));
         this.subCommands.add(new SubcommandData("buy", "Buy Stock").addOption(OptionType.STRING, "code", "The stock code of the business", true).addOptions(quantity));
         this.subCommands.add(new SubcommandData("sell", "Sell Stock").addOption(OptionType.STRING, "code", "The stock code of the business", true).addOptions(quantity));
@@ -38,13 +38,13 @@ public class BusinessCommand extends Command {
         Database db = bot.getDatabase();
 
         switch (event.getSubcommandName()) {
-            case "show" -> {
+            case "market" -> {
                 EmbedBuilder embed = new EmbedBuilder();
                 embed.setTitle("Businesses");
                 embed.setDescription("Here are all of the businesses that you can invest in!");
 
-                for (Map.Entry<String, String> business : db.getBusinesses().entrySet()) {
-                    embed.addField(business.getKey(), business.getValue(), true);
+                for (Document business : db.getBusinesses()) {
+                    embed.addField(business.getString("name"), "Price: <:byte:858172448900644874> `" + business.get("stock", Document.class).getInteger("currentPrice") + " bytes` " + business.get("stock", Document.class).getString("arrowEmoji") + " `(" + business.get("stock", Document.class).getInteger("change") + ")`\nCode: `" + business.getString("stockCode") + "`", true);
                 }
 
                 embed.setColor(EmbedColor.DEFAULT_COLOR);
@@ -83,7 +83,16 @@ public class BusinessCommand extends Command {
 
             case "sell" -> {
                 String code = event.getOption("code").getAsString().toUpperCase();
-                event.getHook().sendMessageEmbeds(EmbedUtils.createError("Currently in development")).queue();
+                int quantity = (event.getOption("quantity") != null) ? event.getOption("quantity").getAsInt() : 1;
+
+                if (quantity > db.getTotalStocks(event.getUser().getId(), code)) {
+                    event.getHook().sendMessageEmbeds(EmbedUtils.createError("You do not have enough stock to sell")).queue();
+                    return;
+                }
+
+                db.removeStockFromUser(event.getUser().getId(), code, quantity);
+
+                event.getHook().sendMessageEmbeds(EmbedUtils.createSuccess("Sale Successful")).queue();
             }
         }
     }
