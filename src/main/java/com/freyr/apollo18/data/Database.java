@@ -1,5 +1,6 @@
 package com.freyr.apollo18.data;
 
+import com.freyr.apollo18.Apollo18;
 import com.freyr.apollo18.handlers.BusinessHandler;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
@@ -36,6 +37,8 @@ import java.util.List;
  */
 public class Database {
 
+    private final Apollo18 bot;
+
     private final MongoCollection<Document> guildData; // The collection of documents for guilds
     private final MongoCollection<Document> userData; // The collection of documents for users
     private final MongoCollection<Document> businessData;
@@ -46,7 +49,8 @@ public class Database {
      *
      * @param srv The connection string
      */
-    public Database(String srv) {
+    public Database(String srv, Apollo18 bot) {
+        this.bot = bot;
         MongoClient mongoClient = new MongoClient(new MongoClientURI(srv));
         MongoDatabase database = mongoClient.getDatabase("apollo");
 
@@ -573,7 +577,7 @@ public class Database {
     // region
     public void createDefaultBusiness(String businessName, String businessDescription, String ticker, String stockCode, @Nullable String logo) {
         try {
-            HttpRequest request = HttpRequest.newBuilder().uri(URI.create("https://twelve-data1.p.rapidapi.com/quote?symbol=" + ticker + "&interval=1day&outputsize=30&format=json")).header("X-RapidAPI-Key", "dd48617c70mshf70a88b8e810bf1p118954jsn51d2619fac68").header("X-RapidAPI-Host", "twelve-data1.p.rapidapi.com").method("GET", HttpRequest.BodyPublishers.noBody()).build();
+            HttpRequest request = HttpRequest.newBuilder().uri(URI.create("https://twelve-data1.p.rapidapi.com/quote?symbol=" + ticker + "&interval=1day&outputsize=30&format=json")).header("X-RapidAPI-Key", bot.getConfig().get("RAPIDAPI_KEY", System.getenv("RAPIDAPI_KEY"))).header("X-RapidAPI-Host", "twelve-data1.p.rapidapi.com").method("GET", HttpRequest.BodyPublishers.noBody()).build();
             HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
             JSONObject data = new JSONObject(response.body());
 
