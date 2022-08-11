@@ -44,7 +44,7 @@ public class BalanceCommand extends Command {
         embed.addField("Net Worth", "<:byte:858172448900644874> " + db.getNetWorth(user.getId()) + " bytes", true);
 
         for (int i = 0; i < businesses.size(); i++) {
-            if (db.getTotalStocks(event.getUser().getId(), businesses.get(i).getString("stockCode")) > 0) {
+            if (db.getTotalStocks(user.getId(), businesses.get(i).getString("stockCode")) > 0) {
                 embed.addField(businesses.get(i).getString("name"), db.getTotalStocks(event.getUser().getId(), businesses.get(i).getString("stockCode")) + " share(s)", true);
             }
         }
