@@ -1,6 +1,7 @@
 package com.freyr.apollo18.data;
 
 import com.freyr.apollo18.Apollo18;
+import com.freyr.apollo18.commands.business.BusinessCommand;
 import com.freyr.apollo18.handlers.BusinessHandler;
 import com.freyr.apollo18.util.textFormatters.RandomString;
 import com.mongodb.MongoClient;
@@ -20,6 +21,7 @@ import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -686,6 +688,33 @@ public class Database {
         }
 
         return totalStocks;
+    }
+
+    public void updateStocks() {
+        FindIterable<Document> businesses = businessData.find();
+
+        for (Document business : businesses) {
+            try {
+                HttpRequest request = HttpRequest.newBuilder().uri(URI.create("https://twelve-data1.p.rapidapi.com/quote?symbol=" + business.get("stock", Document.class).getString("ticker") + "&interval=1day&outputsize=30&format=json")).header("X-RapidAPI-Key", bot.getConfig().get("RAPIDAPI_KEY", System.getenv("RAPIDAPI_KEY"))).header("X-RapidAPI-Host", "twelve-data1.p.rapidapi.com").method("GET", HttpRequest.BodyPublishers.noBody()).build();
+                HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+                JSONObject data = new JSONObject(response.body());
+
+                int change = (int) Double.parseDouble(data.getString("change"));
+                int currentPrice = (int) Double.parseDouble(data.getString("close")) / 4;
+                int previousPrice = currentPrice - change;
+
+                Bson updates = Updates.combine(
+                        Updates.set("stock.currentPrice", currentPrice),
+                        Updates.set("stock.previousPrice", previousPrice),
+                        Updates.set("stock.change", change),
+                        Updates.set("stock.arrowEmoji", BusinessHandler.getArrow(change))
+                );
+
+                businessData.updateOne(business, updates, new UpdateOptions().upsert(true));
+            } catch (Exception e) {
+                System.err.println(e);
+            }
+        }
     }
     // endregion
 

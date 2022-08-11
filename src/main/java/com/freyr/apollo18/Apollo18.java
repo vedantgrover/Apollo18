@@ -18,6 +18,10 @@ import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import org.jetbrains.annotations.NotNull;
 
 import javax.security.auth.login.LoginException;
+import java.time.Duration;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -51,6 +55,20 @@ public class Apollo18 {
 
         // Registering Listeners
         shardManager.addEventListener(new GuildListener(this), new ButtonListener(), new LevelingListener(this), new CommandManager(this), new BotListener(this));
+
+        ZonedDateTime now = ZonedDateTime.now(ZoneId.of("America/Los_Angeles"));
+        ZonedDateTime nextRun = now.withHour(0).withMinute(0).withSecond(0);
+        if(now.compareTo(nextRun) > 0) {
+            nextRun = nextRun.plusDays(1);
+        }
+
+        Duration duration = Duration.between(now, nextRun);
+        long initialDelay = duration.getSeconds();
+
+        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+        scheduler.scheduleAtFixedRate(database::updateStocks, initialDelay, TimeUnit.DAYS.toSeconds(1), TimeUnit.SECONDS);
+
+        System.out.println("Will run at " + nextRun.format(DateTimeFormatter.ofPattern("yyyy/MM/dd-hh:mm:ss")));
     }
 
     public static void main(String[] args) {
