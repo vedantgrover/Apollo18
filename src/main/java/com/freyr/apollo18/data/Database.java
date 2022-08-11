@@ -679,15 +679,19 @@ public class Database {
     }
 
     public int getTotalStocks(String userId, String stockCode) {
-        List<Document> purchasedStocks = userData.find(new Document("userID", userId)).first().get("economy", Document.class).getList("stocks", Document.class);
-        int totalStocks = 0;
-        for (Document purchasedStock : purchasedStocks) {
-            if (purchasedStock.getString("stockCode").equals(stockCode)) {
-                totalStocks += purchasedStock.getInteger("quantity");
+        try {
+            List<Document> purchasedStocks = userData.find(new Document("userID", userId)).first().get("economy", Document.class).getList("stocks", Document.class);
+            int totalStocks = 0;
+            for (Document purchasedStock : purchasedStocks) {
+                if (purchasedStock.getString("stockCode").equals(stockCode)) {
+                    totalStocks += purchasedStock.getInteger("quantity");
+                }
             }
-        }
 
-        return totalStocks;
+            return totalStocks;
+        } catch (Exception e) {
+            return 0;
+        }
     }
 
     public void updateStocks() {
