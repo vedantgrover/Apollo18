@@ -12,7 +12,6 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.bson.Document;
 
-import javax.print.Doc;
 import java.util.List;
 
 public class BalanceCommand extends Command {

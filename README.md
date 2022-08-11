@@ -13,6 +13,7 @@ I am beyond excited to start making bots again. I hope you enjoy!!
 Below is a comprehensive list of the frameworks and libraries used to build Apollo18.
 
 * [Java Discord API](https://github.com/DV8FromTheWorld/JDA)
+* [MongoDB Java Driver](https://mongodb.github.io/mongo-java-driver/3.2/driver/getting-started/installation-guide/)
 * [DotEnv](https://github.com/cdimascio/dotenv-java)
 * [LavaPlayer](https://github.com/sedmelluq/lavaplayer)
 
