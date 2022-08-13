@@ -55,6 +55,11 @@ public class BusinessCommand extends Command {
                 String code = event.getOption("code").getAsString().toUpperCase();
                 Document business = db.getBusiness(code);
 
+                if (business == null) {
+                    event.getHook().sendMessageEmbeds(EmbedUtils.createError(code + "'s business does not exist")).queue();
+                    return;
+                }
+
                 EmbedBuilder embed = new EmbedBuilder();
                 embed.setColor(EmbedColor.DEFAULT_COLOR);
                 embed.setThumbnail(business.getString("logo"));
@@ -70,6 +75,11 @@ public class BusinessCommand extends Command {
                 int quantity = (event.getOption("quantity") != null) ? event.getOption("quantity").getAsInt() : 1;
 
                 Document business = db.getBusiness(code);
+
+                if (business == null) {
+                    event.getHook().sendMessageEmbeds(EmbedUtils.createError(code + "'s business does not exist")).queue();
+                    return;
+                }
 
                 if (db.getBalance(event.getUser().getId()) < (business.get("stock", Document.class).getInteger("currentPrice") * quantity)) {
                     event.getHook().sendMessageEmbeds(EmbedUtils.createError("You cannot afford this")).queue();
@@ -87,6 +97,11 @@ public class BusinessCommand extends Command {
 
                 if (quantity > db.getTotalStocks(event.getUser().getId(), code)) {
                     event.getHook().sendMessageEmbeds(EmbedUtils.createError("You do not have enough stock to sell")).queue();
+                    return;
+                }
+
+                if (db.getBusiness(code) == null) {
+                    event.getHook().sendMessageEmbeds(EmbedUtils.createError(code + "'s business does not exist")).queue();
                     return;
                 }
 
