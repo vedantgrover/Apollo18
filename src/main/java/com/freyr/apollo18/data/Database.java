@@ -715,6 +715,8 @@ public class Database {
                 );
 
                 businessData.updateOne(business, updates, new UpdateOptions().upsert(true));
+                createTransaction("stockUpdate", "Business / Stock / Update", previousPrice, currentPrice);
+                System.out.println("Updating " + business.get("stock", Document.class).getString("ticker") + "; Old Price: " + previousPrice + "; Current Price: " + currentPrice + "; Change: " + change + "\nAll Details: " + data);
             } catch (Exception e) {
                 System.err.println(e);
             }
