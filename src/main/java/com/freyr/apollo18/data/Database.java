@@ -818,6 +818,7 @@ public class Database {
                 );
 
                 userData.updateOne(user, updates, new UpdateOptions().upsert(true));
+                removeBytes(user.getString("userID"), getJob(getUserJob(user.getString("userID")).getString("business"), getUserJob(user.getString("userID")).getString("jobName")).getInteger("salary") * 5);
                 System.out.println(user.getString("userID") + " was fired");
             }
         }
