@@ -32,6 +32,7 @@ public class BusinessCommand extends Command {
         this.subCommands.add(new SubcommandData("buy", "Buy Stock").addOption(OptionType.STRING, "code", "The stock code of the business", true).addOptions(quantity));
         this.subCommands.add(new SubcommandData("sell", "Sell Stock").addOption(OptionType.STRING, "code", "The stock code of the business", true).addOptions(quantity));
         this.subCommands.add(new SubcommandData("jobs", "See the jobs of the business").addOption(OptionType.STRING, "code", "The stock code of the business", true));
+        this.subCommands.add(new SubcommandData("set-job", "Set your job!").addOption(OptionType.STRING, "code", "The stock code of the business", true).addOption(OptionType.STRING, "job", "The name of your job", true));
     }
 
     @Override
@@ -131,11 +132,25 @@ public class BusinessCommand extends Command {
 
                 for (int i = 0; i < jobs.size(); i++) {
                     if (jobs.get(i).getBoolean("available")) {
-                        embed.addField((i + 1) + ") " + jobs.get(i).getString("name"),  jobs.get(i).getString("description") + "\nSalary: <:byte:858172448900644874> " + jobs.get(i).getInteger("salary"), true);
+                        embed.addField((i + 1) + ") " + jobs.get(i).getString("name"),  jobs.get(i).getString("description") + "\nSalary: <:byte:858172448900644874> `" + jobs.get(i).getInteger("salary") + " bytes`", true);
                     }
                 }
 
                 event.getHook().sendMessageEmbeds(embed.build()).queue();
+            }
+
+            case "set-job" -> {
+                String code = event.getOption("code").getAsString().toUpperCase();
+                String job = event.getOption("job").getAsString().toLowerCase();
+                Document business = db.getBusiness(code);
+                if (business == null) {
+                    event.getHook().sendMessageEmbeds(EmbedUtils.createError(code + "'s business does not exist")).queue();
+                    return;
+                }
+
+                db.setJob(event.getUser().getId(), code, job);
+
+                event.getHook().sendMessageEmbeds(EmbedUtils.createSuccess("Job has been set to __" + db.getJob(code, job).getString("name") + "__")).queue();
             }
         }
     }

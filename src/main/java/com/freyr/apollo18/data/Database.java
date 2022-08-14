@@ -4,6 +4,7 @@ import com.freyr.apollo18.Apollo18;
 import com.freyr.apollo18.commands.business.BusinessCommand;
 import com.freyr.apollo18.handlers.BusinessHandler;
 import com.freyr.apollo18.util.textFormatters.RandomString;
+import com.mongodb.Block;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.MongoException;
@@ -80,7 +81,7 @@ public class Database {
         List<Document> items = new ArrayList<>();
         List<Document> playlists = new ArrayList<>();
 
-        Document economyData = new Document("balance", 0).append("bank", 0).append("job", new Document("business", null).append("job", null).append("dayStreak", 0).append("daysMissed", 0).append("worked", false)).append("card", new Document("debit-card", false).append("credit-card", new Document("hasCard", false).append("currentBalance", 0).append("totalBalance", 0).append("expirationDate", null))).append("items", items);
+        Document economyData = new Document("balance", 0).append("bank", 0).append("job", new Document("business", null).append("job", null).append("daysWorked", 0).append("daysMissed", 0).append("worked", false)).append("card", new Document("debit-card", false).append("credit-card", new Document("hasCard", false).append("currentBalance", 0).append("totalBalance", 0).append("expirationDate", null))).append("items", items);
         Document musicData = new Document("playlists", playlists);
 
         userData.insertOne(new Document("userID", user.getId()).append("notifications", true).append("leveling", xp).append("economy", economyData).append("music", musicData));
@@ -743,7 +744,7 @@ public class Database {
         Document business = businessData.find(new Document("stockCode", code)).first();
         Document job = null;
         for (Document doc : business.getList("jobs", Document.class)) {
-            if (doc.getString("name").equals(jobName)) {
+            if (doc.getString("name").equalsIgnoreCase(jobName)) {
                 job = doc;
                 break;
             }
@@ -752,21 +753,24 @@ public class Database {
         return job;
     }
 
-    public void work(String userId) {
+    public boolean work(String userId) {
         Document userEconomyDoc = userData.find(new Document("userID", userId)).first().get("economy", Document.class);
         Document userJob = getJob(userEconomyDoc.get("job", Document.class).getString("business"), userEconomyDoc.get("job", Document.class).getString("job"));
-        if (userJob == null) throw new NullPointerException("Job not found");
+        if (userJob == null) return false;
 
         addBytes(userId, userJob.getInteger("salary"));
         Document query = new Document("userID", userId);
 
-        Bson updates = Updates.combine(
-                Updates.inc("economy.job.dayStreak", 1),
-                Updates.set("economy.job.worked", true)
-        );
+        if (!userEconomyDoc.get("job", Document.class).getBoolean("worked")) {
+            Bson updates = Updates.combine(
+                    Updates.inc("economy.job.daysWorked", 1),
+                    Updates.set("economy.job.worked", true)
+            );
 
-        userData.updateOne(query, updates, new UpdateOptions().upsert(true));
-        createTransaction(userId, "Job / Work", getBalance(userId) - userJob.getInteger("salary"), getBalance(userId));
+            userData.updateOne(query, updates, new UpdateOptions().upsert(true));
+            createTransaction(userId, "Job / Work", getBalance(userId) - userJob.getInteger("salary"), getBalance(userId));
+        }
+        return true;
     }
 
     public void setJob(String userId, String code, String jobName) {
@@ -775,13 +779,49 @@ public class Database {
 
         Bson updates = Updates.combine(
                 Updates.set("economy.job.business", code),
-                Updates.set("economy.job.job", jobName)
+                Updates.set("economy.job.job", job.getString("name"))
         );
 
         userData.updateOne(query, updates, new UpdateOptions().upsert(true));
     }
 
+    public Document getUserJob(String userId) {
+        return userData.find(new Document("userID", userId)).first().get("economy", Document.class).get("job", Document.class);
+    }
+
     // endregion
+
+    public void dailyWorkChecks() {
+        for (Document user : userData.find()) {
+            if (user.get("economy", Document.class).get("job", Document.class).getInteger("daysMissed") == null) {
+                Document job = new Document("business", null).append("job", null).append("daysWorked", 0).append("daysMissed", 0).append("worked", false);
+                Bson updates = Updates.set("economy.job", job);
+
+                userData.updateOne(user, updates, new UpdateOptions().upsert(true));
+                System.out.println("Replaced Job Data with Updated Job Data for " + user.getString("userID"));
+            }
+            if (!user.get("economy", Document.class).get("job", Document.class).getBoolean("worked")) {
+                Bson updates = Updates.combine(
+                        Updates.set("economy.job.daysWorked", 0),
+                        Updates.inc("economy.job.daysMissed", 1)
+                );
+
+                userData.updateOne(user, updates, new UpdateOptions().upsert(true));
+                System.out.println(user.getString("userID") + " did not work today. Days missed added");
+            }
+
+            if (user.get("economy", Document.class).get("job", Document.class).getInteger("daysMissed") > getJob(getUserJob(user.getString("userID")).getString("business"), getUserJob(user.getString("userID")).getString("jobName")).getInteger("daysBeforeFire")) {
+                Bson updates = Updates.combine(
+                        Updates.set("economy.job.business", null),
+                        Updates.set("economy.job.job", null),
+                        Updates.set("economy.job.daysMissed", 0)
+                );
+
+                userData.updateOne(user, updates, new UpdateOptions().upsert(true));
+                System.out.println(user.getString("userID") + " was fired");
+            }
+        }
+    }
     // endregion
 
     // Notifications

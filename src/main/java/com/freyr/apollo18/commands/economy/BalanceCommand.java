@@ -41,6 +41,7 @@ public class BalanceCommand extends Command {
         embed.addField("Balance", "<:byte:858172448900644874> " + db.getBalance(user.getId()) + " bytes", true);
         embed.addField("Bank", "<:byte:858172448900644874> " + db.getBank(user.getId()) + " bytes", true);
         embed.addField("Net Worth", "<:byte:858172448900644874> " + db.getNetWorth(user.getId()) + " bytes", true);
+        embed.addField("Job", db.getUserJob(event.getUser().getId()).getString("job"), false);
 
         for (Document business : businesses) {
             if (db.getTotalStocks(user.getId(), business.getString("stockCode")) > 0) {

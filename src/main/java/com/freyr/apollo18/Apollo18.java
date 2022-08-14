@@ -66,7 +66,10 @@ public class Apollo18 {
         long initialDelay = duration.getSeconds();
 
         ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-        scheduler.scheduleAtFixedRate(database::updateStocks, initialDelay, TimeUnit.DAYS.toSeconds(1), TimeUnit.SECONDS);
+        scheduler.scheduleAtFixedRate(() -> {
+            database.updateStocks();
+            database.dailyWorkChecks();
+        }, initialDelay, TimeUnit.DAYS.toSeconds(1), TimeUnit.SECONDS);
 
         System.out.println("Will run at " + nextRun.format(DateTimeFormatter.ofPattern("yyyy/MM/dd-hh:mm:ss")));
     }

@@ -2,6 +2,7 @@ package com.freyr.apollo18.commands;
 
 import com.freyr.apollo18.Apollo18;
 import com.freyr.apollo18.commands.business.BusinessCommand;
+import com.freyr.apollo18.commands.business.WorkCommand;
 import com.freyr.apollo18.commands.casino.CoinFlipGame;
 import com.freyr.apollo18.commands.casino.SlotMachineCommands;
 import com.freyr.apollo18.commands.dev.*;
@@ -77,7 +78,7 @@ public class CommandManager extends ListenerAdapter {
                 new CoinFlipGame(bot), new SlotMachineCommands(bot),
 
                 // Business Commands
-                //new BusinessCommand(bot),
+                new BusinessCommand(bot), new WorkCommand(bot),
 
                 // Settings Commands
                 new WelcomeSettings(bot), new LevelingSettings(bot), new NotificationSettings(bot),
