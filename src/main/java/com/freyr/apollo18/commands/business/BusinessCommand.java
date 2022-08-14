@@ -13,7 +13,9 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import org.bson.Document;
 
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class BusinessCommand extends Command {
 
@@ -29,6 +31,7 @@ public class BusinessCommand extends Command {
         this.subCommands.add(new SubcommandData("info", "Shows the info about a business").addOption(OptionType.STRING, "code", "The stock code", true));
         this.subCommands.add(new SubcommandData("buy", "Buy Stock").addOption(OptionType.STRING, "code", "The stock code of the business", true).addOptions(quantity));
         this.subCommands.add(new SubcommandData("sell", "Sell Stock").addOption(OptionType.STRING, "code", "The stock code of the business", true).addOptions(quantity));
+        this.subCommands.add(new SubcommandData("jobs", "See the jobs of the business").addOption(OptionType.STRING, "code", "The stock code of the business", true));
     }
 
     @Override
@@ -37,7 +40,7 @@ public class BusinessCommand extends Command {
 
         Database db = bot.getDatabase();
 
-        switch (event.getSubcommandName()) {
+        switch (Objects.requireNonNull(event.getSubcommandName())) {
             case "market" -> {
                 EmbedBuilder embed = new EmbedBuilder();
                 embed.setTitle("Businesses");
@@ -108,6 +111,31 @@ public class BusinessCommand extends Command {
                 db.removeStockFromUser(event.getUser().getId(), code, quantity);
 
                 event.getHook().sendMessageEmbeds(EmbedUtils.createSuccess("Sale Successful")).queue();
+            }
+
+            case "jobs" -> {
+                String code = event.getOption("code").getAsString().toUpperCase();
+                Document business = db.getBusiness(code);
+                if (business == null) {
+                    event.getHook().sendMessageEmbeds(EmbedUtils.createError(code + "'s business does not exist")).queue();
+                    return;
+                }
+
+                List<Document> jobs = db.getJobs(code);
+
+                EmbedBuilder embed = new EmbedBuilder();
+                embed.setTitle(business.getString("name") + "'s Jobs");
+                embed.setDescription("Here are the jobs from this business! Use `/business set-job` to set your job!");
+                embed.setColor(EmbedColor.DEFAULT_COLOR);
+                embed.setThumbnail(business.getString("logo"));
+
+                for (int i = 0; i < jobs.size(); i++) {
+                    if (jobs.get(i).getBoolean("available")) {
+                        embed.addField((i + 1) + ") " + jobs.get(i).getString("name"),  jobs.get(i).getString("description") + "\nSalary: <:byte:858172448900644874> " + jobs.get(i).getInteger("salary"), true);
+                    }
+                }
+
+                event.getHook().sendMessageEmbeds(embed.build()).queue();
             }
         }
     }

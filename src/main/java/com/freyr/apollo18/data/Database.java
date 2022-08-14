@@ -80,7 +80,7 @@ public class Database {
         List<Document> items = new ArrayList<>();
         List<Document> playlists = new ArrayList<>();
 
-        Document economyData = new Document("balance", 0).append("bank", 0).append("job", new Document("business", null).append("job", null)).append("card", new Document("debit-card", false).append("credit-card", new Document("hasCard", false).append("currentBalance", 0).append("totalBalance", 0).append("expirationDate", null))).append("items", items);
+        Document economyData = new Document("balance", 0).append("bank", 0).append("job", new Document("business", null).append("job", null).append("dayStreak", 0).append("daysMissed", 0).append("worked", false)).append("card", new Document("debit-card", false).append("credit-card", new Document("hasCard", false).append("currentBalance", 0).append("totalBalance", 0).append("expirationDate", null))).append("items", items);
         Document musicData = new Document("playlists", playlists);
 
         userData.insertOne(new Document("userID", user.getId()).append("notifications", true).append("leveling", xp).append("economy", economyData).append("music", musicData));
@@ -722,6 +722,66 @@ public class Database {
             }
         }
     }
+
+    // Jobs
+    // region
+
+    public void createDefaultJob(String code, String jobName, String jobDescription, int salary, int daysBeforeFire) {
+        Document query = new Document("stockCode", code);
+        Document job = new Document("name", jobName).append("description", jobDescription).append("salary", salary).append("daysBeforeFire", daysBeforeFire).append("available", true);
+
+        Bson updates = Updates.push("jobs", job);
+
+        businessData.updateOne(query, updates, new UpdateOptions().upsert(true));
+    }
+
+    public List<Document> getJobs(String code) {
+        return businessData.find(new Document("stockCode", code)).first().getList("jobs", Document.class);
+    }
+
+    public Document getJob(String code, String jobName) {
+        Document business = businessData.find(new Document("stockCode", code)).first();
+        Document job = null;
+        for (Document doc : business.getList("jobs", Document.class)) {
+            if (doc.getString("name").equals(jobName)) {
+                job = doc;
+                break;
+            }
+        }
+
+        return job;
+    }
+
+    public void work(String userId) {
+        Document userEconomyDoc = userData.find(new Document("userID", userId)).first().get("economy", Document.class);
+        Document userJob = getJob(userEconomyDoc.get("job", Document.class).getString("business"), userEconomyDoc.get("job", Document.class).getString("job"));
+        if (userJob == null) throw new NullPointerException("Job not found");
+
+        addBytes(userId, userJob.getInteger("salary"));
+        Document query = new Document("userID", userId);
+
+        Bson updates = Updates.combine(
+                Updates.inc("economy.job.dayStreak", 1),
+                Updates.set("economy.job.worked", true)
+        );
+
+        userData.updateOne(query, updates, new UpdateOptions().upsert(true));
+        createTransaction(userId, "Job / Work", getBalance(userId) - userJob.getInteger("salary"), getBalance(userId));
+    }
+
+    public void setJob(String userId, String code, String jobName) {
+        Document query = new Document("userID", userId);
+        Document job = getJob(code, jobName);
+
+        Bson updates = Updates.combine(
+                Updates.set("economy.job.business", code),
+                Updates.set("economy.job.job", jobName)
+        );
+
+        userData.updateOne(query, updates, new UpdateOptions().upsert(true));
+    }
+
+    // endregion
     // endregion
 
     // Notifications

@@ -19,7 +19,7 @@ public class CreateDefaultBusiness extends Command {
 
     public CreateDefaultBusiness(Apollo18 bot) {
         super(bot);
-        this.name = "create-business";
+        this.name = "create-default-business";
         this.description = "Create a default business";
         this.devOnly = true;
 
