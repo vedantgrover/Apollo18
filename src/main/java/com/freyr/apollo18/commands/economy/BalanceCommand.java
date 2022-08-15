@@ -41,8 +41,7 @@ public class BalanceCommand extends Command {
         embed.addField("Balance", "<:byte:858172448900644874> " + db.getBalance(user.getId()) + " bytes", true);
         embed.addField("Bank", "<:byte:858172448900644874> " + db.getBank(user.getId()) + " bytes", true);
         embed.addField("Net Worth", "<:byte:858172448900644874> " + db.getNetWorth(user.getId()) + " bytes", true);
-        embed.addField("Job", db.getUserJob(user.getId()).getString("job"), false);
-
+        embed.addField("Job", (db.getUserJob(user.getId()).getString("job") == null) ? "None" : db.getUserJob(user.getId()).getString("job"), false);
         for (Document business : businesses) {
             if (db.getTotalStocks(user.getId(), business.getString("stockCode")) > 0) {
                 embed.addField(business.getString("name"), db.getTotalStocks(event.getUser().getId(), business.getString("stockCode")) + " share(s)\nCode: `" + business.getString("stockCode") + "`", true);
