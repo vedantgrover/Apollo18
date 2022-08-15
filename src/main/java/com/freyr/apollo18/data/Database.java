@@ -800,7 +800,7 @@ public class Database {
                 userData.updateOne(user, updates, new UpdateOptions().upsert(true));
                 System.out.println("Replaced Job Data with Updated Job Data for " + user.getString("userID"));
             }
-            if (!user.get("economy", Document.class).get("job", Document.class).getBoolean("worked")) {
+            if (!user.get("economy", Document.class).get("job", Document.class).getBoolean("worked") && user.get("economy", Document.class).get("job", Document.class).getString("job") != null) {
                 Bson updates = Updates.combine(
                         Updates.set("economy.job.daysWorked", 0),
                         Updates.inc("economy.job.daysMissed", 1)
@@ -810,7 +810,7 @@ public class Database {
                 System.out.println(user.getString("userID") + " did not work today. Days missed added");
             }
 
-            if (user.get("economy", Document.class).get("job", Document.class).getInteger("daysMissed") > getJob(getUserJob(user.getString("userID")).getString("business"), getUserJob(user.getString("userID")).getString("jobName")).getInteger("daysBeforeFire")) {
+            if (user.get("economy", Document.class).get("job", Document.class).getInteger("daysMissed") > getJob(user.get("economy", Document.class).get("job", Document.class).getString("business"), user.get("economy", Document.class).get("job", Document.class).getString("job")).getInteger("daysBeforeFire")) {
                 Bson updates = Updates.combine(
                         Updates.set("economy.job.business", null),
                         Updates.set("economy.job.job", null),
@@ -818,7 +818,7 @@ public class Database {
                 );
 
                 userData.updateOne(user, updates, new UpdateOptions().upsert(true));
-                removeBytes(user.getString("userID"), getJob(getUserJob(user.getString("userID")).getString("business"), getUserJob(user.getString("userID")).getString("jobName")).getInteger("salary") * 5);
+                removeBytes(user.getString("userID"), getJob(user.get("economy", Document.class).get("job", Document.class).getString("business"), user.get("economy", Document.class).get("job", Document.class).getString("job")).getInteger("salary") * 5);
                 System.out.println(user.getString("userID") + " was fired");
             }
 
