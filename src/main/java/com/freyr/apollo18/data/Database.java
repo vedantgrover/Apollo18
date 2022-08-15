@@ -761,6 +761,15 @@ public class Database {
         addBytes(userId, userJob.getInteger("salary"));
         Document query = new Document("userID", userId);
 
+        if (userEconomyDoc.get("job", Document.class).getInteger("daysMissed") == null) {
+            Document job = new Document("business", userEconomyDoc.get("job", Document.class).getString("business")).append("job", userEconomyDoc.get("job", Document.class).getString("job")).append("daysWorked", 1).append("daysMissed", 0).append("worked", true);
+
+            Bson updates = Updates.set("economy.job", job);
+
+            userData.updateOne(new Document("userID", userId), updates, new UpdateOptions().upsert(true));
+            return true;
+        }
+
         if (!userEconomyDoc.get("job", Document.class).getBoolean("worked")) {
             Bson updates = Updates.combine(
                     Updates.inc("economy.job.daysWorked", 1),
