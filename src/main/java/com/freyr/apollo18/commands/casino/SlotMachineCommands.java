@@ -5,6 +5,7 @@ import com.freyr.apollo18.commands.Category;
 import com.freyr.apollo18.commands.Command;
 import com.freyr.apollo18.data.Database;
 import com.freyr.apollo18.util.embeds.EmbedColor;
+import com.freyr.apollo18.util.embeds.EmbedUtils;
 import jdk.jfr.DataAmount;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -41,6 +42,11 @@ public class SlotMachineCommands extends Command {
         String text = "▪️ " + emojis.get((int) (Math.random() * emojis.size())) + " : " + emojis.get((int) (Math.random() * emojis.size())) + " : " + emojis.get((int) (Math.random() * emojis.size())) + "\n➡️ " + firstChoice + " : " + secondChoice + " : " + thirdChoice + " ⬅️ \n▪️ " + emojis.get((int) (Math.random() * emojis.size())) + " : " + emojis.get((int) (Math.random() * emojis.size())) + " : " + emojis.get((int) (Math.random() * emojis.size()));
 
         int oldBal = db.getBalance(event.getUser().getId());
+
+        if (bet > db.getBalance(event.getUser().getId())) {
+            event.getHook().sendMessageEmbeds(EmbedUtils.createError("You do not have enough money in your wallet")).queue();
+            return;
+        }
 
         EmbedBuilder embed = new EmbedBuilder();
         if (firstChoice.equals(secondChoice) && secondChoice.equals(thirdChoice)) {

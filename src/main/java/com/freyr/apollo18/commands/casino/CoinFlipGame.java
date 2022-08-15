@@ -40,6 +40,7 @@ public class CoinFlipGame extends Command {
 
         if (bet > db.getBalance(event.getUser().getId())) {
             event.getHook().sendMessageEmbeds(EmbedUtils.createError("You do not have enough money in your wallet")).queue();
+            return;
         }
 
         boolean flip = rd.nextBoolean();
