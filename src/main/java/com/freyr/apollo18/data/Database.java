@@ -802,11 +802,12 @@ public class Database {
 
     public void dailyWorkChecks() {
         for (Document user : userData.find()) {
+            Document query = new Document("userID", user.getString("userID"));
             if (user.get("economy", Document.class).get("job", Document.class).getInteger("daysMissed") == null) {
                 Document job = new Document("business", null).append("job", null).append("daysWorked", 0).append("daysMissed", 0).append("worked", false);
                 Bson updates = Updates.set("economy.job", job);
 
-                userData.updateOne(user, updates, new UpdateOptions().upsert(true));
+                userData.updateOne(query, updates, new UpdateOptions().upsert(true));
                 System.out.println("Replaced Job Data with Updated Job Data for " + user.getString("userID"));
             }
             if (!user.get("economy", Document.class).get("job", Document.class).getBoolean("worked") && user.get("economy", Document.class).get("job", Document.class).getString("job") != null) {
@@ -815,7 +816,7 @@ public class Database {
                         Updates.inc("economy.job.daysMissed", 1)
                 );
 
-                userData.updateOne(user, updates, new UpdateOptions().upsert(true));
+                userData.updateOne(query, updates, new UpdateOptions().upsert(true));
                 System.out.println(user.getString("userID") + " did not work today. Days missed added");
             }
 
@@ -826,13 +827,13 @@ public class Database {
                         Updates.set("economy.job.daysMissed", 0)
                 );
 
-                userData.updateOne(user, updates, new UpdateOptions().upsert(true));
+                userData.updateOne(query, updates, new UpdateOptions().upsert(true));
                 removeBytes(user.getString("userID"), getJob(user.get("economy", Document.class).get("job", Document.class).getString("business"), user.get("economy", Document.class).get("job", Document.class).getString("job")).getInteger("salary") * 5);
                 System.out.println(user.getString("userID") + " was fired");
             }
 
             Bson updates = Updates.set("economy.job.worked", false);
-            userData.updateOne(user, updates, new UpdateOptions().upsert(true));
+            userData.updateOne(query, updates, new UpdateOptions().upsert(true));
         }
     }
     // endregion
