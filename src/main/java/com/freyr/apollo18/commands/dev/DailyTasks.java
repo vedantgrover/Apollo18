@@ -6,12 +6,12 @@ import com.freyr.apollo18.data.Database;
 import com.freyr.apollo18.util.embeds.EmbedUtils;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
-public class UpdateStockPrices extends Command {
+public class DailyTasks extends Command {
 
-    public UpdateStockPrices(Apollo18 bot) {
+    public DailyTasks(Apollo18 bot) {
         super(bot);
-        this.name = "update-stock-prices";
-        this.description = "Updates the stock prices";
+        this.name = "daily-tasks";
+        this.description = "Does the daily tasks";
         this.devOnly = true;
     }
 
@@ -22,6 +22,7 @@ public class UpdateStockPrices extends Command {
         Database db = bot.getDatabase();
 
         db.updateStocks();
-        event.getHook().sendMessageEmbeds(EmbedUtils.createSuccess("Updated Stock Prices")).queue();
+        db.dailyWorkChecks();
+        event.getHook().sendMessageEmbeds(EmbedUtils.createSuccess("Daily tasks done")).queue();
     }
 }
