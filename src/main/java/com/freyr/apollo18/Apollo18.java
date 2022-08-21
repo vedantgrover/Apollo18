@@ -70,7 +70,7 @@ public class Apollo18 {
             System.out.println("Running");
             database.updateStocks();
             database.dailyWorkChecks();
-        }, 5, 5, TimeUnit.SECONDS);
+        }, initialDelay, TimeUnit.DAYS.toSeconds(1), TimeUnit.SECONDS);
 
         System.out.println("Will run at " + nextRun.format(DateTimeFormatter.ofPattern("yyyy/MM/dd-hh:mm:ss")));
     }
