@@ -742,6 +742,7 @@ public class Database {
 
     public Document getJob(String code, String jobName) {
         Document business = businessData.find(new Document("stockCode", code)).first();
+        if (business == null) return null;
         Document job = null;
         for (Document doc : business.getList("jobs", Document.class)) {
             if (doc.getString("name").equalsIgnoreCase(jobName)) {
