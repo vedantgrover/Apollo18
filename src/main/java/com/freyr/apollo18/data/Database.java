@@ -802,7 +802,7 @@ public class Database {
     // endregion
 
     public void dailyWorkChecks() {
-        for (Document user : userData.find()) {
+        for (Document user : userData.find(new Document())) {
             Document query = new Document("userID", user.getString("userID"));
             if (user.get("economy", Document.class).get("job", Document.class).getInteger("daysMissed") == null || user.get("economy", Document.class).get("job", Document.class).getBoolean("worked") == null) {
                 Document job = new Document("business", null).append("job", null).append("daysWorked", 0).append("daysMissed", 0).append("worked", false);
