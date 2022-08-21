@@ -821,6 +821,10 @@ public class Database {
                 System.out.println(user.getString("userID") + " did not work today. Days missed added");
             }
 
+            if (getJob(user.get("economy", Document.class).get("job", Document.class).getString("business"), user.get("economy", Document.class).get("job", Document.class).getString("job")) == null) {
+                continue;
+            }
+
             if (user.get("economy", Document.class).get("job", Document.class).getInteger("daysMissed") > getJob(user.get("economy", Document.class).get("job", Document.class).getString("business"), user.get("economy", Document.class).get("job", Document.class).getString("job")).getInteger("daysBeforeFire")) {
                 Bson updates = Updates.combine(
                         Updates.set("economy.job.business", null),
