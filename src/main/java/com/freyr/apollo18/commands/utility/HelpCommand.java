@@ -96,7 +96,7 @@ public class HelpCommand extends Command {
             }
         } else {
             // Display default menu
-            builder.setTitle("TechnoBot Commands");
+            builder.setTitle("Apollo18 Commands");
             categories.forEach((category, commands) -> {
                 String categoryName = category.name().toLowerCase();
                 String value = "`/help " + categoryName + "`";
