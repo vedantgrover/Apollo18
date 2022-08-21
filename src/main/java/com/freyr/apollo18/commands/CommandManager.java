@@ -84,7 +84,7 @@ public class CommandManager extends ListenerAdapter {
                 new WelcomeSettings(bot), new LevelingSettings(bot), new NotificationSettings(bot),
 
                 // Dev only
-                new CreateProfile(bot), new CreateUser(bot), new CreateGuild(bot), new CreateDefaultBusiness(bot), /*new DailyTasks(bot),*/ new CreateDefaultJob(bot),
+                new CreateProfile(bot), new CreateUser(bot), new CreateGuild(bot), new CreateDefaultBusiness(bot), new DailyTasks(bot), new CreateDefaultJob(bot),
 
                 // Help command should come at the bottom
                 new HelpCommand(bot));

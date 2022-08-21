@@ -64,6 +64,7 @@ public class Apollo18 {
 
         Duration duration = Duration.between(now, nextRun);
         long initialDelay = duration.getSeconds();
+        System.out.println("Will run in: " + initialDelay);
 
         ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
         scheduler.scheduleAtFixedRate(() -> {

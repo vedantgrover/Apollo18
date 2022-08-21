@@ -1,10 +1,8 @@
 package com.freyr.apollo18.data;
 
 import com.freyr.apollo18.Apollo18;
-import com.freyr.apollo18.commands.business.BusinessCommand;
 import com.freyr.apollo18.handlers.BusinessHandler;
 import com.freyr.apollo18.util.textFormatters.RandomString;
-import com.mongodb.Block;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.MongoException;
@@ -19,17 +17,17 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 import org.bson.Document;
 import org.bson.conversions.Bson;
-import org.bson.types.ObjectId;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * This class handles everything that is connected to databases.
@@ -804,6 +802,7 @@ public class Database {
     public void dailyWorkChecks() {
         for (Document user : userData.find(new Document())) {
             Document query = new Document("userID", user.getString("userID"));
+            System.out.println("Updating data for " + user.getString("userID"));
             if (user.get("economy", Document.class).get("job", Document.class).getInteger("daysMissed") == null
                     || user.get("economy", Document.class).get("job", Document.class).getBoolean("worked") == null) {
                 Document job = new Document("business", null).append("job", null).append("daysWorked", 0).append("daysMissed", 0).append("worked", false);
@@ -811,8 +810,8 @@ public class Database {
 
                 userData.updateOne(query, updates, new UpdateOptions().upsert(true));
                 System.out.println("Replaced Job Data with Updated Job Data for " + user.getString("userID"));
-                System.out.println(user.get("economy", Document.class).get("job", Document.class));
             }
+
             if (!user.get("economy", Document.class).get("job", Document.class).getBoolean("worked") && user.get("economy", Document.class).get("job", Document.class).getString("job") != null) {
                 Bson updates = Updates.combine(
                         Updates.set("economy.job.daysWorked", 0),
