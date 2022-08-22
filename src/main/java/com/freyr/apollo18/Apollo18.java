@@ -57,7 +57,7 @@ public class Apollo18 {
         shardManager.addEventListener(new GuildListener(this), new ButtonListener(), new LevelingListener(this), new CommandManager(this), new BotListener(this));
 
         ZonedDateTime now = ZonedDateTime.now(ZoneId.of("America/Los_Angeles"));
-        ZonedDateTime nextRun = now.withHour(0).withMinute(0).withSecond(0);
+        ZonedDateTime nextRun = now.withHour(10).withMinute(30).withSecond(0);
         if(now.compareTo(nextRun) > 0) {
             nextRun = nextRun.plusDays(1);
         }
