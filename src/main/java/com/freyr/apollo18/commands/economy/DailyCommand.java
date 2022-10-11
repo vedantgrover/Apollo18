@@ -7,6 +7,10 @@ import com.freyr.apollo18.data.Database;
 import com.freyr.apollo18.util.embeds.EmbedUtils;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
+import java.time.Duration;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+
 public class DailyCommand extends Command {
 
     public DailyCommand(Apollo18 bot) {
@@ -14,7 +18,18 @@ public class DailyCommand extends Command {
         this.name = "daily";
         this.description = "Redeem your daily bytes!";
         this.category = Category.ECONOMY;
-        this.cooldown = 86400;
+
+        ZonedDateTime now = ZonedDateTime.now(ZoneId.of("America/Los_Angeles"));
+        ZonedDateTime nextRun = now.withHour(1).withMinute(0).withSecond(0);
+        if(now.compareTo(nextRun) > 0) {
+            nextRun = nextRun.plusDays(1);
+        }
+
+        Duration duration = Duration.between(now, nextRun);
+        long initialDelay = duration.getSeconds();
+        System.out.println("Will run in: " + initialDelay);
+
+        this.cooldown = Integer.parseInt(Long.toString(initialDelay));
     }
 
     @Override

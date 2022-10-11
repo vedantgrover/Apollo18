@@ -107,8 +107,18 @@ public class PlaylistCommand extends Command {
                     event.getHook().sendMessageEmbeds(EmbedUtils.createError("Nothing is playing right now.")).queue();
                     return;
                 }
-                db.addSong(event.getUser().getId(), event.getOption("playlist").getAsString(), musicManager.audioPlayer.getPlayingTrack());
 
+                if (db.getPlaylists(event.getUser().getId()).size() == 0) {
+                    event.getHook().sendMessageEmbeds(EmbedUtils.createError("You currently do not have any playlists!")).queue();
+                    return;
+                }
+
+                try {
+                    db.addSong(event.getUser().getId(), event.getOption("playlist").getAsString(), musicManager.audioPlayer.getPlayingTrack());
+                } catch (NullPointerException e) {
+                    event.getHook().sendMessageEmbeds(EmbedUtils.createError("Could not find that playlist")).queue();
+                    return;
+                }
                 event.getHook().sendMessageEmbeds(EmbedUtils.createSuccess(musicManager.audioPlayer.getPlayingTrack().getInfo().title + " has been added to " + event.getOption("playlist").getAsString())).queue();
             }
 
