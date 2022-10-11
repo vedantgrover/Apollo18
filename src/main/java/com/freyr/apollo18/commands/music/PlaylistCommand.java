@@ -115,7 +115,7 @@ public class PlaylistCommand extends Command {
 
                 try {
                     db.addSong(event.getUser().getId(), event.getOption("playlist").getAsString(), musicManager.audioPlayer.getPlayingTrack());
-                } catch (Exception e) {
+                } catch (NullPointerException e) {
                     event.getHook().sendMessageEmbeds(EmbedUtils.createError("We could not find that playlist")).queue();
                     return;
                 }
@@ -127,9 +127,7 @@ public class PlaylistCommand extends Command {
                 event.getHook().sendMessageEmbeds(EmbedUtils.createSuccess(event.getOption("song").getAsString() + " has been removed from the playlist.")).queue();
             }
 
-            case "remove" -> {
-                event.getHook().sendMessageEmbeds(EmbedUtils.createNotification("Coming soon. Dunno why this hasn't been made yet. I am doing it. Yes. Thank you")).queue();
-            }
+            case "remove" -> event.getHook().sendMessageEmbeds(EmbedUtils.createNotification("Coming soon. Dunno why this hasn't been made yet. I am doing it. Yes. Thank you")).queue();
         }
 
     }

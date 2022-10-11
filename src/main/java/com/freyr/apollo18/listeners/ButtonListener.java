@@ -11,7 +11,7 @@ import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle;
 import net.dv8tion.jda.api.requests.ErrorResponse;
-import net.dv8tion.jda.api.requests.restaction.WebhookMessageAction;
+import net.dv8tion.jda.api.requests.restaction.WebhookAction;
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction;
 
 import java.util.*;
@@ -44,35 +44,6 @@ public class ButtonListener extends ListenerAdapter {
         List<Button> components = getPaginationButtons(uuid, embeds.size());
         buttons.put(uuid, components);
         menus.put(uuid, embeds);
-        action.addActionRow(components).queue(interactionHook -> ButtonListener.disableButtons(uuid, interactionHook));
-    }
-
-    /**
-     * Adds pagination buttons to a deferred reply message action.
-     *
-     * @param userID the ID of the user who is accessing this menu.
-     * @param action the WebhookMessageAction<Message> to add components to.
-     * @param embeds the embed pages.
-     */
-    public static void sendPaginatedMenu(String userID, WebhookMessageAction<Message> action, List<MessageEmbed> embeds) {
-        String uuid = userID + ":" + UUID.randomUUID();
-        List<Button> components = getPaginationButtons(uuid, embeds.size());
-        buttons.put(uuid, components);
-        menus.put(uuid, embeds);
-        action.addActionRow(components).queue(interactionHook -> ButtonListener.disableButtons(uuid, interactionHook));
-    }
-
-    /**
-     * Adds reset buttons to a deferred reply message action.
-     *
-     * @param userID     the ID of the user who is accessing this menu.
-     * @param systemName the name of the system to reset.
-     * @param action     the WebhookMessageAction<Message> to add components to.
-     */
-    public static void sendResetMenu(String userID, String systemName, WebhookMessageAction<Message> action) {
-        String uuid = userID + ":" + UUID.randomUUID();
-        List<Button> components = getResetButtons(uuid, systemName);
-        buttons.put(uuid, components);
         action.addActionRow(components).queue(interactionHook -> ButtonListener.disableButtons(uuid, interactionHook));
     }
 

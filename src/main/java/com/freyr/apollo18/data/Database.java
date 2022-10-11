@@ -501,7 +501,12 @@ public class Database {
         Bson filter = Filters.and(Filters.eq("userID", userId));
         UpdateOptions options = new UpdateOptions().arrayFilters(List.of(Filters.eq("ele.playlistName", playlist)));
 
-        Document data = new Document("songName", song.getInfo().title).append("uri", song.getInfo().uri).append("position", getSongs(userId, playlist).size());
+        List<Document> songs = getSongs(userId, playlist);
+        if (songs == null) {
+            throw new NullPointerException("Couldn't find the song");
+        }
+
+        Document data = new Document("songName", song.getInfo().title).append("uri", song.getInfo().uri).append("position", songs.size());
 
         Bson update = Updates.push("music.playlists.$[ele].songs", data);
 
@@ -562,7 +567,10 @@ public class Database {
                 break;
             }
         }
-        ;
+
+        if (userPlaylist == null) {
+            return null;
+        }
 
         return userPlaylist.getList("songs", Document.class);
     }

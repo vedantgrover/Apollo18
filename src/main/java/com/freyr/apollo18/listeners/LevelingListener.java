@@ -3,7 +3,7 @@ package com.freyr.apollo18.listeners;
 import com.freyr.apollo18.Apollo18;
 import com.freyr.apollo18.data.Database;
 import com.freyr.apollo18.handlers.LevelingHandler;
-import net.dv8tion.jda.api.entities.MessageChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.bson.Document;

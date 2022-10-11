@@ -6,7 +6,7 @@ import com.freyr.apollo18.commands.Command;
 import com.freyr.apollo18.util.embeds.EmbedColor;
 import com.freyr.apollo18.util.embeds.EmbedUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.MessageChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
