@@ -51,6 +51,11 @@ public class RobCommand extends Command {
             return;
         }
 
+        if (victim.getId().equals(event.getUser().getId())) {
+            event.getHook().sendMessageEmbeds(EmbedUtils.createError("You cannot rob yourself")).queue();
+            return;
+        }
+
         if (db.getBalance(victim.getId()) < 12) {
             event.getHook().sendMessageEmbeds(EmbedUtils.createError(victim.getName() + " doesn't have enough money!")).queue();
             return;
