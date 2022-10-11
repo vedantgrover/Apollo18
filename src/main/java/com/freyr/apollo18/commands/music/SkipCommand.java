@@ -48,7 +48,7 @@ public class SkipCommand extends Command {
         try {
             musicManager.scheduler.nextTrack();
         } catch (Exception e) {
-            event.getHook().sendMessageEmbeds(EmbedUtils.createError("The queue is now empty!")).queue();
+            event.getHook().sendMessageEmbeds(EmbedUtils.createError("This is the last song. There are no other songs to skip to.")).queue();
             return;
         }
 
