@@ -11,6 +11,7 @@ import com.freyr.apollo18.util.music.PlayerManager;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -28,7 +29,7 @@ public class PlaylistCommand extends Command {
         this.category = Category.MUSIC;
         this.devOnly = false;
 
-        this.subCommands.add(new SubcommandData("see", "See all of your playlists!").addOption(OptionType.STRING, "playlist", "List a playlist you want to see."));
+        this.subCommands.add(new SubcommandData("see", "See all of your playlists!").addOption(OptionType.STRING, "playlist", "List a playlist you want to see. This is only for yours.").addOption(OptionType.USER, "user", "View another users playlists. YOU CANNOT SEE THEIR SONGS"));
         this.subCommands.add(new SubcommandData("create", "Create a new playlist to store all of your great songs!").addOption(OptionType.STRING, "name", "Your new playlist name", true));
         this.subCommands.add(new SubcommandData("add", "Add the currently playing tune to your playlist").addOption(OptionType.STRING, "playlist", "The playlist you want to add this song to.", true));
         this.subCommands.add(new SubcommandData("remove-song", "Remove a song from your playlist").addOption(OptionType.STRING, "playlist", "The playlist you want to remove the song from", true).addOption(OptionType.STRING, "song", "The song you want to remove", true));
@@ -48,18 +49,19 @@ public class PlaylistCommand extends Command {
         switch (event.getSubcommandName()) {
             case "see" -> {
                 OptionMapping playlist = event.getOption("playlist");
+                User user = (event.getOption("user") == null) ? event.getUser() : event.getOption("user").getAsUser();
                 if (playlist == null) {
                     StringBuilder playlists = new StringBuilder();
-                    List<Document> userPlaylists = db.getPlaylists(event.getUser().getId());
+                    List<Document> userPlaylists = db.getPlaylists(user.getId());
                     for (int i = 0; i < userPlaylists.size(); i++) {
                         playlists.append("**").append(i + 1).append(")** `").append(userPlaylists.get(i).getString("playlistName")).append("` - **").append(userPlaylists.get(i).getList("songs", Document.class).size()).append(" songs**\n");
                     }
 
                     EmbedBuilder embed = new EmbedBuilder();
 
-                    embed.setTitle(event.getUser().getName() + "'s Playlists");
+                    embed.setTitle(user.getName() + "'s Playlists");
                     embed.addField("Playlists", playlists.toString(), false);
-                    embed.setFooter(userPlaylists.size() + " playlists", event.getUser().getAvatarUrl());
+                    embed.setFooter(userPlaylists.size() + " playlists", user.getAvatarUrl());
                     embed.setColor(EmbedColor.DEFAULT_COLOR);
 
                     event.getHook().sendMessageEmbeds(embed.build()).queue();
