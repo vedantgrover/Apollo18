@@ -45,12 +45,13 @@ public class SkipCommand extends Command {
             return;
         }
 
-        musicManager.scheduler.nextTrack();
+        try {
+            musicManager.scheduler.nextTrack();
+        } catch (Exception e) {
+            event.getHook().sendMessageEmbeds(EmbedUtils.createError("The queue is now empty!")).queue();
+            return;
+        }
 
-        EmbedBuilder embed = new EmbedBuilder();
-        embed.setDescription("**:white_check_mark: - Skipped the current track.**");
-        embed.setColor(EmbedColor.DEFAULT_COLOR);
-
-        event.getHook().sendMessageEmbeds(embed.build()).queue();
+        event.getHook().sendMessageEmbeds(EmbedUtils.createSuccess("Skipped current song")).queue();
     }
 }
