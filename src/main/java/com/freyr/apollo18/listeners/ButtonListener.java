@@ -1,5 +1,6 @@
 package com.freyr.apollo18.listeners;
 
+import com.freyr.apollo18.commands.casino.CrashGame;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
@@ -114,6 +115,13 @@ public class ButtonListener extends ListenerAdapter {
         // Check that these are 'help' buttons
         String[] pressedArgs = event.getComponentId().split(":");
         System.out.println(Arrays.toString(pressedArgs));
+
+        if (pressedArgs[0].equals("cash")) {
+            CrashGame.Crash.cashIn();
+            event.getComponent().asDisabled();
+            event.deferEdit().queue();
+            return;
+        }
 
         // Check if user owns this menu
         long userID = Long.parseLong(pressedArgs[2]);

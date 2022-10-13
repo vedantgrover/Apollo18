@@ -4,6 +4,7 @@ import com.freyr.apollo18.Apollo18;
 import com.freyr.apollo18.commands.business.BusinessCommand;
 import com.freyr.apollo18.commands.business.WorkCommand;
 import com.freyr.apollo18.commands.casino.CoinFlipGame;
+import com.freyr.apollo18.commands.casino.CrashGame;
 import com.freyr.apollo18.commands.casino.SlotMachineCommands;
 import com.freyr.apollo18.commands.dev.*;
 import com.freyr.apollo18.commands.economy.*;
@@ -75,7 +76,7 @@ public class CommandManager extends ListenerAdapter {
                 new BalanceCommand(bot), new DepositCommand(bot), new WithdrawCommand(bot), new BegCommand(bot), new DailyCommand(bot), new RobCommand(bot), new PayCommand(bot),
 
                 // Casino Commands
-                new CoinFlipGame(bot), new SlotMachineCommands(bot),
+                new CoinFlipGame(bot), new SlotMachineCommands(bot), new CrashGame(bot),
 
                 // Business Commands
                 new BusinessCommand(bot), new WorkCommand(bot),
