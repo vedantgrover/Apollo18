@@ -780,7 +780,8 @@ public class Database {
         if (!userEconomyDoc.get("job", Document.class).getBoolean("worked")) {
             Bson updates = Updates.combine(
                     Updates.inc("economy.job.daysWorked", 1),
-                    Updates.set("economy.job.worked", true)
+                    Updates.set("economy.job.worked", true),
+                    Updates.set("economy.job.daysMissed", 0)
             );
 
             userData.updateOne(query, updates, new UpdateOptions().upsert(true));
