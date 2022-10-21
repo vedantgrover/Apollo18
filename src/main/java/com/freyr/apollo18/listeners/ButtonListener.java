@@ -117,9 +117,11 @@ public class ButtonListener extends ListenerAdapter {
         System.out.println(Arrays.toString(pressedArgs));
 
         if (pressedArgs[0].equals("cash")) {
-            CrashGame.Crash.cashIn();
-            event.getComponent().asDisabled();
             event.deferEdit().queue();
+            if (event.getUser().getId().equals(CrashGame.Crash.getUserID())) {
+                CrashGame.Crash.cashIn();
+                event.getComponent().asDisabled();
+            }
             return;
         }
 

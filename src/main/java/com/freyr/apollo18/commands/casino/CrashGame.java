@@ -40,7 +40,7 @@ public class CrashGame extends Command {
             return;
         }
 
-        Crash crash = new Crash(event.getOption("bet").getAsInt());
+        Crash crash = new Crash(event.getOption("bet").getAsInt(), event.getUser().getId());
         Button crashButton = Button.of(ButtonStyle.SECONDARY, "cash", "Cash");
 
         event.getHook().sendMessageEmbeds(new EmbedBuilder().setTitle("Crash").setColor(EmbedColor.DEFAULT_COLOR).setDescription("Current Bet: **" + event.getOption("bet").getAsString() + "bytes**").addField("Multiplier", "1.0x", true).addField("Crash Value", event.getOption("bet").getAsString() + " bytes", true).build()
@@ -55,7 +55,7 @@ public class CrashGame extends Command {
         });
     }
 
-    public class Crash {
+    public static class Crash {
         private int startingBal;
         private double currentMultiplier;
         private int crashAfterIterations;
@@ -63,7 +63,9 @@ public class CrashGame extends Command {
         private boolean crashed;
         private static boolean cashIn;
 
-        public Crash(int startingBal) {
+        private static String userId;
+
+        public Crash(int startingBal, String userId) {
             this.startingBal = startingBal;
             currentMultiplier = 1.0;
             this.crashAfterIterations = (int) (Math.random() * (30 - 5)) + 5;
@@ -71,6 +73,7 @@ public class CrashGame extends Command {
             this.currentIteration = 0;
             crashed = false;
             cashIn = false;
+            Crash.userId = userId;
         }
 
         private boolean startGame(Message message, Button cashButton) {
@@ -100,6 +103,10 @@ public class CrashGame extends Command {
 
         public static void cashIn() {
             cashIn = true;
+        }
+
+        public static String getUserID() {
+            return userId;
         }
     }
 }
