@@ -56,9 +56,9 @@ public class CrashGame extends Command {
     }
 
     public static class Crash {
-        private int startingBal;
+        private final int startingBal;
         private double currentMultiplier;
-        private int crashAfterIterations;
+        private final int crashAfterIterations;
         private int currentIteration;
         private boolean crashed;
         private static boolean cashIn;
