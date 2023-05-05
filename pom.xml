@@ -33,7 +33,7 @@
         <dependency>
             <groupId>io.github.cdimascio</groupId>
             <artifactId>dotenv-java</artifactId>
-            <version>2.2.4</version>
+            <version>2.3.1</version>
         </dependency>
         <!--  https://github.com/sedmelluq/lavaplayer  -->
         <dependency>
@@ -45,7 +45,7 @@
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
-            <version>20220320</version>
+            <version>20230227</version>
         </dependency>
         <!-- https://search.maven.org/artifact/com.fathzer/javaluator/3.0.3/jar -->
         <dependency>
@@ -57,7 +57,7 @@
         <dependency>
             <groupId>org.mongodb</groupId>
             <artifactId>mongo-java-driver</artifactId>
-            <version>3.12.11</version>
+            <version>3.12.12</version>
         </dependency>
         <!-- https://github.com/TheoKanning/openai-java -->
         <dependency>
