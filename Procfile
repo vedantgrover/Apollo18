@@ -1,1 +1,0 @@
-worker: java -jar target/Apollo18-1.0.0.jar
