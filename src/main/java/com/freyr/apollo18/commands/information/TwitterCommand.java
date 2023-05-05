@@ -13,7 +13,6 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.json.JSONObject;
 
 public class TwitterCommand extends Command {
-
     public TwitterCommand(Apollo18 bot) {
         super(bot);
         this.name = "twitter";
@@ -43,6 +42,7 @@ public class TwitterCommand extends Command {
 
             event.getHook().sendMessageEmbeds(embed.build()).queue();
         } catch (Exception e) {
+            System.err.println(e);
             event.getHook().sendMessageEmbeds(EmbedUtils.createError("We could not find that user.")).setEphemeral(true).queue();
         }
     }
