@@ -1,5 +1,11 @@
 # Apollo18
 
+<hr>
+<a href="https://top.gg/bot/853812538218381352">
+  <img src="https://top.gg/api/widget/853812538218381352.svg">
+</a>
+<hr>
+
 Hey everyone! Freyr here from Discord. I have been working on Discord bots for the past 2 years now. All of them have been in Node.js.
 But I know that I can do a better job from Java. So I have decided to restart my bot (previously known as Vicki the Robot) and create
 Apollo18.
