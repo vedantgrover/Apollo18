@@ -58,7 +58,7 @@ public class Apollo18 {
 
         ZonedDateTime now = ZonedDateTime.now(ZoneId.of("America/Los_Angeles"));
         ZonedDateTime nextRun = now.withHour(1).withMinute(0).withSecond(0);
-        if(now.compareTo(nextRun) > 0) {
+        if (now.compareTo(nextRun) > 0) {
             nextRun = nextRun.plusDays(1);
         }
 
