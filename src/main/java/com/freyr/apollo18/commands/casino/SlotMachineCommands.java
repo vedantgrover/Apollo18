@@ -7,7 +7,6 @@ import com.freyr.apollo18.data.Database;
 import com.freyr.apollo18.handlers.BusinessHandler;
 import com.freyr.apollo18.util.embeds.EmbedColor;
 import com.freyr.apollo18.util.embeds.EmbedUtils;
-import jdk.jfr.DataAmount;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -15,6 +14,7 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public class SlotMachineCommands extends Command {
 
@@ -34,7 +34,7 @@ public class SlotMachineCommands extends Command {
         event.deferReply().queue();
 
         Database db = bot.getDatabase();
-        int bet = (event.getOption("bet") != null) ? event.getOption("bet").getAsInt() : 0;
+        int bet = (event.getOption("bet") != null) ? Objects.requireNonNull(event.getOption("bet")).getAsInt() : 0;
 
         String firstChoice = emojis.get((int) (Math.random() * emojis.size()));
         String secondChoice = emojis.get((int) (Math.random() * emojis.size()));

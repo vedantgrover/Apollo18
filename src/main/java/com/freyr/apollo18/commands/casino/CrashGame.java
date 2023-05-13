@@ -15,6 +15,7 @@ import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle;
 
 import java.text.DecimalFormat;
+import java.util.Objects;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -35,15 +36,15 @@ public class CrashGame extends Command {
     public void execute(SlashCommandInteractionEvent event) {
         event.deferReply().queue();
 
-        if (event.getOption("bet").getAsInt() > db.getBalance(event.getUser().getId())) {
+        if (Objects.requireNonNull(event.getOption("bet")).getAsInt() > db.getBalance(event.getUser().getId())) {
             event.getHook().sendMessageEmbeds(EmbedUtils.createError("You do not have enough money in your wallet")).queue();
             return;
         }
 
-        Crash crash = new Crash(event.getOption("bet").getAsInt(), event.getUser().getId());
+        Crash crash = new Crash(Objects.requireNonNull(event.getOption("bet")).getAsInt(), event.getUser().getId());
         Button crashButton = Button.of(ButtonStyle.SECONDARY, "cash", "Cash");
 
-        event.getHook().sendMessageEmbeds(new EmbedBuilder().setTitle("Crash").setColor(EmbedColor.DEFAULT_COLOR).setDescription("Current Bet: **" + event.getOption("bet").getAsString() + "bytes**").addField("Multiplier", "1.0x", true).addField("Crash Value", event.getOption("bet").getAsString() + " bytes", true).build()
+        event.getHook().sendMessageEmbeds(new EmbedBuilder().setTitle("Crash").setColor(EmbedColor.DEFAULT_COLOR).setDescription("Current Bet: **" + Objects.requireNonNull(event.getOption("bet")).getAsString() + "bytes**").addField("Multiplier", "1.0x", true).addField("Crash Value", Objects.requireNonNull(event.getOption("bet")).getAsString() + " bytes", true).build()
 
         ).addActionRow(crashButton).queue(message -> {
             if (crash.startGame(message, crashButton)) {
@@ -56,14 +57,13 @@ public class CrashGame extends Command {
     }
 
     public static class Crash {
+        private static boolean cashIn;
+        private static String userId;
         private final int startingBal;
-        private double currentMultiplier;
         private final int crashAfterIterations;
+        private double currentMultiplier;
         private int currentIteration;
         private boolean crashed;
-        private static boolean cashIn;
-
-        private static String userId;
 
         public Crash(int startingBal, String userId) {
             this.startingBal = startingBal;
@@ -74,6 +74,14 @@ public class CrashGame extends Command {
             crashed = false;
             cashIn = false;
             Crash.userId = userId;
+        }
+
+        public static void cashIn() {
+            cashIn = true;
+        }
+
+        public static String getUserID() {
+            return userId;
         }
 
         private boolean startGame(Message message, Button cashButton) {
@@ -93,20 +101,14 @@ public class CrashGame extends Command {
                 }
             }, 0, 2, TimeUnit.SECONDS);
             try {
-                executor.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
+                if (executor.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS)) {
+                    System.out.println("Successfully terminated executor");
+                }
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
 
             return crashed;
-        }
-
-        public static void cashIn() {
-            cashIn = true;
-        }
-
-        public static String getUserID() {
-            return userId;
         }
     }
 }

@@ -15,7 +15,6 @@ import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import org.bson.Document;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 public class BusinessCommand extends Command {
@@ -57,7 +56,7 @@ public class BusinessCommand extends Command {
             }
 
             case "info" -> {
-                String code = event.getOption("code").getAsString().toUpperCase();
+                String code = Objects.requireNonNull(event.getOption("code")).getAsString().toUpperCase();
                 Document business = db.getBusiness(code);
 
                 if (business == null) {
@@ -76,8 +75,8 @@ public class BusinessCommand extends Command {
             }
 
             case "buy" -> {
-                String code = event.getOption("code").getAsString().toUpperCase();
-                int quantity = (event.getOption("quantity") != null) ? event.getOption("quantity").getAsInt() : 1;
+                String code = Objects.requireNonNull(event.getOption("code")).getAsString().toUpperCase();
+                int quantity = (event.getOption("quantity") != null) ? Objects.requireNonNull(event.getOption("quantity")).getAsInt() : 1;
 
                 Document business = db.getBusiness(code);
 
@@ -97,8 +96,8 @@ public class BusinessCommand extends Command {
             }
 
             case "sell" -> {
-                String code = event.getOption("code").getAsString().toUpperCase();
-                int quantity = (event.getOption("quantity") != null) ? event.getOption("quantity").getAsInt() : 1;
+                String code = Objects.requireNonNull(event.getOption("code")).getAsString().toUpperCase();
+                int quantity = (event.getOption("quantity") != null) ? Objects.requireNonNull(event.getOption("quantity")).getAsInt() : 1;
 
                 if (quantity > db.getTotalStocks(event.getUser().getId(), code)) {
                     event.getHook().sendMessageEmbeds(EmbedUtils.createError("You do not have enough stock to sell")).queue();
@@ -116,7 +115,7 @@ public class BusinessCommand extends Command {
             }
 
             case "jobs" -> {
-                String code = event.getOption("code").getAsString().toUpperCase();
+                String code = Objects.requireNonNull(event.getOption("code")).getAsString().toUpperCase();
                 Document business = db.getBusiness(code);
                 if (business == null) {
                     event.getHook().sendMessageEmbeds(EmbedUtils.createError(code + "'s business does not exist")).queue();
@@ -133,7 +132,7 @@ public class BusinessCommand extends Command {
 
                 for (int i = 0; i < jobs.size(); i++) {
                     if (jobs.get(i).getBoolean("available")) {
-                        embed.addField((i + 1) + ") " + jobs.get(i).getString("name"),  jobs.get(i).getString("description") + "\nSalary: " + BusinessHandler.byteEmoji + " `" + jobs.get(i).getInteger("salary") + " bytes`", true);
+                        embed.addField((i + 1) + ") " + jobs.get(i).getString("name"), jobs.get(i).getString("description") + "\nSalary: " + BusinessHandler.byteEmoji + " `" + jobs.get(i).getInteger("salary") + " bytes`", true);
                     }
                 }
 
@@ -141,8 +140,8 @@ public class BusinessCommand extends Command {
             }
 
             case "set-job" -> {
-                String code = event.getOption("code").getAsString().toUpperCase();
-                String job = event.getOption("job").getAsString().toLowerCase();
+                String code = Objects.requireNonNull(event.getOption("code")).getAsString().toUpperCase();
+                String job = Objects.requireNonNull(event.getOption("job")).getAsString().toLowerCase();
                 Document business = db.getBusiness(code);
                 if (business == null) {
                     event.getHook().sendMessageEmbeds(EmbedUtils.createError(code + "'s business does not exist")).queue();

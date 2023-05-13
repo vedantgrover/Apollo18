@@ -12,6 +12,7 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
+import java.util.Objects;
 import java.util.Random;
 
 public class CoinFlipGame extends Command {
@@ -37,7 +38,7 @@ public class CoinFlipGame extends Command {
         Random rd = new Random();
         Database db = bot.getDatabase();
 
-        int bet = (event.getOption("bet") != null) ? event.getOption("bet").getAsInt() : 0;
+        int bet = (event.getOption("bet") != null) ? Objects.requireNonNull(event.getOption("bet")).getAsInt() : 0;
 
         if (bet > db.getBalance(event.getUser().getId())) {
             event.getHook().sendMessageEmbeds(EmbedUtils.createError("You do not have enough money in your wallet")).queue();
@@ -45,7 +46,7 @@ public class CoinFlipGame extends Command {
         }
 
         boolean flip = rd.nextBoolean();
-        boolean choice = event.getOption("guess").getAsString().equals("heads");
+        boolean choice = Objects.requireNonNull(event.getOption("guess")).getAsString().equals("heads");
 
         int oldBal = db.getBalance(event.getUser().getId());
 

@@ -518,7 +518,7 @@ public class Database {
     }
 
     public boolean removeSong(String userId, String playlist, String songName) {
-        if (!checkIfSongExists(userId, playlist, songName)) {
+        if (checkIfSongExists(userId, playlist, songName)) {
             return false;
         }
 
@@ -538,7 +538,7 @@ public class Database {
     }
 
     public void moveSong(String userId, String playlist, String songName, int newPos) {
-        if (!checkIfSongExists(userId, playlist, songName)) {
+        if (checkIfSongExists(userId, playlist, songName)) {
             return;
         }
 
@@ -576,7 +576,7 @@ public class Database {
     }
 
     private boolean checkIfSongExists(String userId, String playlist, String songName) {
-        return userData.find(new Document("userID", userId).append("music.playlists.playlistName", playlist).append("music.playlists.songs.songName", songName)).first() != null;
+        return userData.find(new Document("userID", userId).append("music.playlists.playlistName", playlist).append("music.playlists.songs.songName", songName)).first() == null;
     }
 
     // endregion
