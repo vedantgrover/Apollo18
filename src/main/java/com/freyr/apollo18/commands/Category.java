@@ -1,5 +1,6 @@
 package com.freyr.apollo18.commands;
 
+import com.freyr.apollo18.handlers.BusinessHandler;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 
 /**
@@ -10,7 +11,7 @@ import net.dv8tion.jda.api.entities.emoji.Emoji;
  */
 public enum Category {
 
-    UTILITY("Utility", ":tools:"), MUSIC("Music", ":musical_note:"), INFORMATION("Information", ":thinking:"), FUN("Fun", ":balloon:"), LEVELING("Leveling", "\uD83D\uDCC8"), ECONOMY("Economy", "<:byte:858172448900644874>"), CASINO("Casino", "\uD83C\uDFB2"), BUSINESS("Business", "\uD83C\uDFE2"), IMAGE("Image", "\uD83D\uDDBC\uFE0F"),  SETTINGS("Settings", ":gear:");
+    UTILITY("Utility", ":tools:"), MUSIC("Music", ":musical_note:"), INFORMATION("Information", ":thinking:"), FUN("Fun", ":balloon:"), LEVELING("Leveling", "\uD83D\uDCC8"), ECONOMY("Economy", BusinessHandler.byteEmoji), CASINO("Casino", "\uD83C\uDFB2"), BUSINESS("Business", "\uD83C\uDFE2"), IMAGE("Image", "\uD83D\uDDBC\uFE0F"),  SETTINGS("Settings", ":gear:");
 
     public final String name; // Name of the Category
     public final String emoji; // What emoji to use with it

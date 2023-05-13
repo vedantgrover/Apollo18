@@ -2,6 +2,7 @@ package com.freyr.apollo18.listeners;
 
 import com.freyr.apollo18.Apollo18;
 import com.freyr.apollo18.data.Database;
+import com.freyr.apollo18.handlers.BusinessHandler;
 import com.freyr.apollo18.handlers.LevelingHandler;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -50,7 +51,8 @@ public class LevelingListener extends ListenerAdapter {
             if (userDoc.getInteger("xp") >= maxXp) { // If the user's current xp exceeds that, then they level up
                 int bytesAdded = LevelingHandler.randomNumBytes(); // The number of bytes that the user gets when they level up.
                 db.levelUp(event.getAuthor().getId(), event.getGuild().getId(), bytesAdded); // Leveling the user up
-                channel.sendMessage(db.getLevelingMessage(event.getGuild().getId()).replace("[member]", event.getAuthor().getAsMention()).replace("[level]", String.valueOf(userDoc.getInteger("level") + 1)).replace("[server]", event.getGuild().getName()).replace("[bytes]", "<:byte:858172448900644874> " + bytesAdded)).queue(); // Grabbing the leveling up message and replacing placeholders with their values
+                assert channel != null;
+                channel.sendMessage(db.getLevelingMessage(event.getGuild().getId()).replace("[member]", event.getAuthor().getAsMention()).replace("[level]", String.valueOf(userDoc.getInteger("level") + 1)).replace("[server]", event.getGuild().getName()).replace("[bytes]", BusinessHandler.byteEmoji + " " + bytesAdded)).queue(); // Grabbing the leveling up message and replacing placeholders with their values
             }
         }
     }

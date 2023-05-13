@@ -3,6 +3,7 @@ package com.freyr.apollo18.commands.leveling;
 import com.freyr.apollo18.Apollo18;
 import com.freyr.apollo18.commands.Category;
 import com.freyr.apollo18.commands.Command;
+import com.freyr.apollo18.handlers.BusinessHandler;
 import com.freyr.apollo18.util.embeds.EmbedColor;
 import com.mongodb.client.FindIterable;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -36,7 +37,7 @@ public class LeaderboardCommand extends Command {
             embed.setThumbnail(event.getGuild().getIconUrl());
             embed.setColor(EmbedColor.DEFAULT_COLOR);
             embed.addField("\uD83D\uDCC8 Leveling", buildLeaderboard(event.getGuild(), 5, false), true);
-            embed.addField("<:byte:858172448900644874> Economy", buildLeaderboard(event.getGuild(), 5, true), true);
+            embed.addField(BusinessHandler.byteEmoji + " Economy", buildLeaderboard(event.getGuild(), 5, true), true);
 
             event.getHook().sendMessageEmbeds(embed.build()).queue();
         } else if (choice.getAsString().equals("leveling")) {
@@ -67,7 +68,7 @@ public class LeaderboardCommand extends Command {
         int num = 0;
         if (data == null) {
             for (Document doc : bot.getDatabase().getEconomyLeaderboard(guild.getId(), limit)) {
-                result.append("`").append(num + 1).append(")` **__").append(guild.getMemberById(doc.getString("userID")).getEffectiveName()).append("__** - **Net Worth:** <:byte:858172448900644874> `").append(bot.getDatabase().getNetWorth(doc.getString("userID"))).append(" bytes`\n");
+                result.append("`").append(num + 1).append(")` **__").append(guild.getMemberById(doc.getString("userID")).getEffectiveName()).append("__** - **Net Worth:** " + BusinessHandler.byteEmoji + " `").append(bot.getDatabase().getNetWorth(doc.getString("userID"))).append(" bytes`\n");
                 num++;
             }
         } else {

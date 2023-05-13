@@ -4,6 +4,7 @@ import com.freyr.apollo18.Apollo18;
 import com.freyr.apollo18.commands.Category;
 import com.freyr.apollo18.commands.Command;
 import com.freyr.apollo18.data.Database;
+import com.freyr.apollo18.handlers.BusinessHandler;
 import com.freyr.apollo18.util.embeds.EmbedColor;
 import com.freyr.apollo18.util.embeds.EmbedUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -42,7 +43,7 @@ public class WorkCommand extends Command {
         if (db.work(event.getUser().getId())) {
             EmbedBuilder embed = new EmbedBuilder();
             embed.setTitle("Success");
-            embed.addField(workResponses.getString((int) (Math.random() * workResponses.length())), "You were payed <:byte:858172448900644874> `" + db.getJob(db.getUserJob(event.getUser().getId()).getString("business"), db.getUserJob(event.getUser().getId()).getString("job")).getInteger("salary") + " bytes`", false);
+            embed.addField(workResponses.getString((int) (Math.random() * workResponses.length())), "You were payed " + BusinessHandler.byteEmoji + " `" + db.getJob(db.getUserJob(event.getUser().getId()).getString("business"), db.getUserJob(event.getUser().getId()).getString("job")).getInteger("salary") + " bytes`", false);
             embed.setColor(EmbedColor.DEFAULT_COLOR);
             embed.setFooter("You have worked for " + db.getUser(event.getUser().getId()).get("economy", Document.class).get("job", Document.class).getInteger("daysWorked") + " day(s)");
 

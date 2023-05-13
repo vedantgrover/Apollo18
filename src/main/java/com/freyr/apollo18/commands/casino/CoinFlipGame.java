@@ -4,6 +4,7 @@ import com.freyr.apollo18.Apollo18;
 import com.freyr.apollo18.commands.Category;
 import com.freyr.apollo18.commands.Command;
 import com.freyr.apollo18.data.Database;
+import com.freyr.apollo18.handlers.BusinessHandler;
 import com.freyr.apollo18.util.embeds.EmbedColor;
 import com.freyr.apollo18.util.embeds.EmbedUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -54,7 +55,7 @@ public class CoinFlipGame extends Command {
             EmbedBuilder embed = new EmbedBuilder();
             embed.setTitle("Success");
             embed.setColor(EmbedColor.DEFAULT_COLOR);
-            embed.addField("The coin landed " + ((flip) ? "heads" : "tails"), ":white_check_mark: - You won <:byte:858172448900644874> **" + bet + "** bytes", false);
+            embed.addField("The coin landed " + ((flip) ? "heads" : "tails"), ":white_check_mark: - You won " + BusinessHandler.byteEmoji + " **" + bet + "** bytes", false);
             embed.setThumbnail("https://c.tenor.com/cZK8lK6_xbIAAAAM/bravo-clap.gif");
 
             event.getHook().sendMessageEmbeds(embed.build()).queue();
@@ -64,7 +65,7 @@ public class CoinFlipGame extends Command {
             EmbedBuilder embed = new EmbedBuilder();
             embed.setTitle("Fail");
             embed.setColor(EmbedColor.DEFAULT_COLOR);
-            embed.addField("The coin landed " + ((flip) ? "heads" : "tails"), ":x: - You lost <:byte:858172448900644874> **" + bet + "** bytes", false);
+            embed.addField("The coin landed " + ((flip) ? "heads" : "tails"), ":x: - You lost " + BusinessHandler.byteEmoji + " **" + bet + "** bytes", false);
             embed.setThumbnail("https://media.tenor.com/images/d9e906c20d34be7123762250fc39dcd6/tenor.gif");
 
             event.getHook().sendMessageEmbeds(embed.build()).queue();

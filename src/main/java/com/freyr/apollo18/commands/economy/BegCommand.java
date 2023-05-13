@@ -4,6 +4,7 @@ import com.freyr.apollo18.Apollo18;
 import com.freyr.apollo18.commands.Category;
 import com.freyr.apollo18.commands.Command;
 import com.freyr.apollo18.data.Database;
+import com.freyr.apollo18.handlers.BusinessHandler;
 import com.freyr.apollo18.util.embeds.EmbedColor;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -49,7 +50,7 @@ public class BegCommand extends Command {
 
             EmbedBuilder embed = new EmbedBuilder();
             embed.setTitle("Success");
-            embed.addField(successResponses.getString((int) (Math.random() * successResponses.length())), "✅ - You were given <:byte:858172448900644874> " + randBytes + " bytes!", false);
+            embed.addField(successResponses.getString((int) (Math.random() * successResponses.length())), "✅ - You were given " + BusinessHandler.byteEmoji + " " + randBytes + " bytes!", false);
             embed.setFooter("Now go get a job...", event.getUser().getAvatarUrl());
             embed.setColor(EmbedColor.DEFAULT_COLOR);
 

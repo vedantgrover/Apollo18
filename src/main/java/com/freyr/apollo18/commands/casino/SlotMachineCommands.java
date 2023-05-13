@@ -4,6 +4,7 @@ import com.freyr.apollo18.Apollo18;
 import com.freyr.apollo18.commands.Category;
 import com.freyr.apollo18.commands.Command;
 import com.freyr.apollo18.data.Database;
+import com.freyr.apollo18.handlers.BusinessHandler;
 import com.freyr.apollo18.util.embeds.EmbedColor;
 import com.freyr.apollo18.util.embeds.EmbedUtils;
 import jdk.jfr.DataAmount;
@@ -54,14 +55,14 @@ public class SlotMachineCommands extends Command {
 
             embed.setTitle("Success");
             embed.setDescription(text);
-            embed.addField("Winnings", "You won <:byte:858172448900644874> " + (bet * 20) + " bytes", false);
+            embed.addField("Winnings", "You won " + BusinessHandler.byteEmoji + " " + (bet * 20) + " bytes", false);
             embed.setColor(EmbedColor.DEFAULT_COLOR);
         } else {
             db.removeBytes(event.getUser().getId(), bet);
 
             embed.setTitle("Fail");
             embed.setDescription(text);
-            embed.addField("Losses", "You lost **<:byte:858172448900644874> " + bet + " bytes**", false);
+            embed.addField("Losses", "You lost **" + BusinessHandler.byteEmoji + " " + bet + " bytes**", false);
             embed.setColor(EmbedColor.DEFAULT_COLOR);
         }
 

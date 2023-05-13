@@ -4,6 +4,7 @@ import com.freyr.apollo18.Apollo18;
 import com.freyr.apollo18.commands.Category;
 import com.freyr.apollo18.commands.Command;
 import com.freyr.apollo18.data.Database;
+import com.freyr.apollo18.handlers.BusinessHandler;
 import com.freyr.apollo18.util.embeds.EmbedUtils;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
@@ -53,7 +54,7 @@ public class DepositCommand extends Command {
         int oldBal = db.getBank(event.getUser().getId());
 
         db.depositBytes(event.getUser().getId(), amount);
-        event.getHook().sendMessageEmbeds(EmbedUtils.createSuccess("Deposited <:byte:858172448900644874> " + amount + " bytes")).queue();
+        event.getHook().sendMessageEmbeds(EmbedUtils.createSuccess("Deposited " + BusinessHandler.byteEmoji + " " + amount + " bytes")).queue();
 
         db.createTransaction(event.getUser().getId(), "Bank / Deposit", oldBal, db.getBank(event.getUser().getId()));
     }

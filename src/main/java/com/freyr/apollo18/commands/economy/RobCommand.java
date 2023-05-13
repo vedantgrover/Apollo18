@@ -4,6 +4,7 @@ import com.freyr.apollo18.Apollo18;
 import com.freyr.apollo18.commands.Category;
 import com.freyr.apollo18.commands.Command;
 import com.freyr.apollo18.data.Database;
+import com.freyr.apollo18.handlers.BusinessHandler;
 import com.freyr.apollo18.util.embeds.EmbedColor;
 import com.freyr.apollo18.util.embeds.EmbedUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -80,7 +81,7 @@ public class RobCommand extends Command {
             event.getHook().sendMessageEmbeds(embed.build()).queue();
 
             if (db.getNotificationToggle(victim.getId())) {
-                event.getJDA().getUserById(victim.getId()).openPrivateChannel().flatMap(channel -> channel.sendMessageEmbeds(EmbedUtils.createNotification(event.getUser().getName() + " has just robbed <:byte:858172448900644874> " + bytesStolen + " bytes from you!"))).queue();
+                event.getJDA().getUserById(victim.getId()).openPrivateChannel().flatMap(channel -> channel.sendMessageEmbeds(EmbedUtils.createNotification(event.getUser().getName() + " has just robbed " + BusinessHandler.byteEmoji + " " + bytesStolen + " bytes from you!"))).queue();
             }
 
             db.createTransaction(event.getUser().getId(), "Robbery / Robber", robberOldBytes, db.getBalance(event.getUser().getId()));

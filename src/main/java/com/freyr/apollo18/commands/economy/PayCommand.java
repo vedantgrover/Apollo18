@@ -4,11 +4,14 @@ import com.freyr.apollo18.Apollo18;
 import com.freyr.apollo18.commands.Category;
 import com.freyr.apollo18.commands.Command;
 import com.freyr.apollo18.data.Database;
+import com.freyr.apollo18.handlers.BusinessHandler;
 import com.freyr.apollo18.util.embeds.EmbedUtils;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+
+import java.util.Objects;
 
 public class PayCommand extends Command {
 
@@ -41,10 +44,10 @@ public class PayCommand extends Command {
         db.addBytes(user.getId(), bytes);
         db.removeBytes(event.getUser().getId(), bytes);
 
-        event.getHook().sendMessageEmbeds(EmbedUtils.createSuccess("Payed " + user.getName() + " <:byte:858172448900644874> " + bytes + " bytes!")).queue();
+        event.getHook().sendMessageEmbeds(EmbedUtils.createSuccess("Payed " + user.getName() + " " + BusinessHandler.byteEmoji + " " + bytes + " bytes!")).queue();
 
         if (db.getNotificationToggle(user.getId())) {
-            event.getJDA().getUserById(user.getId()).openPrivateChannel().flatMap(channel -> channel.sendMessageEmbeds(EmbedUtils.createNotification(event.getUser().getName() + " has just payed you <:byte:858172448900644874> " + bytes + " bytes!"))).queue();
+            Objects.requireNonNull(event.getJDA().getUserById(user.getId())).openPrivateChannel().flatMap(channel -> channel.sendMessageEmbeds(EmbedUtils.createNotification(event.getUser().getName() + " has just payed you " + BusinessHandler.byteEmoji + " " + bytes + " bytes!"))).queue();
         }
 
         db.createTransaction(event.getUser().getId(), "Payment / Pay", giverOldBal, db.getBalance(event.getUser().getId()));

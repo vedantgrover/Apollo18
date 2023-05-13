@@ -4,6 +4,7 @@ import com.freyr.apollo18.Apollo18;
 import com.freyr.apollo18.commands.Category;
 import com.freyr.apollo18.commands.Command;
 import com.freyr.apollo18.data.Database;
+import com.freyr.apollo18.handlers.BusinessHandler;
 import com.freyr.apollo18.util.embeds.EmbedUtils;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
@@ -43,7 +44,7 @@ public class DailyCommand extends Command {
         int randBytes = (int) (Math.random() * (50 - 20) + 20);
         db.addBytes(event.getUser().getId(), randBytes);
 
-        event.getHook().sendMessageEmbeds(EmbedUtils.createSuccess("Redeemed <:byte:858172448900644874> " + randBytes + " bytes")).queue();
+        event.getHook().sendMessageEmbeds(EmbedUtils.createSuccess("Redeemed " + BusinessHandler.byteEmoji + " " + randBytes + " bytes")).queue();
 
         db.createTransaction(event.getUser().getId(), "Redemption / Daily", oldBal, db.getBalance(event.getUser().getId()));
     }
