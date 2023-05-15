@@ -47,7 +47,7 @@ public class PlaylistCommand extends Command {
         GuildMusicManager musicManager = PlayerManager.getInstance().getMusicManager(event.getGuild());
 
         switch (event.getSubcommandName()) {
-            case "see" -> {
+            case "see":
                 OptionMapping playlist = event.getOption("playlist");
                 User user = (event.getOption("user") == null) ? event.getUser() : event.getOption("user").getAsUser();
                 if (playlist == null) {
@@ -88,18 +88,17 @@ public class PlaylistCommand extends Command {
 
                     event.getHook().sendMessageEmbeds(embed.build()).queue();
                 }
-            }
-
-            case "create" -> {
+                break;
+            case "create":
                 if (db.getPlaylists(event.getUser().getId()).size() > 10) {
                     event.getHook().sendMessageEmbeds(EmbedUtils.createError("You have reached the max number of playlists")).queue();
                     return;
                 }
                 db.createPlaylist(event.getUser().getId(), event.getOption("name").getAsString());
                 event.getHook().sendMessageEmbeds(EmbedUtils.createSuccess(event.getOption("name").getAsString() + " has been successfully created.")).queue();
-            }
+                break;
 
-            case "add" -> {
+            case "add":
                 if (!memberVoiceState.inAudioChannel()) {
                     event.getHook().sendMessageEmbeds(EmbedUtils.createError("You need to be in a voice channel for this command to work.")).setEphemeral(true).queue();
                     return;
@@ -122,14 +121,16 @@ public class PlaylistCommand extends Command {
                     return;
                 }
                 event.getHook().sendMessageEmbeds(EmbedUtils.createSuccess(musicManager.audioPlayer.getPlayingTrack().getInfo().title + " has been added to " + event.getOption("playlist").getAsString())).queue();
-            }
+                break;
 
-            case "remove-song" -> {
+            case "remove-song":
                 db.removeSong(event.getUser().getId(), event.getOption("playlist").getAsString(), event.getOption("song").getAsString());
                 event.getHook().sendMessageEmbeds(EmbedUtils.createSuccess(event.getOption("song").getAsString() + " has been removed from the playlist.")).queue();
-            }
+                break;
 
-            case "remove" -> event.getHook().sendMessageEmbeds(EmbedUtils.createNotification("Coming soon. Dunno why this hasn't been made yet. I am doing it. Yes. Thank you")).queue();
+            case "remove":
+                event.getHook().sendMessageEmbeds(EmbedUtils.createNotification("Coming soon. Dunno why this hasn't been made yet. I am doing it. Yes. Thank you")).queue();
+                break;
         }
 
     }

@@ -62,7 +62,7 @@ public class HelpCommand extends Command {
             List<MessageEmbed> embeds = buildCategoryMenu(category, categories.get(category));
             if (embeds.isEmpty()) {
                 // No commands for this category
-                EmbedBuilder embed = new EmbedBuilder().setTitle(category.emoji + "  **%s Commands**".formatted(category.name)).setDescription("Coming soon...").setColor(EmbedColor.DEFAULT_COLOR);
+                EmbedBuilder embed = new EmbedBuilder().setTitle(category.emoji + "  **" + category.name + " Commands**").setDescription("Coming soon...").setColor(EmbedColor.DEFAULT_COLOR);
                 event.replyEmbeds(embed.build()).queue();
                 return;
             }
@@ -116,7 +116,7 @@ public class HelpCommand extends Command {
     public List<MessageEmbed> buildCategoryMenu(Category category, List<Command> commands) {
         List<MessageEmbed> embeds = new ArrayList<>();
         EmbedBuilder embed = new EmbedBuilder();
-        embed.setTitle(category.emoji + "  **%s Commands**".formatted(category.name));
+        embed.setTitle(category.emoji + "  **" + category.name +" Commands**");
         embed.setColor(EmbedColor.DEFAULT_COLOR);
 
         int counter = 0;

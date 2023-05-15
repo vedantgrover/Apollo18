@@ -26,16 +26,18 @@ public class BinaryCommand extends Command {
 
         String subCommand = event.getSubcommandName();
 
-        switch (subCommand) {
-            case "encode" -> {
-                String data = getApiData("https://some-random-api.ml/binary?text=" + event.getOption("string").getAsString()).getString("binary");
-                event.getHook().sendMessage("```" + data + "```").queue();
-            }
+        String data;
 
-            case "decode" -> {
-                String data = getApiData("https://some-random-api.ml/binary?decode=" + event.getOption("string").getAsString()).getString("text");
+        switch (subCommand) {
+            case "encode":
+                data = getApiData("https://some-random-api.ml/binary?text=" + event.getOption("string").getAsString()).getString("binary");
                 event.getHook().sendMessage("```" + data + "```").queue();
-            }
+            break;
+
+            case "decode":
+                data = getApiData("https://some-random-api.ml/binary?decode=" + event.getOption("string").getAsString()).getString("text");
+                event.getHook().sendMessage("```" + data + "```").queue();
+            break;
         }
     }
 }

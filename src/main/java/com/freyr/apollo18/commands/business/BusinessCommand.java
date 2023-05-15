@@ -41,30 +41,34 @@ public class BusinessCommand extends Command {
 
         Database db = bot.getDatabase();
 
+        EmbedBuilder embed;
+        String code;
+        Document business;
+
         switch (Objects.requireNonNull(event.getSubcommandName())) {
-            case "market" -> {
-                EmbedBuilder embed = new EmbedBuilder();
+            case "market":
+                embed = new EmbedBuilder();
                 embed.setTitle("Businesses");
                 embed.setDescription("Here are all of the businesses that you can invest in!");
 
-                for (Document business : db.getBusinesses()) {
-                    embed.addField(business.getString("name"), "Price: " + BusinessHandler.byteEmoji + "`" + business.get("stock", Document.class).getInteger("currentPrice") + " bytes`" + business.get("stock", Document.class).getString("arrowEmoji") + "`(" + business.get("stock", Document.class).getInteger("change") + ")`\nCode: `" + business.getString("stockCode") + "`", true);
+                for (Document currentBusiness : db.getBusinesses()) {
+                    embed.addField(currentBusiness.getString("name"), "Price: " + BusinessHandler.byteEmoji + "`" + currentBusiness.get("stock", Document.class).getInteger("currentPrice") + " bytes`" + currentBusiness.get("stock", Document.class).getString("arrowEmoji") + "`(" + currentBusiness.get("stock", Document.class).getInteger("change") + ")`\nCode: `" + currentBusiness.getString("stockCode") + "`", true);
                 }
 
                 embed.setColor(EmbedColor.DEFAULT_COLOR);
                 event.getHook().sendMessageEmbeds(embed.build()).queue();
-            }
+            break;
 
-            case "info" -> {
-                String code = Objects.requireNonNull(event.getOption("code")).getAsString().toUpperCase();
-                Document business = db.getBusiness(code);
+            case "info":
+                code = Objects.requireNonNull(event.getOption("code")).getAsString().toUpperCase();
+                business = db.getBusiness(code);
 
                 if (business == null) {
                     event.getHook().sendMessageEmbeds(EmbedUtils.createError(code + "'s business does not exist")).queue();
                     return;
                 }
 
-                EmbedBuilder embed = new EmbedBuilder();
+                embed = new EmbedBuilder();
                 embed.setColor(EmbedColor.DEFAULT_COLOR);
                 embed.setThumbnail(business.getString("logo"));
                 embed.setTitle(business.getString("name"));
@@ -72,13 +76,13 @@ public class BusinessCommand extends Command {
                 embed.addField("Stock Info", "Price: " + BusinessHandler.byteEmoji + " `" + business.get("stock", Document.class).getInteger("currentPrice") + " bytes` " + business.get("stock", Document.class).getString("arrowEmoji") + " `(" + business.get("stock", Document.class).getInteger("change") + ")`\nCode: `" + business.getString("stockCode") + "`", false);
 
                 event.getHook().sendMessageEmbeds(embed.build()).queue();
-            }
+            break;
 
-            case "buy" -> {
-                String code = Objects.requireNonNull(event.getOption("code")).getAsString().toUpperCase();
+            case "buy":
+                code = Objects.requireNonNull(event.getOption("code")).getAsString().toUpperCase();
                 int quantity = (event.getOption("quantity") != null) ? Objects.requireNonNull(event.getOption("quantity")).getAsInt() : 1;
 
-                Document business = db.getBusiness(code);
+                business = db.getBusiness(code);
 
                 if (business == null) {
                     event.getHook().sendMessageEmbeds(EmbedUtils.createError(code + "'s business does not exist")).queue();
@@ -93,11 +97,11 @@ public class BusinessCommand extends Command {
                 db.addStockToUser(business, event.getUser().getId(), quantity);
 
                 event.getHook().sendMessageEmbeds(EmbedUtils.createSuccess("Purchase Successful")).queue();
-            }
+            break;
 
-            case "sell" -> {
-                String code = Objects.requireNonNull(event.getOption("code")).getAsString().toUpperCase();
-                int quantity = (event.getOption("quantity") != null) ? Objects.requireNonNull(event.getOption("quantity")).getAsInt() : 1;
+            case "sell":
+                code = Objects.requireNonNull(event.getOption("code")).getAsString().toUpperCase();
+                quantity = (event.getOption("quantity") != null) ? Objects.requireNonNull(event.getOption("quantity")).getAsInt() : 1;
 
                 if (quantity > db.getTotalStocks(event.getUser().getId(), code)) {
                     event.getHook().sendMessageEmbeds(EmbedUtils.createError("You do not have enough stock to sell")).queue();
@@ -112,11 +116,11 @@ public class BusinessCommand extends Command {
                 db.removeStockFromUser(event.getUser().getId(), code, quantity);
 
                 event.getHook().sendMessageEmbeds(EmbedUtils.createSuccess("Sale Successful")).queue();
-            }
+            break;
 
-            case "jobs" -> {
-                String code = Objects.requireNonNull(event.getOption("code")).getAsString().toUpperCase();
-                Document business = db.getBusiness(code);
+            case "jobs":
+                code = Objects.requireNonNull(event.getOption("code")).getAsString().toUpperCase();
+                business = db.getBusiness(code);
                 if (business == null) {
                     event.getHook().sendMessageEmbeds(EmbedUtils.createError(code + "'s business does not exist")).queue();
                     return;
@@ -124,7 +128,7 @@ public class BusinessCommand extends Command {
 
                 List<Document> jobs = db.getJobs(code);
 
-                EmbedBuilder embed = new EmbedBuilder();
+                embed = new EmbedBuilder();
                 embed.setTitle(business.getString("name") + "'s Jobs");
                 embed.setDescription("Here are the jobs from this business! Use `/business set-job` to set your job!");
                 embed.setColor(EmbedColor.DEFAULT_COLOR);
@@ -137,12 +141,12 @@ public class BusinessCommand extends Command {
                 }
 
                 event.getHook().sendMessageEmbeds(embed.build()).queue();
-            }
+            break;
 
-            case "set-job" -> {
-                String code = Objects.requireNonNull(event.getOption("code")).getAsString().toUpperCase();
+            case "set-job":
+                code = Objects.requireNonNull(event.getOption("code")).getAsString().toUpperCase();
                 String job = Objects.requireNonNull(event.getOption("job")).getAsString().toLowerCase();
-                Document business = db.getBusiness(code);
+                business = db.getBusiness(code);
                 if (business == null) {
                     event.getHook().sendMessageEmbeds(EmbedUtils.createError(code + "'s business does not exist")).queue();
                     return;
@@ -151,7 +155,7 @@ public class BusinessCommand extends Command {
                 db.setJob(event.getUser().getId(), code, job);
 
                 event.getHook().sendMessageEmbeds(EmbedUtils.createSuccess("Job has been set to __" + db.getJob(code, job).getString("name") + "__")).queue();
-            }
+            break;
         }
     }
 }

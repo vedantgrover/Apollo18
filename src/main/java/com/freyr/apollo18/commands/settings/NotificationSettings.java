@@ -8,6 +8,8 @@ import com.freyr.apollo18.util.embeds.EmbedUtils;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 
+import java.util.Objects;
+
 public class NotificationSettings extends Command {
 
     public NotificationSettings(Apollo18 bot) {
@@ -25,11 +27,11 @@ public class NotificationSettings extends Command {
 
         Database db = bot.getDatabase();
 
-        switch (event.getSubcommandName()) {
-            case "toggle" -> {
+        switch (Objects.requireNonNull(event.getSubcommandName())) {
+            case "toggle":
                 db.toggleNotifications(event.getUser().getId());
                 event.getHook().sendMessageEmbeds(EmbedUtils.createSuccess("Notifications have been __" + ((db.getNotificationToggle(event.getUser().getId())) ? "enabled":"disabled") + "__")).queue();
-            }
+            break;
         }
     }
 }
