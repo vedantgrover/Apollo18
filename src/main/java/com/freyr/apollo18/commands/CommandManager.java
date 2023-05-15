@@ -9,10 +9,6 @@ import com.freyr.apollo18.commands.casino.SlotMachineCommands;
 import com.freyr.apollo18.commands.dev.*;
 import com.freyr.apollo18.commands.economy.*;
 import com.freyr.apollo18.commands.fun.*;
-import com.freyr.apollo18.commands.image_manipulation.BlurCommand;
-import com.freyr.apollo18.commands.image_manipulation.GreyscaleImage;
-import com.freyr.apollo18.commands.image_manipulation.InvertCommand;
-import com.freyr.apollo18.commands.image_manipulation.PixelateCommand;
 import com.freyr.apollo18.commands.information.*;
 import com.freyr.apollo18.commands.leveling.LeaderboardCommand;
 import com.freyr.apollo18.commands.leveling.RankCommand;
@@ -84,9 +80,6 @@ public class CommandManager extends ListenerAdapter {
 
                 // Business Commands
                 new BusinessCommand(bot), new WorkCommand(bot),
-
-                // Image Manipulation
-                new InvertCommand(bot), new BlurCommand(bot), new GreyscaleImage(bot), new PixelateCommand(bot),
 
                 // Settings Commands
                 new WelcomeSettings(bot), new LevelingSettings(bot), new NotificationSettings(bot),
