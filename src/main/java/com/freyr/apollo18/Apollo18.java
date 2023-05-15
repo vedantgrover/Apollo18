@@ -36,6 +36,8 @@ public class Apollo18 {
     private final @NotNull Dotenv config; // Getting all of my sensitive info from environment file
     private final @NotNull ShardManager shardManager; // Allows bot to run on multiple servers. Bot "builder"
     private final @NotNull Database database; // All direct database method interactions are stored in this class.
+    
+    // Testing for Hosting
 
     public Apollo18() throws LoginException {
         config = Dotenv.configure().ignoreIfMissing().load(); // Initializing and loading the .env file if it exists in the classpath.
