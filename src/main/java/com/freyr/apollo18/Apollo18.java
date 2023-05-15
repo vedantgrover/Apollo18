@@ -39,7 +39,7 @@ public class Apollo18 {
 
     public Apollo18() throws LoginException {
         config = Dotenv.configure().ignoreIfMissing().load(); // Initializing and loading the .env file if it exists in the classpath.
-        database = new Database(config.get("DATABASE", System.getenv("DATABASE")), this);
+        database = new Database("mongodb+srv://apollo18:" + config.get("MONGODB", System.getenv("MONGODB")) + "@apollo18.ggfg1.mongodb.net/?retryWrites=true&w=majority", this);
 
         DefaultShardManagerBuilder builder = DefaultShardManagerBuilder.createDefault(config.get("TOKEN", System.getenv("TOKEN"))); // Creating a basic instance of the bot and logging in with token
         builder.setStatus(OnlineStatus.ONLINE); // Setting the bot status to ONLINE (Green Dot)
