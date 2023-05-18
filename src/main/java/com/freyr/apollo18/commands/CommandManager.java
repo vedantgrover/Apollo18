@@ -9,6 +9,7 @@ import com.freyr.apollo18.commands.casino.SlotMachineCommands;
 import com.freyr.apollo18.commands.dev.*;
 import com.freyr.apollo18.commands.economy.*;
 import com.freyr.apollo18.commands.fun.*;
+import com.freyr.apollo18.commands.image.*;
 import com.freyr.apollo18.commands.information.*;
 import com.freyr.apollo18.commands.leveling.LeaderboardCommand;
 import com.freyr.apollo18.commands.leveling.RankCommand;
@@ -81,11 +82,14 @@ public class CommandManager extends ListenerAdapter {
                 // Business Commands
                 new BusinessCommand(bot), new WorkCommand(bot),
 
+                // Image Manipulation
+                new InvertCommand(bot), new BlurCommand(bot), new GreyscaleImage(bot), new PixelateCommand(bot), new ImageGenerationCommand(bot),
+
                 // Settings Commands
                 new WelcomeSettings(bot), new LevelingSettings(bot), new NotificationSettings(bot),
 
                 // Dev only
-                new CreateProfile(bot), new CreateUser(bot), new CreateGuild(bot), new CreateDefaultBusiness(bot), new DailyTasks(bot), new CreateDefaultJob(bot), new OS(bot),
+                new CreateProfile(bot), new CreateUser(bot), new CreateGuild(bot), new CreateDefaultBusiness(bot), new DailyTasks(bot), new CreateDefaultJob(bot),
 
                 // Help command should come at the bottom
                 new HelpCommand(bot));
