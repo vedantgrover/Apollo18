@@ -1,4 +1,4 @@
-package com.freyr.apollo18.commands.image_manipulation;
+package com.freyr.apollo18.commands.image;
 
 import com.freyr.apollo18.Apollo18;
 import com.freyr.apollo18.commands.Category;
@@ -13,16 +13,16 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
 
-public class GreyscaleImage extends Command {
+public class BlurCommand extends Command {
 
-    public GreyscaleImage(Apollo18 bot) {
+    public BlurCommand(Apollo18 bot) {
         super(bot);
 
-        this.name = "greyscale";
-        this.description = "Greyscales the user's pfp";
+        this.name = "blur";
+        this.description = "Blurs the user's pfp";
         this.category = Category.IMAGE;
 
-        this.args.add(new OptionData(OptionType.USER, "user", "The user's pfp you would like to greyscale"));
+        this.args.add(new OptionData(OptionType.USER, "user", "The user's pfp you would like to blur"));
     }
 
     @Override
@@ -33,7 +33,7 @@ public class GreyscaleImage extends Command {
 
         try {
             assert avatarURL != null;
-            File invertedImage = JPixel.greyScaleImage(avatarURL);
+            File invertedImage = JPixel.blurImage(avatarURL, 1);
 
             FileUpload fileUpload = FileUpload.fromData(invertedImage);
             event.getHook().sendFiles(fileUpload).queue();

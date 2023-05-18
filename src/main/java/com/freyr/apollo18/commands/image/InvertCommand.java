@@ -1,4 +1,4 @@
-package com.freyr.apollo18.commands.image_manipulation;
+package com.freyr.apollo18.commands.image;
 
 import com.freyr.apollo18.Apollo18;
 import com.freyr.apollo18.commands.Category;
@@ -13,16 +13,16 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
 
-public class BlurCommand extends Command {
+public class InvertCommand extends Command {
 
-    public BlurCommand(Apollo18 bot) {
+    public InvertCommand(Apollo18 bot) {
         super(bot);
 
-        this.name = "blur";
-        this.description = "Blurs the user's pfp";
+        this.name = "invert";
+        this.description = "Returns the avatar (or pfp) of a user";
         this.category = Category.IMAGE;
 
-        this.args.add(new OptionData(OptionType.USER, "user", "The user's pfp you would like to blur"));
+        this.args.add(new OptionData(OptionType.USER, "user", "The user's pfp you would like to invert"));
     }
 
     @Override
@@ -33,7 +33,7 @@ public class BlurCommand extends Command {
 
         try {
             assert avatarURL != null;
-            File invertedImage = JPixel.blurImage(avatarURL, 1);
+            File invertedImage = JPixel.invertImage(avatarURL);
 
             FileUpload fileUpload = FileUpload.fromData(invertedImage);
             event.getHook().sendFiles(fileUpload).queue();

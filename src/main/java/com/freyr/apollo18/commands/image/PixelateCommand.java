@@ -1,4 +1,4 @@
-package com.freyr.apollo18.commands.image_manipulation;
+package com.freyr.apollo18.commands.image;
 
 import com.freyr.apollo18.Apollo18;
 import com.freyr.apollo18.commands.Category;

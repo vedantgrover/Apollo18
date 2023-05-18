@@ -1,4 +1,4 @@
-package com.freyr.apollo18.commands.image_manipulation;
+package com.freyr.apollo18.commands.image;
 
 import com.freyr.apollo18.Apollo18;
 import com.freyr.apollo18.commands.Category;
@@ -11,19 +11,18 @@ import net.dv8tion.jda.api.utils.FileUpload;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.util.Objects;
 
-public class InvertCommand extends Command {
+public class GreyscaleImage extends Command {
 
-    public InvertCommand(Apollo18 bot) {
+    public GreyscaleImage(Apollo18 bot) {
         super(bot);
 
-        this.name = "invert";
-        this.description = "Returns the avatar (or pfp) of a user";
+        this.name = "greyscale";
+        this.description = "Greyscales the user's pfp";
         this.category = Category.IMAGE;
 
-        this.args.add(new OptionData(OptionType.USER, "user", "The user's pfp you would like to invert"));
+        this.args.add(new OptionData(OptionType.USER, "user", "The user's pfp you would like to greyscale"));
     }
 
     @Override
@@ -34,7 +33,7 @@ public class InvertCommand extends Command {
 
         try {
             assert avatarURL != null;
-            File invertedImage = JPixel.invertImage(avatarURL);
+            File invertedImage = JPixel.greyScaleImage(avatarURL);
 
             FileUpload fileUpload = FileUpload.fromData(invertedImage);
             event.getHook().sendFiles(fileUpload).queue();
