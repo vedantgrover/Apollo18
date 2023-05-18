@@ -7,6 +7,7 @@ import com.freyr.apollo18.util.embeds.EmbedUtils;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -25,14 +26,18 @@ public class ImageGenerationCommand extends Command {
         this.description = "Generate an image through text";
         this.category = Category.IMAGE;
         this.args.add(new OptionData(OptionType.STRING, "description", "Image description", true));
+        this.args.add(new OptionData(OptionType.INTEGER, "number", "Number of Images you want").setMinValue(1).setMaxValue(5));
     }
 
     @Override
     public void execute(SlashCommandInteractionEvent event) {
         event.deferReply().queue();
 
+        int numberOfImages = (event.getOption("number") == null) ? 1: Objects.requireNonNull(event.getOption("number")).getAsInt();
+
         JSONObject requestBodyJSON = new JSONObject();
         requestBodyJSON.put("prompt", Objects.requireNonNull(event.getOption("description")).getAsString());
+        requestBodyJSON.put("n", numberOfImages);
         requestBodyJSON.put("size", "512x512");
 
         String requestBody = requestBodyJSON.toString();
@@ -47,10 +52,15 @@ public class ImageGenerationCommand extends Command {
             HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
             JSONObject data = new JSONObject(response.body());
 
-            String image = data.getJSONArray("data").getJSONObject(0).getString("url");
+            JSONArray image = data.getJSONArray("data");
 
-            event.getHook().sendMessage(image).queue();
-        } catch (InterruptedException | IOException e) {
+            for (int i = 0; i < image.length(); i++) {
+                JSONObject urlHolder = image.getJSONObject(i);
+
+                String url = urlHolder.getString("url");
+                event.getHook().sendMessage(url).queue();
+            }
+        } catch (Exception e) {
             event.getHook().sendMessageEmbeds(EmbedUtils.createError("Something went wrong while generating your image.")).queue();
             System.err.println(e);
         }
