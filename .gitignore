@@ -32,3 +32,4 @@ out/
 .gradle/
 test
 *.out
+dependency-reduced-pom.xml
