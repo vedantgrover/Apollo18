@@ -31,4 +31,4 @@ out/
 .env
 .gradle/
 test
-output.png
+*.out
