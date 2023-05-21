@@ -2,12 +2,16 @@ package com.freyr.apollo18.listeners;
 
 import com.freyr.apollo18.Apollo18;
 import com.theokanning.openai.completion.CompletionRequest;
+import com.theokanning.openai.completion.chat.ChatCompletionRequest;
+import com.theokanning.openai.completion.chat.ChatMessage;
+import com.theokanning.openai.completion.chat.ChatMessageRole;
 import com.theokanning.openai.service.OpenAiService;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class ChatBotListener extends ListenerAdapter {
@@ -24,13 +28,24 @@ public class ChatBotListener extends ListenerAdapter {
 
         for (Member member: message) {
             if (member.getId().equals("853812538218381352")) {
-                OpenAiService service = new OpenAiService(bot.getConfig().get("OPENAI_TOKEN", System.getenv("OPENAI_TOKEN")));
-                CompletionRequest completionRequest = CompletionRequest.builder()
-                        .prompt("Somebody once told me the world is gonna roll me")
+                OpenAiService service = new OpenAiService(bot.getConfig().get("OPENAI_KEY", System.getenv("OPENAI_KEY")));
+
+                System.out.println("Streaming chat completion...");
+                final List<ChatMessage> messages = new ArrayList<>();
+                final ChatMessage systemMessage = new ChatMessage(ChatMessageRole.SYSTEM.value(), "You are a dog and will speak as such.");
+                messages.add(systemMessage);
+                ChatCompletionRequest chatCompletionRequest = ChatCompletionRequest
+                        .builder()
                         .model("gpt-3.5-turbo")
-                        .echo(true)
+                        .messages(messages)
+                        .n(1)
+                        .maxTokens(50)
+                        .logitBias(new HashMap<>())
                         .build();
-                service.createCompletion(completionRequest).getChoices().forEach(System.out::println);
+
+                service.streamChatCompletion(chatCompletionRequest)
+                        .doOnError(Throwable::printStackTrace)
+                        .blockingForEach(System.out::println);
             }
         }
     }
