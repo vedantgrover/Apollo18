@@ -37,7 +37,7 @@ public class ChatBotListener extends ListenerAdapter {
                     final List<ChatMessage> messages = new ArrayList<>();
                     final ChatMessage systemMessage = new ChatMessage(ChatMessageRole.SYSTEM.value(), prompt);
                     messages.add(systemMessage);
-                    ChatCompletionRequest chatCompletionRequest = ChatCompletionRequest.builder().model("gpt-3.5-turbo").messages(messages).n(1).maxTokens(3500).logitBias(new HashMap<>()).build();
+                    ChatCompletionRequest chatCompletionRequest = ChatCompletionRequest.builder().model("gpt-3.5-turbo").messages(messages).n(1).maxTokens(3900).logitBias(new HashMap<>()).build();
 
                     service.streamChatCompletion(chatCompletionRequest).doOnError(Throwable::printStackTrace).blockingForEach(str -> {
                         String content = str.toString().substring(str.toString().indexOf("content") + 8, str.toString().indexOf(")"));
