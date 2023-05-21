@@ -67,7 +67,7 @@ public class CommandManager extends ListenerAdapter {
                 new WeatherCommand(bot), new YouTubeCommand(bot), new TwitterCommand(bot), new ServerInfoCommand(bot), new UserInfoCommand(bot),
 
                 // Fun Commands
-                new MemeCommand(bot), new EmoteCommand(bot), new AvatarCommand(bot), new UrbanDictionaryCommand(bot),
+                new EmoteCommand(bot), new AvatarCommand(bot), new UrbanDictionaryCommand(bot),
 
                 // Leveling Commands
                 new RankCommand(bot),
