@@ -41,10 +41,6 @@ public class EmoteCommand extends Command {
         JSONObject data = getApiData("https://api.otakugifs.xyz/gif?reaction=" + event.getOption("action").getAsString()); // Getting the data from the URL (link)
 
         // Building the embed
-        EmbedBuilder embed = new EmbedBuilder();
-        embed.setColor(EmbedColor.DEFAULT_COLOR);
-        embed.setAuthor(event.getUser().getName(), null, event.getUser().getAvatarUrl());
-        embed.setImage(data.getString("url"));
-        event.replyEmbeds(embed.build()).queue();
+        event.getHook().sendMessage(data.getString("url")).queue();
     }
 }
