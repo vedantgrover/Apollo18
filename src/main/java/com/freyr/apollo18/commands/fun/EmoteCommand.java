@@ -38,6 +38,7 @@ public class EmoteCommand extends Command {
 
     @Override
     public void execute(SlashCommandInteractionEvent event) {
+        event.deferReply().queue();
         JSONObject data = getApiData("https://api.otakugifs.xyz/gif?reaction=" + event.getOption("action").getAsString()); // Getting the data from the URL (link)
 
         // Building the embed
