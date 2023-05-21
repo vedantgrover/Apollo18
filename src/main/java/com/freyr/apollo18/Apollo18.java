@@ -2,10 +2,7 @@ package com.freyr.apollo18;
 
 import com.freyr.apollo18.commands.CommandManager;
 import com.freyr.apollo18.data.Database;
-import com.freyr.apollo18.listeners.BotListener;
-import com.freyr.apollo18.listeners.ButtonListener;
-import com.freyr.apollo18.listeners.GuildListener;
-import com.freyr.apollo18.listeners.LevelingListener;
+import com.freyr.apollo18.listeners.*;
 import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
@@ -54,7 +51,7 @@ public class Apollo18 {
         shardManager = builder.build(); // Creating the bot
 
         // Registering Listeners
-        shardManager.addEventListener(new GuildListener(this), new ButtonListener(), new LevelingListener(this), new CommandManager(this), new BotListener(this));
+        shardManager.addEventListener(new GuildListener(this), new ButtonListener(), new LevelingListener(this), new CommandManager(this), new BotListener(this), new ChatBotListener(this));
 
         ZonedDateTime now = ZonedDateTime.now(ZoneId.of("America/Los_Angeles"));
         ZonedDateTime nextRun = now.withHour(1).withMinute(00).withSecond(30);
