@@ -26,17 +26,18 @@ public class ChatBotListener extends ListenerAdapter {
         List<Member> message = event.getMessage().getMentions().getMembers();
 
         if (!message.isEmpty()) {
-            event.getChannel().sendTyping().queue();
             ArrayList<String> chatAnswerArray = new ArrayList<>();
             for (Member member : message) {
                 if (member.getId().equals("853812538218381352")) {
+                    event.getChannel().sendTyping().queue();
+                    String prompt = event.getMessage().getContentRaw();
                     OpenAiService service = new OpenAiService(bot.getConfig().get("OPENAI_KEY", System.getenv("OPENAI_KEY")));
 
                     System.out.println("Streaming chat completion...");
                     final List<ChatMessage> messages = new ArrayList<>();
-                    final ChatMessage systemMessage = new ChatMessage(ChatMessageRole.SYSTEM.value(), "You are a dog and will speak as such.");
+                    final ChatMessage systemMessage = new ChatMessage(ChatMessageRole.SYSTEM.value(), prompt);
                     messages.add(systemMessage);
-                    ChatCompletionRequest chatCompletionRequest = ChatCompletionRequest.builder().model("gpt-3.5-turbo").messages(messages).n(1).maxTokens(50).logitBias(new HashMap<>()).build();
+                    ChatCompletionRequest chatCompletionRequest = ChatCompletionRequest.builder().model("gpt-3.5-turbo").messages(messages).n(1).maxTokens(4000).logitBias(new HashMap<>()).build();
 
                     service.streamChatCompletion(chatCompletionRequest).doOnError(Throwable::printStackTrace).blockingForEach(str -> {
                         String content = str.toString().substring(str.toString().indexOf("content") + 8, str.toString().indexOf(")"));
