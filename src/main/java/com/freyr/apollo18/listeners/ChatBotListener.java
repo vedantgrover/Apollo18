@@ -23,11 +23,11 @@ public class ChatBotListener extends ListenerAdapter {
 
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
-        List<Member> message = event.getMessage().getMentions().getMembers();
+        List<Member> messageMentions = event.getMessage().getMentions().getMembers();
 
-        if (!message.isEmpty()) {
+        if (!messageMentions.isEmpty()) {
             ArrayList<String> chatAnswerArray = new ArrayList<>();
-            for (Member member : message) {
+            for (Member member : messageMentions) {
                 if (member.getId().equals("853812538218381352")) {
                     event.getChannel().sendTyping().queue();
                     String prompt = event.getMessage().getContentRaw();
