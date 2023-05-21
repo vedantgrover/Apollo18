@@ -1,7 +1,6 @@
 package com.freyr.apollo18.listeners;
 
 import com.freyr.apollo18.Apollo18;
-import com.theokanning.openai.completion.CompletionRequest;
 import com.theokanning.openai.completion.chat.ChatCompletionRequest;
 import com.theokanning.openai.completion.chat.ChatMessage;
 import com.theokanning.openai.completion.chat.ChatMessageRole;
@@ -26,7 +25,8 @@ public class ChatBotListener extends ListenerAdapter {
     public void onMessageReceived(MessageReceivedEvent event) {
         List<Member> message = event.getMessage().getMentions().getMembers();
 
-        for (Member member: message) {
+        ArrayList<String> chatAnswerArray = new ArrayList<>();
+        for (Member member : message) {
             if (member.getId().equals("853812538218381352")) {
                 OpenAiService service = new OpenAiService(bot.getConfig().get("OPENAI_KEY", System.getenv("OPENAI_KEY")));
 
@@ -34,19 +34,19 @@ public class ChatBotListener extends ListenerAdapter {
                 final List<ChatMessage> messages = new ArrayList<>();
                 final ChatMessage systemMessage = new ChatMessage(ChatMessageRole.SYSTEM.value(), "You are a dog and will speak as such.");
                 messages.add(systemMessage);
-                ChatCompletionRequest chatCompletionRequest = ChatCompletionRequest
-                        .builder()
-                        .model("gpt-3.5-turbo")
-                        .messages(messages)
-                        .n(1)
-                        .maxTokens(50)
-                        .logitBias(new HashMap<>())
-                        .build();
+                ChatCompletionRequest chatCompletionRequest = ChatCompletionRequest.builder().model("gpt-3.5-turbo").messages(messages).n(1).maxTokens(50).logitBias(new HashMap<>()).build();
 
-                service.streamChatCompletion(chatCompletionRequest)
-                        .doOnError(Throwable::printStackTrace)
-                        .blockingForEach(System.out::println);
+                service.streamChatCompletion(chatCompletionRequest).doOnError(Throwable::printStackTrace).blockingForEach(str -> chatAnswerArray.add(str.toString().substring(str.toString().indexOf("content") + 8, str.toString().indexOf(")"))));
             }
         }
+
+        StringBuilder chatAnswer = new StringBuilder();
+        for (String word : chatAnswerArray) {
+            if (!word.equals("null")) {
+                chatAnswer.append(word);
+            }
+        }
+
+        event.getChannel().sendMessage(chatAnswer).queue();
     }
 }
