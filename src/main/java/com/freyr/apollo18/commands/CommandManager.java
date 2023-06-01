@@ -62,7 +62,7 @@ public class CommandManager extends ListenerAdapter {
                 // Utility Commands
                 new PingCommand(bot), new InviteCommand(bot), new ReportBugCommand(bot), new SuggestCommand(bot), new VoteCommand(bot), new PollCommand(bot), new MathCommand(bot),
                 // Music Commands
-                new PlayCommand(bot), new StopCommand(bot), new SkipCommand(bot), new NowPlayingCommand(bot), new QueueCommand(bot), new LoopCommand(bot), new VolumeCommand(bot), new PauseCommand(bot), new ResumeCommand(bot), new PlaylistCommand(bot),
+                new PlayCommand(bot), new StopCommand(bot), new SkipCommand(bot), new NowPlayingCommand(bot), new QueueCommand(bot), new LoopCommand(bot), new VolumeCommand(bot), new PauseCommand(bot), new ResumeCommand(bot), new PlaylistCommand(bot), new RecordCommand(bot),
                 // Information Commands
                 new WeatherCommand(bot), new YouTubeCommand(bot), new TwitterCommand(bot), new ServerInfoCommand(bot), new UserInfoCommand(bot),
 

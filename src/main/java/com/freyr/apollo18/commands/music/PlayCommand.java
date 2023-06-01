@@ -83,6 +83,8 @@ public class PlayCommand extends Command {
     }
 
     private void join(SlashCommandInteractionEvent event) {
+        event.deferReply().queue();
+
         final Member self = event.getGuild().getSelfMember();
         final GuildVoiceState selfVoiceState = self.getVoiceState();
 
