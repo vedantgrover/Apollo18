@@ -706,12 +706,12 @@ public class Database {
 
         for (Document business : businesses) {
             try {
-                HttpRequest request = HttpRequest.newBuilder().uri(URI.create("https://twelve-data1.p.rapidapi.com/quote?symbol=" + business.get("stock", Document.class).getString("ticker") + "&interval=1day&outputsize=30&format=json")).header("X-RapidAPI-Key", bot.getConfig().get("RAPIDAPI_KEY", System.getenv("RAPIDAPI_KEY"))).header("X-RapidAPI-Host", "twelve-data1.p.rapidapi.com").method("GET", HttpRequest.BodyPublishers.noBody()).build();
+                HttpRequest request = HttpRequest.newBuilder().uri(URI.create("https://realstonks.p.rapidapi.com/" + business.get("stock", Document.class).getString("ticker"))).header("X-RapidAPI-Key", bot.getConfig().get("RAPIDAPI_KEY", System.getenv("RAPIDAPI_KEY"))).header("X-RapidAPI-Host", "realstonks.p.rapidapi.com").method("GET", HttpRequest.BodyPublishers.noBody()).build();
                 HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
                 JSONObject data = new JSONObject(response.body());
 
-                int change = (int) Double.parseDouble(data.getString("change"));
-                int currentPrice = (int) Double.parseDouble(data.getString("close")) / 4;
+                int change = (int) Math.round(data.getDouble("change_point") * 0.23);
+                int currentPrice = (int) Math.round(data.getDouble("price") * 0.23);
                 int previousPrice = currentPrice - change;
 
                 Bson updates = Updates.combine(

@@ -52,7 +52,7 @@ public class BusinessCommand extends Command {
                 embed.setDescription("Here are all of the businesses that you can invest in!");
 
                 for (Document currentBusiness : db.getBusinesses()) {
-                    embed.addField(currentBusiness.getString("name"), "Price: " + BusinessHandler.byteEmoji + "`" + currentBusiness.get("stock", Document.class).getInteger("currentPrice") + " bytes`" + currentBusiness.get("stock", Document.class).getString("arrowEmoji") + "`(" + currentBusiness.get("stock", Document.class).getInteger("change") + ")`\nCode: `" + currentBusiness.getString("stockCode") + "`", true);
+                    embed.addField(currentBusiness.getString("name"), "Price: " + BusinessHandler.byteEmoji + "`" + currentBusiness.get("stock", Document.class).getInteger("currentPrice") + " bytes`" + currentBusiness.get("stock", Document.class).getString("arrowEmoji") + "\nChange: `" + currentBusiness.get("stock", Document.class).getInteger("change") + " bytes`\nCode: `" + currentBusiness.getString("stockCode") + "`", true);
                 }
 
                 embed.setColor(EmbedColor.DEFAULT_COLOR);
