@@ -23,12 +23,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class StockData {
-    private Apollo18 bot;
     private final String API_KEY;
-    private  String symbol;
+    private final String symbol;
 
     protected StockData(Apollo18 bot, String symbol) {
-        this.bot = bot;
         this.API_KEY = bot.getConfig().get("ALPHAVANTAGE", System.getenv("ALPHAVANTAGE"));
         this.symbol = symbol;
     }
@@ -70,7 +68,7 @@ public class StockData {
             for (String key : timeSeriesData.keySet()) {
                 Date date = dateFormat.parse(key);
                 JSONObject dailyData = timeSeriesData.getJSONObject(key);
-                double closePrice = dailyData.getDouble("4. close");
+                double closePrice = dailyData.getDouble("4. close") * 0.23;
                 timeSeries.addOrUpdate(new Hour(date), closePrice);
             }
         } catch (Exception e) {

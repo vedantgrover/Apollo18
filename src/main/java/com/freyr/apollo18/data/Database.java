@@ -715,12 +715,7 @@ public class Database {
                 int currentPrice = (int) Math.round(data.getDouble("price") * 0.23);
                 int previousPrice = currentPrice - change;
 
-                Bson updates = Updates.combine(
-                        Updates.set("stock.currentPrice", currentPrice),
-                        Updates.set("stock.previousPrice", previousPrice),
-                        Updates.set("stock.change", change),
-                        Updates.set("stock.arrowEmoji", BusinessHandler.getArrow(change))
-                );
+                Bson updates = Updates.combine(Updates.set("stock.currentPrice", currentPrice), Updates.set("stock.previousPrice", previousPrice), Updates.set("stock.change", change), Updates.set("stock.arrowEmoji", BusinessHandler.getArrow(change)));
 
                 businessData.updateOne(business, updates, new UpdateOptions().upsert(true));
                 createTransaction("stockUpdate", "Business / Stock / Update", previousPrice, currentPrice);
@@ -785,11 +780,7 @@ public class Database {
         }
 
         if (!userEconomyDoc.get("job", Document.class).getBoolean("worked")) {
-            Bson updates = Updates.combine(
-                    Updates.inc("economy.job.daysWorked", 1),
-                    Updates.set("economy.job.worked", true),
-                    Updates.set("economy.job.daysMissed", 0)
-            );
+            Bson updates = Updates.combine(Updates.inc("economy.job.daysWorked", 1), Updates.set("economy.job.worked", true), Updates.set("economy.job.daysMissed", 0));
 
             userData.updateOne(query, updates, new UpdateOptions().upsert(true));
             createTransaction(userId, "Job / Work", getBalance(userId) - userJob.getInteger("salary"), getBalance(userId));
@@ -801,10 +792,7 @@ public class Database {
         Document query = new Document("userID", userId);
         Document job = getJob(code, jobName);
 
-        Bson updates = Updates.combine(
-                Updates.set("economy.job.business", code),
-                Updates.set("economy.job.job", job.getString("name"))
-        );
+        Bson updates = Updates.combine(Updates.set("economy.job.business", code), Updates.set("economy.job.job", job.getString("name")));
 
         userData.updateOne(query, updates, new UpdateOptions().upsert(true));
     }
@@ -819,8 +807,7 @@ public class Database {
         for (Document user : userData.find(new Document())) {
             Document query = new Document("userID", user.getString("userID"));
             System.out.println("Updating data for " + user.getString("userID"));
-            if (user.get("economy", Document.class).get("job", Document.class).getInteger("daysMissed") == null
-                    || user.get("economy", Document.class).get("job", Document.class).getBoolean("worked") == null) {
+            if (user.get("economy", Document.class).get("job", Document.class).getInteger("daysMissed") == null || user.get("economy", Document.class).get("job", Document.class).getBoolean("worked") == null) {
                 Document job = new Document("business", null).append("job", null).append("daysWorked", 0).append("daysMissed", 0).append("worked", false);
                 Bson updates = Updates.set("economy.job", job);
 
@@ -829,10 +816,7 @@ public class Database {
             }
 
             if (!user.get("economy", Document.class).get("job", Document.class).getBoolean("worked") && user.get("economy", Document.class).get("job", Document.class).getString("job") != null) {
-                Bson updates = Updates.combine(
-                        Updates.set("economy.job.daysWorked", 0),
-                        Updates.inc("economy.job.daysMissed", 1)
-                );
+                Bson updates = Updates.combine(Updates.set("economy.job.daysWorked", 0), Updates.inc("economy.job.daysMissed", 1));
 
                 userData.updateOne(query, updates, new UpdateOptions().upsert(true));
                 System.out.println(user.getString("userID") + " did not work today. Days missed added");
@@ -843,11 +827,7 @@ public class Database {
             }
 
             if (user.get("economy", Document.class).get("job", Document.class).getInteger("daysMissed") > getJob(user.get("economy", Document.class).get("job", Document.class).getString("business"), user.get("economy", Document.class).get("job", Document.class).getString("job")).getInteger("daysBeforeFire")) {
-                Bson updates = Updates.combine(
-                        Updates.set("economy.job.business", null),
-                        Updates.set("economy.job.job", null),
-                        Updates.set("economy.job.daysMissed", 0)
-                );
+                Bson updates = Updates.combine(Updates.set("economy.job.business", null), Updates.set("economy.job.job", null), Updates.set("economy.job.daysMissed", 0));
 
                 userData.updateOne(query, updates, new UpdateOptions().upsert(true));
                 removeBytes(user.getString("userID"), getJob(user.get("economy", Document.class).get("job", Document.class).getString("business"), user.get("economy", Document.class).get("job", Document.class).getString("job")).getInteger("salary") * 5);

@@ -12,8 +12,10 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
+import net.dv8tion.jda.api.utils.FileUpload;
 import org.bson.Document;
 
+import java.io.File;
 import java.util.List;
 import java.util.Objects;
 
@@ -57,7 +59,7 @@ public class BusinessCommand extends Command {
 
                 embed.setColor(EmbedColor.DEFAULT_COLOR);
                 event.getHook().sendMessageEmbeds(embed.build()).queue();
-            break;
+                break;
 
             case "info":
                 code = Objects.requireNonNull(event.getOption("code")).getAsString().toUpperCase();
@@ -75,8 +77,14 @@ public class BusinessCommand extends Command {
                 embed.setDescription(business.getString("description"));
                 embed.addField("Stock Info", "Price: " + BusinessHandler.byteEmoji + " `" + business.get("stock", Document.class).getInteger("currentPrice") + " bytes` " + business.get("stock", Document.class).getString("arrowEmoji") + " `(" + business.get("stock", Document.class).getInteger("change") + ")`\nCode: `" + business.getString("stockCode") + "`", false);
 
-                event.getHook().sendMessageEmbeds(embed.build()).queue();
-            break;
+                String imagePath = "src/main/resources/stock_data/" + business.get("stock", Document.class).getString("ticker") + "/" + business.get("stock", Document.class).getString("ticker") + "-graph.png";
+                System.out.println(imagePath);
+
+                File graph = new File(imagePath);
+                embed.setImage("attachment://graph.png");
+
+                event.getHook().sendMessageEmbeds(embed.build()).addFiles(FileUpload.fromData(graph, "graph.png")).queue();
+                break;
 
             case "buy":
                 code = Objects.requireNonNull(event.getOption("code")).getAsString().toUpperCase();
@@ -97,7 +105,7 @@ public class BusinessCommand extends Command {
                 db.addStockToUser(business, event.getUser().getId(), quantity);
 
                 event.getHook().sendMessageEmbeds(EmbedUtils.createSuccess("Purchase Successful")).queue();
-            break;
+                break;
 
             case "sell":
                 code = Objects.requireNonNull(event.getOption("code")).getAsString().toUpperCase();
@@ -116,7 +124,7 @@ public class BusinessCommand extends Command {
                 db.removeStockFromUser(event.getUser().getId(), code, quantity);
 
                 event.getHook().sendMessageEmbeds(EmbedUtils.createSuccess("Sale Successful")).queue();
-            break;
+                break;
 
             case "jobs":
                 code = Objects.requireNonNull(event.getOption("code")).getAsString().toUpperCase();
@@ -141,7 +149,7 @@ public class BusinessCommand extends Command {
                 }
 
                 event.getHook().sendMessageEmbeds(embed.build()).queue();
-            break;
+                break;
 
             case "set-job":
                 code = Objects.requireNonNull(event.getOption("code")).getAsString().toUpperCase();
@@ -155,7 +163,7 @@ public class BusinessCommand extends Command {
                 db.setJob(event.getUser().getId(), code, job);
 
                 event.getHook().sendMessageEmbeds(EmbedUtils.createSuccess("Job has been set to __" + db.getJob(code, job).getString("name") + "__")).queue();
-            break;
+                break;
         }
     }
 }
