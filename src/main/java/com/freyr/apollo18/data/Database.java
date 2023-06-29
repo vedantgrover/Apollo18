@@ -28,6 +28,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * This class handles everything that is connected to databases.
@@ -723,7 +724,13 @@ public class Database {
 
                 businessData.updateOne(business, updates, new UpdateOptions().upsert(true));
                 createTransaction("stockUpdate", "Business / Stock / Update", previousPrice, currentPrice);
+
+                StockData stockData = new StockData(bot, business.get("stock", Document.class).getString("ticker"));
+                stockData.displayLineChart(stockData.parseStockData(stockData.retrieveStockData()));
+
                 System.out.println("Updating " + business.get("stock", Document.class).getString("ticker") + "; Old Price: " + previousPrice + "; Current Price: " + currentPrice + "; Change: " + change + "\nAll Details: " + data);
+
+                TimeUnit.SECONDS.sleep(5);
             } catch (Exception e) {
                 System.err.println(e);
             }
