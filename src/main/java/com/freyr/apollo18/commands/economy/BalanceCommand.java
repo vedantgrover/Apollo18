@@ -50,7 +50,6 @@ public class BalanceCommand extends Command {
             }
         }
 
-
         event.getHook().sendMessageEmbeds(embed.build()).queue();
     }
 }

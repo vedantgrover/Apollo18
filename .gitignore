@@ -33,3 +33,4 @@ out/
 test
 *.out
 dependency-reduced-pom.xml
+node_modules
