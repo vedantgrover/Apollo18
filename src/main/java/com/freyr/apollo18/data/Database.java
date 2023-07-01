@@ -711,9 +711,9 @@ public class Database {
                 HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
                 JSONObject data = new JSONObject(response.body());
 
-                int change = (int) Math.round(data.getDouble("change_point") * 0.23);
                 int currentPrice = (int) Math.round(data.getDouble("price") * 0.23);
-                int previousPrice = currentPrice - change;
+                int previousPrice = business.get("stock", Document.class).getInteger("currentPrice");
+                int change = currentPrice - previousPrice;
 
                 Bson updates = Updates.combine(Updates.set("stock.currentPrice", currentPrice), Updates.set("stock.previousPrice", previousPrice), Updates.set("stock.change", change), Updates.set("stock.arrowEmoji", BusinessHandler.getArrow(change)));
 
