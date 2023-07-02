@@ -5,8 +5,10 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
+import okhttp3.*;
 import org.json.JSONObject;
 
+import javax.print.attribute.standard.Media;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -76,18 +78,47 @@ public abstract class Command {
      * This command uses an API URL to grab data and return it for use
      *
      * @param apiURL The api url you want to use
-     * @param authentication The authentication key (Bearer + [key])
+     * @param apiAuthentication The authentication key (Bearer + [key])
      * @return All the data given through that URL
      */
-    public JSONObject getApiData(String apiURL, String authentication) {
-        try {
-            HttpClient client = HttpClient.newHttpClient();
-            HttpRequest request = HttpRequest.newBuilder().uri(URI.create(apiURL)).header("Authorization", "Bearer " + authentication).build();
+    public JSONObject getApiData(String apiURL, String apiAuthentication) {
 
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        OkHttpClient okHttpClient = new OkHttpClient();
 
-            return new JSONObject(response.body());
-        } catch (IOException | InterruptedException e) {
+        Request  request = new Request.Builder()
+                .url(apiURL)
+                .addHeader("Authorization", "Bearer " + apiAuthentication)
+                .build();
+
+        try (Response response = okHttpClient.newCall(request).execute()) {
+            String responseBody = response.body().string();
+            System.out.println(responseBody);
+
+            return new JSONObject(responseBody);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public JSONObject postApiData(String apiUrl, String json) {
+        OkHttpClient okHttpClient = new OkHttpClient();
+
+        MediaType mediaType = MediaType.parse("application/json");
+
+        RequestBody body = RequestBody.create(json, mediaType);
+
+        Request request = new Request.Builder()
+                .url(apiUrl)
+                .post(body)
+                .build();
+
+        try (Response response = okHttpClient.newCall(request).execute()) {
+            String responseBody = response.body().string();
+            System.out.println(responseBody);
+
+            return new JSONObject(responseBody);
+        } catch (IOException e) {
             e.printStackTrace();
             return null;
         }

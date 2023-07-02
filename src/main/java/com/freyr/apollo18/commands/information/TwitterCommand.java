@@ -10,7 +10,13 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import okhttp3.HttpUrl;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import org.json.JSONObject;
+
+import java.io.IOException;
 
 public class TwitterCommand extends Command {
     public TwitterCommand(Apollo18 bot) {
@@ -19,15 +25,34 @@ public class TwitterCommand extends Command {
         this.description = "Retrieve Information about a user from Twitter";
         this.category = Category.INFORMATION;
 
-        this.args.add(new OptionData(OptionType.STRING, "user", "The user you want info about", true));
+        this.args.add(new OptionData(OptionType.STRING, "username", "The user you want info about", true));
     }
 
     @Override
     public void execute(SlashCommandInteractionEvent event) {
         event.deferReply().queue();
-        try {
-            String user = event.getOption("user").getAsString();
-            JSONObject data = getApiData("https://api.twitter.com/2/users/by/username/"+ user +"?user.fields=profile_image_url%2Cpublic_metrics%2Clocation%2Cdescription%2Curl", bot.getConfig().get("TWITTER_TOKEN")).getJSONObject("data");
+
+        String username = event.getOption("username").getAsString();
+
+        OkHttpClient client = new OkHttpClient();
+
+        HttpUrl.Builder urlBuilder = HttpUrl.parse("https://api.twitter.com/2/users/by")
+                .newBuilder()
+                .addPathSegment("username")
+                .addPathSegment(username);
+
+        String url = urlBuilder.build().toString();
+
+        Request request = new Request.Builder()
+                .url(url)
+                .addHeader("Authorization", String.format("Bearer %s", bot.getConfig().get("TWITTER_TOKEN", System.getenv("TWITTER_TOKEN"))))
+                .build();
+
+        try (Response response = client.newCall(request).execute()) {
+            String responseBody = response.body().string();
+            JSONObject data = new JSONObject(responseBody);
+
+            System.out.println(data);
 
             EmbedBuilder embed = new EmbedBuilder();
 
@@ -41,9 +66,9 @@ public class TwitterCommand extends Command {
             embed.addField("Followers", NumberFormatter.formatLongNumber(data.getJSONObject("public_metrics").getInt("followers_count")), true);
 
             event.getHook().sendMessageEmbeds(embed.build()).queue();
-        } catch (Exception e) {
+        } catch (IOException e) {
             System.err.println(e);
-            event.getHook().sendMessageEmbeds(EmbedUtils.createError("We could not find that user.")).setEphemeral(true).queue();
+            event.getHook().sendMessageEmbeds(EmbedUtils.createError("We could not find that username.")).setEphemeral(true).queue();
         }
     }
 }

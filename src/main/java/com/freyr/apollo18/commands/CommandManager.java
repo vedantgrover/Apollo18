@@ -9,6 +9,7 @@ import com.freyr.apollo18.commands.casino.SlotMachineCommands;
 import com.freyr.apollo18.commands.dev.*;
 import com.freyr.apollo18.commands.economy.*;
 import com.freyr.apollo18.commands.fun.*;
+import com.freyr.apollo18.commands.image.ImageManipulationCommand;
 import com.freyr.apollo18.commands.information.*;
 import com.freyr.apollo18.commands.leveling.LeaderboardCommand;
 import com.freyr.apollo18.commands.leveling.RankCommand;
@@ -64,7 +65,7 @@ public class CommandManager extends ListenerAdapter {
                 // Music Commands
                 new PlayCommand(bot), new StopCommand(bot), new SkipCommand(bot), new NowPlayingCommand(bot), new QueueCommand(bot), new LoopCommand(bot), new VolumeCommand(bot), new PauseCommand(bot), new ResumeCommand(bot), new PlaylistCommand(bot),
                 // Information Commands
-                new WeatherCommand(bot), new YouTubeCommand(bot), new TwitterCommand(bot), new ServerInfoCommand(bot), new UserInfoCommand(bot),
+                new WeatherCommand(bot), new YouTubeCommand(bot), /*new TwitterCommand(bot),*/ new ServerInfoCommand(bot), new UserInfoCommand(bot),
 
                 // Fun Commands
                 new EmoteCommand(bot), new AvatarCommand(bot), new UrbanDictionaryCommand(bot),
@@ -77,6 +78,9 @@ public class CommandManager extends ListenerAdapter {
 
                 // Casino Commands
                 new CoinFlipGame(bot), new SlotMachineCommands(bot), new CrashGame(bot),
+
+                // Image Commands
+                new ImageManipulationCommand(bot),
 
                 // Business Commands
                 new BusinessCommand(bot), new WorkCommand(bot),
