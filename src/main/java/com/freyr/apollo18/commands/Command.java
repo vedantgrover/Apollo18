@@ -101,6 +101,12 @@ public abstract class Command {
         }
     }
 
+    /**
+     * Sends a post request to an API without authorization
+     * @param apiUrl The URL endpoint of the API
+     * @param json The request body
+     * @return A JSONObject with the response body
+     */
     public JSONObject postApiData(String apiUrl, String json) {
         OkHttpClient okHttpClient = new OkHttpClient();
 

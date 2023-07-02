@@ -11,8 +11,15 @@ import org.json.JSONObject;
 
 import java.util.Objects;
 
+/**
+ * This command handles all the image manipulation using the Apollo API.
+ */
 public class ImageManipulationCommand extends Command {
 
+    /**
+     * Sets up the command parameters and adds the different manipulation choices.
+     * @param bot
+     */
     public ImageManipulationCommand(Apollo18 bot) {
         super(bot);
 
@@ -26,12 +33,13 @@ public class ImageManipulationCommand extends Command {
     public void execute(SlashCommandInteractionEvent event) {
         event.deferReply().queue();
 
-        String manipulation = Objects.requireNonNull(event.getOption("manipulation")).getAsString();
+        String manipulation = Objects.requireNonNull(event.getOption("manipulation")).getAsString(); // Gets the user requested manipulation
 
-        User user = (event.getOption("user") == null) ? event.getUser() : event.getOption("user").getAsUser();
+        User user = (event.getOption("user") == null) ? event.getUser() : Objects.requireNonNull(event.getOption("user")).getAsUser(); // Gets the user-specified user or defaults to author.
         User user2;
 
         JSONObject data;
+        // Validates that two users are given if the manipulation needs two users.
         if (manipulation.equals("distracted") || manipulation.equals("fuse") || manipulation.equals("slap") || manipulation.equals("spank")) {
             if (event.getOption("user") == null) {
                 event.getHook().sendMessageEmbeds(EmbedUtils.createError("Please add a second user for this manipulation")).queue();
@@ -41,12 +49,12 @@ public class ImageManipulationCommand extends Command {
             user = event.getUser();
             user2 = Objects.requireNonNull(event.getOption("user")).getAsUser();
 
+            // Sending post request with two image urls (avatar of both users)
             data = postApiData("http://apollo18.westus2.cloudapp.azure.com:3000/image", "{ \"url1\": \"" + user.getAvatarUrl() + "\", \"url2\": \"" + user2.getAvatarUrl() + "\", \"manipulation\": \"" + event.getOption("manipulation").getAsString() + "\"}");
 
-        } else {
+        } else { // If image requires one user
             data = postApiData("http://apollo18.westus2.cloudapp.azure.com:3000/image", "{ \"url1\": \"" + user.getAvatarUrl() + "\", \"manipulation\": \"" + event.getOption("manipulation").getAsString() + "\"}");
         }
-
 
         event.getHook().sendMessage(data.getString("url")).queue();
     }
