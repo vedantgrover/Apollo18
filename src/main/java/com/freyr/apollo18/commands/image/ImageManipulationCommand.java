@@ -1,6 +1,7 @@
 package com.freyr.apollo18.commands.image;
 
 import com.freyr.apollo18.Apollo18;
+import com.freyr.apollo18.commands.Category;
 import com.freyr.apollo18.commands.Command;
 import com.freyr.apollo18.util.embeds.EmbedUtils;
 import net.dv8tion.jda.api.entities.User;
@@ -25,6 +26,7 @@ public class ImageManipulationCommand extends Command {
 
         this.name = "image";
         this.description = "Have fun with generating funny images!";
+        this.category = Category.IMAGE;
         this.args.add(new OptionData(OptionType.STRING, "manipulation", "The manipulation you want", true).addChoice("beautiful", "beautiful").addChoice("trigger", "trigger").addChoice("distracted", "distracted").addChoice("facepalm", "facepalm").addChoice("fuse", "fuse").addChoice("hitler", "hitler").addChoice("invert", "invert").addChoice("jail", "jail").addChoice("joke over head", "jokeoverhead").addChoice("rainbow", "rainbow").addChoice("rip", "rip").addChoice("slap", "slap").addChoice("spank", "spank").addChoice("wanted", "wanted"));
         this.args.add(new OptionData(OptionType.USER, "user", "User you want in the picture"));
     }
