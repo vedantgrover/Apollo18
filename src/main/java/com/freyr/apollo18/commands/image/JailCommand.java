@@ -16,7 +16,7 @@ public class JailCommand extends Command {
     public JailCommand(Apollo18 bot) {
         super(bot);
 
-        this.name = "jail-image";
+        this.name = "jail";
         this.description = "Puts a pfp behind bars";
         this.category = Category.IMAGE;
         this.args.add(new OptionData(OptionType.USER, "user", "The person going behind bars"));
