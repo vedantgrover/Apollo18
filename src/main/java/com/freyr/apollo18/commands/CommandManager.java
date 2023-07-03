@@ -9,7 +9,7 @@ import com.freyr.apollo18.commands.casino.SlotMachineCommands;
 import com.freyr.apollo18.commands.dev.*;
 import com.freyr.apollo18.commands.economy.*;
 import com.freyr.apollo18.commands.fun.*;
-import com.freyr.apollo18.commands.image.ImageManipulationCommand;
+import com.freyr.apollo18.commands.image.*;
 import com.freyr.apollo18.commands.information.*;
 import com.freyr.apollo18.commands.leveling.LeaderboardCommand;
 import com.freyr.apollo18.commands.leveling.RankCommand;
@@ -80,7 +80,7 @@ public class CommandManager extends ListenerAdapter {
                 new CoinFlipGame(bot), new SlotMachineCommands(bot), new CrashGame(bot),
 
                 // Image Commands
-                new ImageManipulationCommand(bot),
+                new BeautifulCommand(bot), new DistractedCommand(bot), new FuseCommand(bot), new HitlerCommand(bot), new JailCommand(bot), new JokeOverHeadCommand(bot), new RainbowCommand(bot), new RipCommand(bot), new SlapCommand(bot), new SpankCommand(bot), new TriggerCommand(bot), new WantedCommand(bot),
 
                 // Business Commands
                 new BusinessCommand(bot), new WorkCommand(bot),
