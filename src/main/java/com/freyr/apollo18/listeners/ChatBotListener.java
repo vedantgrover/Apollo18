@@ -11,7 +11,6 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 
 public class ChatBotListener extends ListenerAdapter {
@@ -68,17 +67,5 @@ public class ChatBotListener extends ListenerAdapter {
 
             event.getChannel().sendMessage(chatAnswer.toString()).queue();
         }
-    }
-
-    private String makeSystemMessage(String prompt) {
-        return "{ \"role\": \"system\", \"content\": \"" + prompt + "\" }";
-    }
-
-    private String makeUserMessage(String prompt) {
-        return "{ \"role\": \"user\", \"content\": \"" + prompt + "\" }";
-    }
-
-    private String makeAssistantMessage(String prompt) {
-        return "{ \"role\": \"assistant\", \"content\": \"" + prompt + "\" }";
     }
 }
