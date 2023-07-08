@@ -1,4 +1,4 @@
-const {exec} = require('child_process');
+const { exec } = require('child_process');
 const { BlobServiceClient, StorageSharedKeyCredential } = require('@azure/storage-blob');
 const fs = require('fs');
 const Canvacord = require('canvacord');
@@ -119,9 +119,55 @@ async function generateAndUploadImage_Image(url, url2 = "https://ih1.redbubble.n
     return blobUrl;
 }
 
+// Generate an image using Canvacord, save it locally, and upload it to Azure Blob Storage
+async function generateAndUploadImage_Text(text, avatar, manipulation) {
+    let image;
+    let imageExt = ".png";
+
+    switch (manipulation) {
+        case "changemymind":
+            image = await Canvacord.Canvas.changemymind(text);
+            break;
+        case "clyde":
+            image = await Canvacord.Canvas.clyde(text)
+            break;
+        case "ohno":
+            image = await Canvacord.Canvas.ohno(text)
+            break;
+        case "opinion":
+            image = await Canvacord.Canvas.opinion(avatar, text)
+            break;
+    }
+
+    const containerClient = blobServiceClient.getContainerClient(containerName);
+    const blobName = `image_${Date.now()}${imageExt}`;
+
+    // Save the image buffer locally (optional)
+    fs.writeFileSync(blobName, image);
+
+    // Upload the image to Azure Blob Storage
+    const blockBlobClient = containerClient.getBlockBlobClient(blobName);
+    await blockBlobClient.uploadFile(blobName);
+
+    setBlobTTL(containerName, blobName, 15);
+    console.log("TTL Set successfully");
+
+    console.log('Image uploaded successfully.');
+
+    // Generate the URL for the uploaded image
+    const blobUrl = blockBlobClient.url;
+
+    console.log('Image URL:', blobUrl);
+
+    // Delete the locally saved image (optional)
+    fs.unlinkSync(blobName);
+
+    return blobUrl;
+}
 
 
-app.post("/image", async (req, res) => {
+
+app.post("/image/image", async (req, res) => {
     let reqBody = req.body;
     console.log(reqBody)
 
@@ -133,6 +179,19 @@ app.post("/image", async (req, res) => {
 
     res.json({ url: url });
 });
+
+app.post("/image/text", async (req, res) => {
+    let reqBody = req.body;
+    console.log(reqBody)
+
+    let text = reqBody.text;
+    let avatar = reqBody.avatar || undefined;
+    let manipulation = reqBody.manipulation;
+
+    let url = await generateAndUploadImage_Text(text, avatar, manipulation);
+
+    res.json({ url: url });
+})
 
 console.log("Running Shell Script")
 exec('sh ~/Scripts/restart_bot.sh', (error, stdout, stderr) => { });
