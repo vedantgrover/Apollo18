@@ -8,10 +8,15 @@ import com.freyr.apollo18.commands.casino.CrashGame;
 import com.freyr.apollo18.commands.casino.SlotMachineCommands;
 import com.freyr.apollo18.commands.dev.*;
 import com.freyr.apollo18.commands.economy.*;
-import com.freyr.apollo18.commands.fun.*;
+import com.freyr.apollo18.commands.fun.AvatarCommand;
+import com.freyr.apollo18.commands.fun.EmoteCommand;
+import com.freyr.apollo18.commands.fun.MemeCommand;
+import com.freyr.apollo18.commands.fun.UrbanDictionaryCommand;
 import com.freyr.apollo18.commands.image.*;
-import com.freyr.apollo18.commands.information.*;
-import com.freyr.apollo18.commands.leveling.LeaderboardCommand;
+import com.freyr.apollo18.commands.information.ServerInfoCommand;
+import com.freyr.apollo18.commands.information.UserInfoCommand;
+import com.freyr.apollo18.commands.information.WeatherCommand;
+import com.freyr.apollo18.commands.information.YouTubeCommand;
 import com.freyr.apollo18.commands.leveling.RankCommand;
 import com.freyr.apollo18.commands.music.*;
 import com.freyr.apollo18.commands.settings.LevelingSettings;
@@ -68,7 +73,7 @@ public class CommandManager extends ListenerAdapter {
                 new WeatherCommand(bot), new YouTubeCommand(bot), /*new TwitterCommand(bot),*/ new ServerInfoCommand(bot), new UserInfoCommand(bot),
 
                 // Fun Commands
-                new EmoteCommand(bot), new AvatarCommand(bot), new UrbanDictionaryCommand(bot),
+                new EmoteCommand(bot), new AvatarCommand(bot), new UrbanDictionaryCommand(bot), new MemeCommand(bot),
 
                 // Leveling Commands
                 new RankCommand(bot),

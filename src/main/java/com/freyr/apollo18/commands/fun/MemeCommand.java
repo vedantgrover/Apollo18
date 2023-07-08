@@ -6,9 +6,7 @@ import com.freyr.apollo18.commands.Command;
 import com.freyr.apollo18.util.embeds.EmbedColor;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.interactions.commands.OptionMapping;
-import net.dv8tion.jda.api.interactions.commands.OptionType;
-import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
@@ -21,37 +19,25 @@ public class MemeCommand extends Command {
         this.name = "meme";
         this.description = "Get a random meme from the internet";
         this.category = Category.FUN;
-
-        // Adding different subreddit options
-        OptionData optionData = new OptionData(OptionType.STRING, "type", "Specify a type of meme", false);
-        optionData.addChoice("dankmeme", "dankmeme");
-        optionData.addChoice("surreal", "surreal");
-        optionData.addChoice("me_irl", "me_irl");
-        optionData.addChoice("wholesome", "wholesome");
-        this.args.add(optionData);
     }
 
     @Override
     public void execute(SlashCommandInteractionEvent event) {
         event.deferReply().queue(); // Asking discord to wait longer
-        OptionMapping type = event.getOption("type"); // Getting the type (could be null if not given)
-        String memeAPI = "https://meme-api.herokuapp.com/gimme"; // Initializing the base string
-
-        // Adding the subreddit if it is not null
-        if (type != null) {
-            memeAPI += "/" + type.getAsString();
-        }
+        String memeAPI = "https://www.reddit.com/r/memes/random/.json"; // Initializing the base string
 
         // Getting the data
-        JSONObject data = getApiData(memeAPI);
+        JSONArray data = getApiDataArray(memeAPI);
+
+        JSONObject memeInfo = data.getJSONObject(0).getJSONObject("data").getJSONArray("children").getJSONObject(0).getJSONObject("data");
 
         // Building the embed
         EmbedBuilder memeEmbed = new EmbedBuilder();
         memeEmbed.setColor(EmbedColor.DEFAULT_COLOR);
-        memeEmbed.setTitle(data.getString("title"), data.getString("postLink"));
-        memeEmbed.setDescription("Created by: " + data.getString("author"));
-        memeEmbed.setImage(data.getString("url"));
-        memeEmbed.setFooter("👍 - " + data.getInt("ups"));
+        memeEmbed.setTitle(memeInfo.getString("title"), memeInfo.getString("url"));
+        memeEmbed.setDescription("Created by: " + memeInfo.getString("author"));
+        memeEmbed.setImage(memeInfo.getString("url"));
+        memeEmbed.setFooter("\uD83D\uDC4D " + memeInfo.getInt("ups") + "\t\uD83D\uDC4E " + memeInfo.getInt("downs"));
 
         event.getHook().sendMessageEmbeds(memeEmbed.build()).queue();
     }
