@@ -160,7 +160,10 @@ public class BusinessCommand extends Command {
                     return;
                 }
 
-                db.setJob(event.getUser().getId(), code, job);
+                if (db.getJob(code, job) == null) {
+                    event.getHook().sendMessageEmbeds(EmbedUtils.createError("That job doesn't exist in that company!")).queue();
+                    return;
+                }
 
                 event.getHook().sendMessageEmbeds(EmbedUtils.createSuccess("Job has been set to __" + db.getJob(code, job).getString("name") + "__")).queue();
                 break;
