@@ -1,4 +1,4 @@
-package com.freyr.apollo18.commands.image;
+package com.freyr.apollo18.commands.image.image;
 
 import com.freyr.apollo18.Apollo18;
 import com.freyr.apollo18.commands.Category;
@@ -11,22 +11,23 @@ import org.json.JSONObject;
 
 import java.util.Objects;
 
-public class DistractedCommand extends Command {
+public class RipCommand extends Command {
 
-    public DistractedCommand(Apollo18 bot) {
+    public RipCommand(Apollo18 bot) {
         super(bot);
 
-        this.name = "distracted";
-        this.description = "Uses the distracted meme but with your pfps";
+        this.name = "rip";
+        this.description = "Rest in piece";
         this.category = Category.IMAGE;
-        this.args.add(new OptionData(OptionType.USER, "user", "The jealous person", true));
+        this.args.add(new OptionData(OptionType.USER, "user", "The dead one"));
     }
 
     @Override
     public void execute(SlashCommandInteractionEvent event) {
         event.deferReply().queue();
 
-        JSONObject data = postApiData(ImageManipulationAPI.API_URL, ImageManipulationAPI.makeRequestBody(event.getUser().getAvatarUrl(), Objects.requireNonNull(event.getOption("user")).getAsUser().getAvatarUrl(), "distracted"));
+        String avatarUrl = (event.getOption("user") == null) ? event.getUser().getAvatarUrl() : Objects.requireNonNull(event.getOption("user")).getAsUser().getAvatarUrl();
+        JSONObject data = postApiData(ImageManipulationAPI.IMAGE_API_URL, ImageManipulationAPI.makeRequestBody(avatarUrl, null, null, "rip", "image"));
 
         event.getHook().sendMessage(data.getString("url")).queue();
     }

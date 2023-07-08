@@ -1,4 +1,4 @@
-package com.freyr.apollo18.commands.image;
+package com.freyr.apollo18.commands.image.image;
 
 import com.freyr.apollo18.Apollo18;
 import com.freyr.apollo18.commands.Category;
@@ -11,15 +11,15 @@ import org.json.JSONObject;
 
 import java.util.Objects;
 
-public class BeautifulCommand extends Command {
+public class TriggerCommand extends Command {
 
-    public BeautifulCommand(Apollo18 bot) {
+    public TriggerCommand(Apollo18 bot) {
         super(bot);
 
-        this.name = "beautiful";
-        this.description = "Gives great advice on amazing art";
+        this.name = "trigger";
+        this.description = "Applies the trigger gif over an image";
         this.category = Category.IMAGE;
-        this.args.add(new OptionData(OptionType.USER, "user", "The lucky painting"));
+        this.args.add(new OptionData(OptionType.USER, "user", "Applies the gif over a user's pfp"));
     }
 
     @Override
@@ -27,7 +27,7 @@ public class BeautifulCommand extends Command {
         event.deferReply().queue();
 
         String avatarUrl = (event.getOption("user") == null) ? event.getUser().getAvatarUrl() : Objects.requireNonNull(event.getOption("user")).getAsUser().getAvatarUrl();
-        JSONObject data = postApiData(ImageManipulationAPI.API_URL, ImageManipulationAPI.makeRequestBody(avatarUrl, null, "beautiful"));
+        JSONObject data = postApiData(ImageManipulationAPI.IMAGE_API_URL, ImageManipulationAPI.makeRequestBody(avatarUrl, null, null, "trigger", "image"));
 
         event.getHook().sendMessage(data.getString("url")).queue();
     }

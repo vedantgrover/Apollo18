@@ -1,4 +1,4 @@
-package com.freyr.apollo18.commands.image;
+package com.freyr.apollo18.commands.image.image;
 
 import com.freyr.apollo18.Apollo18;
 import com.freyr.apollo18.commands.Category;
@@ -11,15 +11,15 @@ import org.json.JSONObject;
 
 import java.util.Objects;
 
-public class RainbowCommand extends Command {
+public class JailCommand extends Command {
 
-    public RainbowCommand(Apollo18 bot) {
+    public JailCommand(Apollo18 bot) {
         super(bot);
 
-        this.name = "rainbow";
-        this.description = "Applies a rainbow over a pfp";
+        this.name = "jail";
+        this.description = "Puts a pfp behind bars";
         this.category = Category.IMAGE;
-        this.args.add(new OptionData(OptionType.USER, "user", "The pfp getting the rainbow treatment"));
+        this.args.add(new OptionData(OptionType.USER, "user", "The person going behind bars"));
     }
 
     @Override
@@ -27,7 +27,7 @@ public class RainbowCommand extends Command {
         event.deferReply().queue();
 
         String avatarUrl = (event.getOption("user") == null) ? event.getUser().getAvatarUrl() : Objects.requireNonNull(event.getOption("user")).getAsUser().getAvatarUrl();
-        JSONObject data = postApiData(ImageManipulationAPI.API_URL, ImageManipulationAPI.makeRequestBody(avatarUrl, null, "rainbow"));
+        JSONObject data = postApiData(ImageManipulationAPI.IMAGE_API_URL, ImageManipulationAPI.makeRequestBody(avatarUrl, null, null, "jail", "image"));
 
         event.getHook().sendMessage(data.getString("url")).queue();
     }

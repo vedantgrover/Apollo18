@@ -1,4 +1,4 @@
-package com.freyr.apollo18.commands.image;
+package com.freyr.apollo18.commands.image.text;
 
 import com.freyr.apollo18.Apollo18;
 import com.freyr.apollo18.commands.Category;
@@ -11,23 +11,23 @@ import org.json.JSONObject;
 
 import java.util.Objects;
 
-public class HitlerCommand extends Command {
+public class OpinionCommand extends Command {
 
-    public HitlerCommand(Apollo18 bot) {
+    public OpinionCommand(Apollo18 bot) {
         super(bot);
 
-        this.name = "hitler";
-        this.description = "Shows who is worse than hitler";
+        this.name = "opinion";
+        this.description = "Creates a message as Clyde";
         this.category = Category.IMAGE;
-        this.args.add(new OptionData(OptionType.USER, "user", "Person who is worse than hitler"));
+        this.args.add(new OptionData(OptionType.STRING, "text", "The text you want clyde to read", true));
     }
 
     @Override
     public void execute(SlashCommandInteractionEvent event) {
         event.deferReply().queue();
 
-        String avatarUrl = (event.getOption("user") == null) ? event.getUser().getAvatarUrl() : Objects.requireNonNull(event.getOption("user")).getAsUser().getAvatarUrl();
-        JSONObject data = postApiData(ImageManipulationAPI.API_URL, ImageManipulationAPI.makeRequestBody(avatarUrl, null, "hitler"));
+        String text = Objects.requireNonNull(event.getOption("text")).getAsString();
+        JSONObject data = postApiData(ImageManipulationAPI.TEXT_IMAGE_API_URL, ImageManipulationAPI.makeRequestBody(event.getUser().getAvatarUrl(), null, text, "opinion", "text"));
 
         event.getHook().sendMessage(data.getString("url")).queue();
     }

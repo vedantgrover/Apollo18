@@ -1,4 +1,4 @@
-package com.freyr.apollo18.commands.image;
+package com.freyr.apollo18.commands.image.text;
 
 import com.freyr.apollo18.Apollo18;
 import com.freyr.apollo18.commands.Category;
@@ -11,22 +11,23 @@ import org.json.JSONObject;
 
 import java.util.Objects;
 
-public class FuseCommand extends Command {
+public class ClydeCommand extends Command {
 
-    public FuseCommand(Apollo18 bot) {
+    public ClydeCommand(Apollo18 bot) {
         super(bot);
 
-        this.name = "fuse";
-        this.description = "Lets you fuse your pfp with someone else";
+        this.name = "clyde";
+        this.description = "Creates a message as Clyde";
         this.category = Category.IMAGE;
-        this.args.add(new OptionData(OptionType.USER, "user", "The other pfp", true));
+        this.args.add(new OptionData(OptionType.STRING, "text", "The text you want clyde to read", true));
     }
 
     @Override
     public void execute(SlashCommandInteractionEvent event) {
         event.deferReply().queue();
 
-        JSONObject data = postApiData(ImageManipulationAPI.API_URL, ImageManipulationAPI.makeRequestBody(event.getUser().getAvatarUrl(), Objects.requireNonNull(event.getOption("user")).getAsUser().getAvatarUrl(), "fuse"));
+        String text = Objects.requireNonNull(event.getOption("text")).getAsString();
+        JSONObject data = postApiData(ImageManipulationAPI.TEXT_IMAGE_API_URL, ImageManipulationAPI.makeRequestBody(null, null, text, "clyde", "text"));
 
         event.getHook().sendMessage(data.getString("url")).queue();
     }

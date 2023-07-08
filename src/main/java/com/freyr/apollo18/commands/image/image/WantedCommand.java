@@ -1,4 +1,4 @@
-package com.freyr.apollo18.commands.image;
+package com.freyr.apollo18.commands.image.image;
 
 import com.freyr.apollo18.Apollo18;
 import com.freyr.apollo18.commands.Category;
@@ -11,15 +11,15 @@ import org.json.JSONObject;
 
 import java.util.Objects;
 
-public class JokeOverHeadCommand extends Command {
+public class WantedCommand extends Command {
 
-    public JokeOverHeadCommand(Apollo18 bot) {
+    public WantedCommand(Apollo18 bot) {
         super(bot);
 
-        this.name = "joke-over-head";
-        this.description = "Sends a joke over someone's head";
+        this.name = "wanted";
+        this.description = "Makes a wanted poster";
         this.category = Category.IMAGE;
-        this.args.add(new OptionData(OptionType.USER, "user", "The joker (geddit?)"));
+        this.args.add(new OptionData(OptionType.USER, "user", "The wanted person"));
     }
 
     @Override
@@ -27,7 +27,7 @@ public class JokeOverHeadCommand extends Command {
         event.deferReply().queue();
 
         String avatarUrl = (event.getOption("user") == null) ? event.getUser().getAvatarUrl() : Objects.requireNonNull(event.getOption("user")).getAsUser().getAvatarUrl();
-        JSONObject data = postApiData(ImageManipulationAPI.API_URL, ImageManipulationAPI.makeRequestBody(avatarUrl, null, "jokeoverhead"));
+        JSONObject data = postApiData(ImageManipulationAPI.IMAGE_API_URL, ImageManipulationAPI.makeRequestBody(avatarUrl, null, null, "wanted", "image"));
 
         event.getHook().sendMessage(data.getString("url")).queue();
     }

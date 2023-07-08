@@ -1,4 +1,4 @@
-package com.freyr.apollo18.commands.image;
+package com.freyr.apollo18.commands.image.image;
 
 import com.freyr.apollo18.Apollo18;
 import com.freyr.apollo18.commands.Category;
@@ -11,15 +11,15 @@ import org.json.JSONObject;
 
 import java.util.Objects;
 
-public class WantedCommand extends Command {
+public class BeautifulCommand extends Command {
 
-    public WantedCommand(Apollo18 bot) {
+    public BeautifulCommand(Apollo18 bot) {
         super(bot);
 
-        this.name = "wanted";
-        this.description = "Makes a wanted poster";
+        this.name = "beautiful";
+        this.description = "Gives great advice on amazing art";
         this.category = Category.IMAGE;
-        this.args.add(new OptionData(OptionType.USER, "user", "The wanted person"));
+        this.args.add(new OptionData(OptionType.USER, "user", "The lucky painting"));
     }
 
     @Override
@@ -27,7 +27,7 @@ public class WantedCommand extends Command {
         event.deferReply().queue();
 
         String avatarUrl = (event.getOption("user") == null) ? event.getUser().getAvatarUrl() : Objects.requireNonNull(event.getOption("user")).getAsUser().getAvatarUrl();
-        JSONObject data = postApiData(ImageManipulationAPI.API_URL, ImageManipulationAPI.makeRequestBody(avatarUrl, null, "wanted"));
+        JSONObject data = postApiData(ImageManipulationAPI.IMAGE_API_URL, ImageManipulationAPI.makeRequestBody(avatarUrl, null, null, "beautiful", "image"));
 
         event.getHook().sendMessage(data.getString("url")).queue();
     }

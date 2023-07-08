@@ -1,4 +1,4 @@
-package com.freyr.apollo18.commands.image;
+package com.freyr.apollo18.commands.image.text;
 
 import com.freyr.apollo18.Apollo18;
 import com.freyr.apollo18.commands.Category;
@@ -11,22 +11,23 @@ import org.json.JSONObject;
 
 import java.util.Objects;
 
-public class SlapCommand extends Command {
+public class OhNoCommand extends Command {
 
-    public SlapCommand(Apollo18 bot) {
+    public OhNoCommand(Apollo18 bot) {
         super(bot);
 
-        this.name = "slap";
-        this.description = "Lets you slap someone";
+        this.name = "oh-no";
+        this.description = "Adds stupid text to a cartoon";
         this.category = Category.IMAGE;
-        this.args.add(new OptionData(OptionType.USER, "user", "The one getting slapped", true));
+        this.args.add(new OptionData(OptionType.STRING, "text", "The stupid text", true));
     }
 
     @Override
     public void execute(SlashCommandInteractionEvent event) {
         event.deferReply().queue();
 
-        JSONObject data = postApiData(ImageManipulationAPI.API_URL, ImageManipulationAPI.makeRequestBody(event.getUser().getAvatarUrl(), Objects.requireNonNull(event.getOption("user")).getAsUser().getAvatarUrl(), "slap"));
+        String text = Objects.requireNonNull(event.getOption("text")).getAsString();
+        JSONObject data = postApiData(ImageManipulationAPI.TEXT_IMAGE_API_URL, ImageManipulationAPI.makeRequestBody(null, null, text, "ohno", "text"));
 
         event.getHook().sendMessage(data.getString("url")).queue();
     }
