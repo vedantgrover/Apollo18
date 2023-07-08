@@ -36,10 +36,7 @@ import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -159,8 +156,9 @@ public class CommandManager extends ListenerAdapter {
                 event.replyEmbeds(EmbedUtils.createError("This is a **developer only** command")).setEphemeral(true).queue();
                 return;
             }
-            Role botRole = event.getGuild().getBotRole();
+            Role botRole = Objects.requireNonNull(event.getGuild()).getBotRole();
             if (cmd.botPermission != null) {
+                assert botRole != null;
                 if (!botRole.hasPermission(cmd.botPermission) && !botRole.hasPermission(Permission.ADMINISTRATOR)) {
                     String text = "I need the `" + cmd.botPermission.getName().toUpperCase() + "` permission to execute that command.";
                     event.replyEmbeds(EmbedUtils.createError(text)).setEphemeral(true).queue();
