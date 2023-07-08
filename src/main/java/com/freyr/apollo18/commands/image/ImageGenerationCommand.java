@@ -38,7 +38,7 @@ public class ImageGenerationCommand extends Command {
         JSONObject requestBodyJSON = new JSONObject();
         requestBodyJSON.put("prompt", Objects.requireNonNull(event.getOption("description")).getAsString());
         requestBodyJSON.put("n", numberOfImages);
-        requestBodyJSON.put("size", "512x512");
+        requestBodyJSON.put("size", "256x256");
 
         String requestBody = requestBodyJSON.toString();
 
