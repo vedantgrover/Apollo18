@@ -6,14 +6,10 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import okhttp3.*;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
-import javax.print.attribute.standard.Media;
 import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,14 +57,18 @@ public abstract class Command {
      * @return All the data given through that URL
      */
     public JSONObject getApiData(String apiURL) {
+        OkHttpClient client = new OkHttpClient();
+
+        Request request = new Request.Builder().url(apiURL).build();
+
         try {
-            HttpClient client = HttpClient.newHttpClient();
-            HttpRequest request = HttpRequest.newBuilder().uri(URI.create(apiURL)).build();
+            Response response = client.newCall(request).execute();
 
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            String responseBody = response.body().string();
 
-            return new JSONObject(response.body());
-        } catch (IOException | InterruptedException e) {
+            response.close();
+            return new JSONObject(responseBody);
+        } catch (IOException e) {
             e.printStackTrace();
             return null;
         }
@@ -78,6 +78,30 @@ public abstract class Command {
      * This command uses an API URL to grab data and return it for use
      *
      * @param apiURL The api url you want to use
+     * @return All the data given through that URL
+     */
+    public JSONArray getApiDataArray(String apiURL) {
+        OkHttpClient client = new OkHttpClient();
+
+        Request request = new Request.Builder().url(apiURL).build();
+
+        try {
+            Response response = client.newCall(request).execute();
+
+            String responseBody = response.body().string();
+
+            response.close();
+            return new JSONArray(responseBody);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * This command uses an API URL to grab data and return it for use
+     *
+     * @param apiURL            The api url you want to use
      * @param apiAuthentication The authentication key (Bearer + [key])
      * @return All the data given through that URL
      */
@@ -85,10 +109,7 @@ public abstract class Command {
 
         OkHttpClient okHttpClient = new OkHttpClient();
 
-        Request  request = new Request.Builder()
-                .url(apiURL)
-                .addHeader("Authorization", "Bearer " + apiAuthentication)
-                .build();
+        Request request = new Request.Builder().url(apiURL).addHeader("Authorization", "Bearer " + apiAuthentication).build();
 
         try (Response response = okHttpClient.newCall(request).execute()) {
             String responseBody = response.body().string();
@@ -103,8 +124,9 @@ public abstract class Command {
 
     /**
      * Sends a post request to an API without authorization
+     *
      * @param apiUrl The URL endpoint of the API
-     * @param json The request body
+     * @param json   The request body
      * @return A JSONObject with the response body
      */
     public JSONObject postApiData(String apiUrl, String json) {
@@ -114,10 +136,7 @@ public abstract class Command {
 
         RequestBody body = RequestBody.create(json, mediaType);
 
-        Request request = new Request.Builder()
-                .url(apiUrl)
-                .post(body)
-                .build();
+        Request request = new Request.Builder().url(apiUrl).post(body).build();
 
         try (Response response = okHttpClient.newCall(request).execute()) {
             String responseBody = response.body().string();
