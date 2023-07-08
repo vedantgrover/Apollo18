@@ -16,7 +16,6 @@ import com.freyr.apollo18.commands.image.image.*;
 import com.freyr.apollo18.commands.image.text.ChangeMyMindCommand;
 import com.freyr.apollo18.commands.image.text.ClydeCommand;
 import com.freyr.apollo18.commands.image.text.OhNoCommand;
-import com.freyr.apollo18.commands.image.text.OpinionCommand;
 import com.freyr.apollo18.commands.information.ServerInfoCommand;
 import com.freyr.apollo18.commands.information.UserInfoCommand;
 import com.freyr.apollo18.commands.information.WeatherCommand;
@@ -86,8 +85,8 @@ public class CommandManager extends ListenerAdapter {
                 new CoinFlipGame(bot), new SlotMachineCommands(bot), new CrashGame(bot),
 
                 // Image Commands
-                new BeautifulCommand(bot), new ChangeMyMindCommand(bot), new ClydeCommand(bot), new DistractedCommand(bot), new FuseCommand(bot), new HitlerCommand(bot), new JailCommand(bot), new JokeOverHeadCommand(bot), new OhNoCommand(bot), new OpinionCommand(bot),
-        new RainbowCommand(bot), new RipCommand(bot), new SlapCommand(bot), new SpankCommand(bot), new TriggerCommand(bot), new WantedCommand(bot),
+                new BeautifulCommand(bot), new ChangeMyMindCommand(bot), new ClydeCommand(bot), new DistractedCommand(bot), new FuseCommand(bot), new HitlerCommand(bot), new JailCommand(bot), new JokeOverHeadCommand(bot), new OhNoCommand(bot),
+                new RainbowCommand(bot), new RipCommand(bot), new SlapCommand(bot), new SpankCommand(bot), new TriggerCommand(bot), new WantedCommand(bot),
 
                 // Business Commands
                 new BusinessCommand(bot), new WorkCommand(bot),
