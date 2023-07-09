@@ -16,10 +16,7 @@ import com.freyr.apollo18.commands.image.image.*;
 import com.freyr.apollo18.commands.image.text.ChangeMyMindCommand;
 import com.freyr.apollo18.commands.image.text.ClydeCommand;
 import com.freyr.apollo18.commands.image.text.OhNoCommand;
-import com.freyr.apollo18.commands.information.ServerInfoCommand;
-import com.freyr.apollo18.commands.information.UserInfoCommand;
-import com.freyr.apollo18.commands.information.WeatherCommand;
-import com.freyr.apollo18.commands.information.YouTubeCommand;
+import com.freyr.apollo18.commands.information.*;
 import com.freyr.apollo18.commands.leveling.RankCommand;
 import com.freyr.apollo18.commands.music.*;
 import com.freyr.apollo18.commands.settings.LevelingSettings;
@@ -42,6 +39,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.zip.DeflaterInputStream;
 
 /**
  * This class will handle all the commands that I make and add them into Discord.
@@ -70,7 +68,7 @@ public class CommandManager extends ListenerAdapter {
                 // Music Commands
                 new PlayCommand(bot), new StopCommand(bot), new SkipCommand(bot), new NowPlayingCommand(bot), new QueueCommand(bot), new LoopCommand(bot), new VolumeCommand(bot), new PauseCommand(bot), new ResumeCommand(bot), new PlaylistCommand(bot),
                 // Information Commands
-                new WeatherCommand(bot), new YouTubeCommand(bot), new ServerInfoCommand(bot), new UserInfoCommand(bot),
+                new WeatherCommand(bot), new YouTubeCommand(bot), new ServerInfoCommand(bot), new UserInfoCommand(bot), new DictionaryCommand(bot),
 
                 // Fun Commands
                 new EmoteCommand(bot), new AvatarCommand(bot), new UrbanDictionaryCommand(bot), new MemeCommand(bot),
