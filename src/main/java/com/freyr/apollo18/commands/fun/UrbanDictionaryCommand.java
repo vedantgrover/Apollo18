@@ -3,6 +3,7 @@ package com.freyr.apollo18.commands.fun;
 import com.freyr.apollo18.Apollo18;
 import com.freyr.apollo18.commands.Category;
 import com.freyr.apollo18.commands.Command;
+import com.freyr.apollo18.util.embeds.EmbedColor;
 import com.freyr.apollo18.util.embeds.EmbedUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -34,6 +35,7 @@ public class UrbanDictionaryCommand extends Command {
             EmbedBuilder embed = new EmbedBuilder();
             embed.setTitle(data.getString("word"), data.getString("permalink"));
             embed.setDescription(data.getString("definition"));
+            embed.setColor(EmbedColor.DEFAULT_COLOR);
             embed.addField("Example", data.getString("example"), false);
             embed.setFooter("👍 " + data.getInt("thumbs_up") + " || " + data.getString("author") + " || 👎 " + data.getInt("thumbs_down"));
 
