@@ -59,12 +59,6 @@
             <artifactId>mongo-java-driver</artifactId>
             <version>3.12.12</version>
         </dependency>
-        <!-- https://github.com/TheoKanning/openai-java -->
-        <dependency>
-            <groupId>com.theokanning.openai-gpt3-java</groupId>
-            <artifactId>service</artifactId>
-            <version>0.11.1</version>
-        </dependency>
         <!-- JFreeChart -->
         <dependency>
             <groupId>org.jfree</groupId>
@@ -84,6 +78,11 @@
             <version>5.0.0-alpha.11</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.theokanning.openai-gpt3-java</groupId>
+            <artifactId>service</artifactId>
+            <version>0.12.0</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
