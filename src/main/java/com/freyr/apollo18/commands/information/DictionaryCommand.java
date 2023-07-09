@@ -4,6 +4,7 @@ import com.freyr.apollo18.Apollo18;
 import com.freyr.apollo18.commands.Category;
 import com.freyr.apollo18.commands.Command;
 import com.freyr.apollo18.util.embeds.EmbedColor;
+import com.freyr.apollo18.util.embeds.EmbedUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -29,6 +30,10 @@ public class DictionaryCommand extends Command {
 
         JSONArray data = getApiDataArray("https://www.dictionaryapi.com/api/v3/references/collegiate/json/" + requestedWord + "?key=" + bot.getConfig().get("DICTIONARYAPI", System.getenv("DICTIONARYAPI")));
 
+        if (data.length() <= 0) {
+            event.getHook().sendMessageEmbeds(EmbedUtils.createError("That word doesn't exist")).queue();
+            return;
+        }
 
         String word = data.getJSONObject(0).getJSONObject("meta").getString("id");
         String pronunciation = data.getJSONObject(0).getJSONObject("hwi").getString("hw").replace("*", "•");
