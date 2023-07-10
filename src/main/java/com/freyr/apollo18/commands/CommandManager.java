@@ -68,7 +68,7 @@ public class CommandManager extends ListenerAdapter {
                 // Music Commands
                 new PlayCommand(bot), new StopCommand(bot), new SkipCommand(bot), new NowPlayingCommand(bot), new QueueCommand(bot), new LoopCommand(bot), new VolumeCommand(bot), new PauseCommand(bot), new ResumeCommand(bot), new PlaylistCommand(bot),
                 // Information Commands
-                new WeatherCommand(bot), new YouTubeCommand(bot), new ServerInfoCommand(bot), new UserInfoCommand(bot),
+                new WeatherCommand(bot), new YouTubeCommand(bot), new ServerInfoCommand(bot), new UserInfoCommand(bot), new DictionaryCommand(bot),
 
                 // Fun Commands
                 new EmoteCommand(bot), new AvatarCommand(bot), new UrbanDictionaryCommand(bot), new MemeCommand(bot),
