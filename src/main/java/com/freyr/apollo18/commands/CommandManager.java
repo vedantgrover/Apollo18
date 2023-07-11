@@ -12,6 +12,7 @@ import com.freyr.apollo18.commands.fun.AvatarCommand;
 import com.freyr.apollo18.commands.fun.EmoteCommand;
 import com.freyr.apollo18.commands.fun.MemeCommand;
 import com.freyr.apollo18.commands.fun.UrbanDictionaryCommand;
+import com.freyr.apollo18.commands.image.GenerateCommand;
 import com.freyr.apollo18.commands.image.image.*;
 import com.freyr.apollo18.commands.image.text.ChangeMyMindCommand;
 import com.freyr.apollo18.commands.image.text.ClydeCommand;
@@ -39,7 +40,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import java.util.zip.DeflaterInputStream;
 
 /**
  * This class will handle all the commands that I make and add them into Discord.
@@ -84,7 +84,7 @@ public class CommandManager extends ListenerAdapter {
 
                 // Image Commands
                 new BeautifulCommand(bot), new ChangeMyMindCommand(bot), new ClydeCommand(bot), new DistractedCommand(bot), new FuseCommand(bot), new HitlerCommand(bot), new JailCommand(bot), new JokeOverHeadCommand(bot), new OhNoCommand(bot),
-                new RainbowCommand(bot), new RipCommand(bot), new SlapCommand(bot), new SpankCommand(bot), new TriggerCommand(bot), new WantedCommand(bot),
+                new RainbowCommand(bot), new RipCommand(bot), new SlapCommand(bot), new SpankCommand(bot), new TriggerCommand(bot), new WantedCommand(bot), new GenerateCommand(bot),
 
                 // Business Commands
                 new BusinessCommand(bot), new WorkCommand(bot),
