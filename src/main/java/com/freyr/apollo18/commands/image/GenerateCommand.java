@@ -23,6 +23,7 @@ public class GenerateCommand extends Command {
         this.description = "Uses the DALL-E to generate AI art";
         this.category = Category.IMAGE;
         this.args.add(new OptionData(OptionType.STRING, "prompt", "The description of the image", true));
+        this.cooldown = 5 * 1000;
     }
 
     @Override
