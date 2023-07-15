@@ -66,6 +66,7 @@ public class Database {
         Document levelingData = new Document("onOff", true).append("channel", null).append("levelingMessage", "Congratulations [member], you have leveled up to [level]!");
         Document greetingData = new Document("onOff", false).append("welcomeChannel", null).append("leaveChannel", null).append("memberCountChannel", null).append("welcomeMessage", "[member] has joined [server]!").append("leaveMessage", "[member] has left [server].");
 
+
         guildData.insertOne(new Document("guildID", guild.getId()).append("leveling", levelingData).append("greetings", greetingData));
     }
 
@@ -518,9 +519,9 @@ public class Database {
         }
     }
 
-    public boolean removeSong(String userId, String playlist, String songName) {
+    public void removeSong(String userId, String playlist, String songName) {
         if (checkIfSongExists(userId, playlist, songName)) {
-            return false;
+            return;
         }
 
         Bson filter = Filters.and(Filters.eq("userID", userId));
@@ -532,10 +533,8 @@ public class Database {
             userData.updateOne(filter, update, options);
         } catch (MongoException me) {
             me.printStackTrace();
-            return false;
         }
 
-        return true;
     }
 
     public void moveSong(String userId, String playlist, String songName, int newPos) {
