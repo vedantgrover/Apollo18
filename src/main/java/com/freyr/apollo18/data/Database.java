@@ -406,8 +406,18 @@ public class Database {
         return userData.find(new Document("userID", userId)).first().get("economy", Document.class).getInteger("bank");
     }
 
-    public int getNetWorth(String userId) {
-        return getBalance(userId) + getBank(userId);
+    public int getNetWorth(String userID) {
+        int balance = getBalance(userID);
+        int bank = getBank(userID);
+        int totalStockPrice = 0;
+
+        List<Document> businesses = getBusinesses();
+
+        for (Document business : businesses) {
+            totalStockPrice += getTotalStocks(userID, business.getString("stockCode")) * business.get("stock", Document.class).getInteger("currentPrice");
+        }
+
+        return balance + bank + totalStockPrice;
     }
 
     public void addBytes(String userId, int amount) {
