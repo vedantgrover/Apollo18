@@ -10,7 +10,6 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-import okhttp3.OkHttpClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -22,11 +21,8 @@ import java.net.http.HttpResponse;
 
 public class StockCommand extends Command {
 
-    private final OkHttpClient client;
-
     public StockCommand(Apollo18 bot) {
         super(bot);
-        this.client = new OkHttpClient();
 
         this.name = "stock";
         this.description = "Search information about any stock in the market.";
