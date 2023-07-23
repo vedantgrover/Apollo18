@@ -10,7 +10,6 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-import okhttp3.OkHttpClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -19,14 +18,12 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.Objects;
 
 public class StockCommand extends Command {
 
-    private final OkHttpClient client;
-
     public StockCommand(Apollo18 bot) {
         super(bot);
-        this.client = new OkHttpClient();
 
         this.name = "stock";
         this.description = "Search information about any stock in the market.";
@@ -38,11 +35,12 @@ public class StockCommand extends Command {
     public void execute(SlashCommandInteractionEvent event) {
         event.deferReply().queue();
 
-        String code = event.getOption("code").getAsString().toUpperCase();
+        String code = Objects.requireNonNull(event.getOption("code")).getAsString().toUpperCase();
 
         JSONObject companyInfo = getCompanyInformation(code);
         JSONObject priceInfo = getPriceInformation(code);
 
+        assert priceInfo != null;
         if (priceInfo.isEmpty() || companyInfo.isEmpty()) {
             event.getHook().sendMessageEmbeds(EmbedUtils.createError("Could not find `" + code + "`")).queue();
             return;
@@ -74,7 +72,6 @@ public class StockCommand extends Command {
         } catch (JSONException e) {
             return new JSONObject("{}");
         } catch (IOException | InterruptedException e) {
-            System.err.println(e);
             return null;
         }
     }
