@@ -1,9 +1,15 @@
 package com.freyr.apollo18.data;
 
 import com.freyr.apollo18.Apollo18;
+import com.freyr.apollo18.data.codec.JobCodec;
+import com.freyr.apollo18.data.codec.StockCodec;
+import com.freyr.apollo18.data.provider.BusinessCodecProvider;
+import com.freyr.apollo18.data.records.business.Business;
+import com.freyr.apollo18.data.records.business.Job;
 import com.freyr.apollo18.handlers.BusinessHandler;
 import com.freyr.apollo18.util.textFormatters.RandomString;
 import com.mongodb.MongoClient;
+import com.mongodb.MongoClientSettings;
 import com.mongodb.MongoClientURI;
 import com.mongodb.MongoException;
 import com.mongodb.client.AggregateIterable;
@@ -16,6 +22,9 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 import org.bson.Document;
+import org.bson.codecs.configuration.CodecRegistries;
+import org.bson.codecs.configuration.CodecRegistry;
+import org.bson.codecs.pojo.PojoCodecProvider;
 import org.bson.conversions.Bson;
 import org.json.JSONObject;
 
@@ -28,6 +37,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -42,7 +52,7 @@ public class Database {
 
     private final MongoCollection<Document> guildData; // The collection of documents for guilds
     private final MongoCollection<Document> userData; // The collection of documents for users
-    private final MongoCollection<Document> businessData;
+    private final MongoCollection<Business> businessData;
     private final MongoCollection<Document> transactionData;
 
     /**
@@ -53,11 +63,18 @@ public class Database {
     public Database(String srv, Apollo18 bot) {
         this.bot = bot;
         MongoClient mongoClient = new MongoClient(new MongoClientURI(srv));
-        MongoDatabase database = mongoClient.getDatabase("apollo");
+
+        CodecRegistry codecRegistry = CodecRegistries.fromRegistries(
+                CodecRegistries.fromCodecs(new JobCodec(), new StockCodec()),
+                CodecRegistries.fromProviders(new BusinessCodecProvider()),
+                MongoClientSettings.getDefaultCodecRegistry()
+        );
+
+        MongoDatabase database = mongoClient.getDatabase("apollo").withCodecRegistry(codecRegistry);
 
         guildData = database.getCollection("guildData");
         userData = database.getCollection("userData");
-        businessData = database.getCollection("businesses");
+        businessData = database.getCollection("businesses", Business.class);
         transactionData = database.getCollection("transactions");
     }
 
@@ -411,10 +428,10 @@ public class Database {
         int bank = getBank(userID);
         int totalStockPrice = 0;
 
-        List<Document> businesses = getBusinesses();
+        List<Business> businesses = getBusinesses();
 
-        for (Document business : businesses) {
-            totalStockPrice += getTotalStocks(userID, business.getString("stockCode")) * business.get("stock", Document.class).getInteger("currentPrice");
+        for (Business business : businesses) {
+            totalStockPrice += getTotalStocks(userID, business.stockCode()) * business.stock().currentPrice();
         }
 
         return balance + bank + totalStockPrice;
@@ -606,29 +623,29 @@ public class Database {
             Document stockData = new Document("ticker", ticker).append("currentPrice", currentPrice).append("previousPrice", previousPrice).append("change", change).append("arrowEmoji", BusinessHandler.getArrow(change));
             Document document = new Document("name", businessName).append("stockCode", stockCode).append("owner", "default").append("description", businessDescription).append("logo", (logo == null) ? "https://library.kissclipart.com/20181224/fww/kissclipart-free-vector-building-clipart-computer-icons-66d576fc7c1dd7ff.png" : logo).append("public", true).append("jobs", new ArrayList<Document>()).append("stock", stockData);
 
-            businessData.insertOne(document);
+            businessData.insertOne(new Business(document));
         } catch (Exception e) {
             System.err.println(e);
         }
     }
 
-    public Document getBusiness(String stockCode) {
+    public Business getBusiness(String stockCode) {
         return businessData.find(new Document("stockCode", stockCode)).first();
     }
 
-    public List<Document> getBusinesses() {
-        List<Document> result = new ArrayList<>();
+    public List<Business> getBusinesses() {
+        List<Business> result = new ArrayList<>();
 
-        FindIterable<Document> businesses = businessData.find(new Document("public", true));
-        for (Document business : businesses) {
+        FindIterable<Business> businesses = businessData.find(new Document("public", true));
+        for (Business business : businesses) {
             result.add(business);
         }
 
         return result;
     }
 
-    public void addStockToUser(Document business, String userId, int quantity) {
-        Document userBusiness = new Document("_id", new RandomString(12).nextString()).append("stockCode", business.getString("stockCode")).append("purchasePrice", business.get("stock", Document.class).getInteger("currentPrice")).append("quantity", quantity);
+    public void addStockToUser(Business business, String userId, int quantity) {
+        Document userBusiness = new Document("_id", new RandomString(12).nextString()).append("stockCode", business.stockCode()).append("purchasePrice", business.stock().currentPrice()).append("quantity", quantity);
         Document query = new Document("userID", userId);
 
         Bson updates = Updates.push("economy.stocks", userBusiness);
@@ -638,15 +655,15 @@ public class Database {
         int oldBal = getBalance(userId);
 
         userData.updateOne(query, updates, options);
-        removeBytes(userId, business.get("stock", Document.class).getInteger("currentPrice") * quantity);
+        removeBytes(userId, business.stock().currentPrice() * quantity);
 
         createTransaction(userId, "Business / Stock / Buy", oldBal, getBalance(userId));
     }
 
     public void removeStockFromUser(String userId, String stockCode, int quantity) {
         List<Document> actions = getPurchasedStocks(userId, stockCode, quantity);
-        Document business = getBusiness(stockCode);
-        int currentPrice = business.get("stock", Document.class).getInteger("currentPrice");
+        Business business = getBusiness(stockCode);
+        int currentPrice = business.stock().currentPrice();
 
         int totalPrice = quantity * currentPrice;
 
@@ -712,27 +729,28 @@ public class Database {
     }
 
     public void updateStocks() {
-        FindIterable<Document> businesses = businessData.find();
+        FindIterable<Business> businesses = businessData.find();
 
-        for (Document business : businesses) {
+        for (Business business : businesses) {
             try {
-                HttpRequest request = HttpRequest.newBuilder().uri(URI.create("https://realstonks.p.rapidapi.com/" + business.get("stock", Document.class).getString("ticker"))).header("X-RapidAPI-Key", bot.getConfig().get("RAPIDAPI_KEY", System.getenv("RAPIDAPI_KEY"))).header("X-RapidAPI-Host", "realstonks.p.rapidapi.com").method("GET", HttpRequest.BodyPublishers.noBody()).build();
+                Document query = new Document("stockCode", business.stockCode());
+                HttpRequest request = HttpRequest.newBuilder().uri(URI.create("https://realstonks.p.rapidapi.com/" + business.stock().ticker())).header("X-RapidAPI-Key", bot.getConfig().get("RAPIDAPI_KEY", System.getenv("RAPIDAPI_KEY"))).header("X-RapidAPI-Host", "realstonks.p.rapidapi.com").method("GET", HttpRequest.BodyPublishers.noBody()).build();
                 HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
                 JSONObject data = new JSONObject(response.body());
 
                 int currentPrice = (int) Math.round(data.getDouble("price") * 0.23);
-                int previousPrice = business.get("stock", Document.class).getInteger("currentPrice");
+                int previousPrice = business.stock().currentPrice();
                 int change = currentPrice - previousPrice;
 
                 Bson updates = Updates.combine(Updates.set("stock.currentPrice", currentPrice), Updates.set("stock.previousPrice", previousPrice), Updates.set("stock.change", change), Updates.set("stock.arrowEmoji", BusinessHandler.getArrow(change)));
 
-                businessData.updateOne(business, updates, new UpdateOptions().upsert(true));
+                    businessData.updateOne(query, updates, new UpdateOptions().upsert(true));
                 createTransaction("stockUpdate", "Business / Stock / Update", previousPrice, currentPrice);
 
-                StockData stockData = new StockData(bot, business.get("stock", Document.class).getString("ticker"));
+                StockData stockData = new StockData(bot, business.stock().ticker());
                 stockData.displayLineChart(stockData.parseStockData(stockData.retrieveStockData()));
 
-                System.out.println("Updating " + business.get("stock", Document.class).getString("ticker") + "; Old Price: " + previousPrice + "; Current Price: " + currentPrice + "; Change: " + change + "\nAll Details: " + data);
+                System.out.println("Updating " + business.stock().ticker() + "; Old Price: " + previousPrice + "; Current Price: " + currentPrice + "; Change: " + change + "\nAll Details: " + data);
 
                 TimeUnit.SECONDS.sleep(5);
             } catch (Exception e) {
@@ -753,17 +771,17 @@ public class Database {
         businessData.updateOne(query, updates, new UpdateOptions().upsert(true));
     }
 
-    public List<Document> getJobs(String code) {
-        return businessData.find(new Document("stockCode", code)).first().getList("jobs", Document.class);
+    public List<Job> getJobs(String code) {
+        return businessData.find(new Document("stockCode", code)).first().jobs();
     }
 
-    public Document getJob(String code, String jobName) {
-        Document business = businessData.find(new Document("stockCode", code)).first();
+    public Job getJob(String code, String jobName) {
+        Business business = getBusiness(code);
         if (business == null) return null;
-        Document job = null;
-        for (Document doc : business.getList("jobs", Document.class)) {
-            if (doc.getString("name").equalsIgnoreCase(jobName)) {
-                job = doc;
+        Job job = null;
+        for (Job currentJob : business.jobs()) {
+            if (currentJob.name().equalsIgnoreCase(jobName)) {
+                job = currentJob;
                 break;
             }
         }
@@ -773,10 +791,10 @@ public class Database {
 
     public boolean work(String userId) {
         Document userEconomyDoc = userData.find(new Document("userID", userId)).first().get("economy", Document.class);
-        Document userJob = getJob(userEconomyDoc.get("job", Document.class).getString("business"), userEconomyDoc.get("job", Document.class).getString("job"));
+        Job userJob = getJob(userEconomyDoc.get("job", Document.class).getString("business"), userEconomyDoc.get("job", Document.class).getString("job"));
         if (userJob == null) return false;
 
-        addBytes(userId, userJob.getInteger("salary"));
+        addBytes(userId, userJob.salary());
         Document query = new Document("userID", userId);
 
         if (userEconomyDoc.get("job", Document.class).getInteger("daysMissed") == null) {
@@ -792,16 +810,16 @@ public class Database {
             Bson updates = Updates.combine(Updates.inc("economy.job.daysWorked", 1), Updates.set("economy.job.worked", true), Updates.set("economy.job.daysMissed", 0));
 
             userData.updateOne(query, updates, new UpdateOptions().upsert(true));
-            createTransaction(userId, "Job / Work", getBalance(userId) - userJob.getInteger("salary"), getBalance(userId));
+            createTransaction(userId, "Job / Work", getBalance(userId) - userJob.salary(), getBalance(userId));
         }
         return true;
     }
 
     public void setJob(String userId, String code, String jobName) {
         Document query = new Document("userID", userId);
-        Document job = getJob(code, jobName);
+        Job job = getJob(code, jobName);
 
-        Bson updates = Updates.combine(Updates.set("economy.job.business", code), Updates.set("economy.job.job", job.getString("name")));
+        Bson updates = Updates.combine(Updates.set("economy.job.business", code), Updates.set("economy.job.job", job.name()));
 
         userData.updateOne(query, updates, new UpdateOptions().upsert(true));
     }
@@ -835,11 +853,11 @@ public class Database {
                 continue;
             }
 
-            if (user.get("economy", Document.class).get("job", Document.class).getInteger("daysMissed") > getJob(user.get("economy", Document.class).get("job", Document.class).getString("business"), user.get("economy", Document.class).get("job", Document.class).getString("job")).getInteger("daysBeforeFire")) {
+            if (user.get("economy", Document.class).get("job", Document.class).getInteger("daysMissed") > getJob(user.get("economy", Document.class).get("job", Document.class).getString("business"), user.get("economy", Document.class).get("job", Document.class).getString("job")).daysBeforeFire()) {
                 Bson updates = Updates.combine(Updates.set("economy.job.business", null), Updates.set("economy.job.job", null), Updates.set("economy.job.daysMissed", 0));
 
                 userData.updateOne(query, updates, new UpdateOptions().upsert(true));
-                removeBytes(user.getString("userID"), getJob(user.get("economy", Document.class).get("job", Document.class).getString("business"), user.get("economy", Document.class).get("job", Document.class).getString("job")).getInteger("salary") * 5);
+                removeBytes(user.getString("userID"), getJob(user.get("economy", Document.class).get("job", Document.class).getString("business"), user.get("economy", Document.class).get("job", Document.class).getString("job")).salary() * 5);
                 System.out.println(user.getString("userID") + " was fired");
             }
 
