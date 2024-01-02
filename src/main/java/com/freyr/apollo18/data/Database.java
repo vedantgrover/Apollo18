@@ -1,11 +1,12 @@
 package com.freyr.apollo18.data;
 
 import com.freyr.apollo18.Apollo18;
-import com.freyr.apollo18.data.codec.JobCodec;
-import com.freyr.apollo18.data.codec.StockCodec;
+import com.freyr.apollo18.data.codec.business.JobCodec;
+import com.freyr.apollo18.data.codec.business.StockCodec;
 import com.freyr.apollo18.data.provider.BusinessCodecProvider;
 import com.freyr.apollo18.data.records.business.Business;
 import com.freyr.apollo18.data.records.business.Job;
+import com.freyr.apollo18.data.records.business.Stock;
 import com.freyr.apollo18.handlers.BusinessHandler;
 import com.freyr.apollo18.util.textFormatters.RandomString;
 import com.mongodb.MongoClient;
@@ -24,7 +25,6 @@ import net.dv8tion.jda.api.entities.User;
 import org.bson.Document;
 import org.bson.codecs.configuration.CodecRegistries;
 import org.bson.codecs.configuration.CodecRegistry;
-import org.bson.codecs.pojo.PojoCodecProvider;
 import org.bson.conversions.Bson;
 import org.json.JSONObject;
 
@@ -37,7 +37,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -64,11 +63,7 @@ public class Database {
         this.bot = bot;
         MongoClient mongoClient = new MongoClient(new MongoClientURI(srv));
 
-        CodecRegistry codecRegistry = CodecRegistries.fromRegistries(
-                CodecRegistries.fromCodecs(new JobCodec(), new StockCodec()),
-                CodecRegistries.fromProviders(new BusinessCodecProvider()),
-                MongoClientSettings.getDefaultCodecRegistry()
-        );
+        CodecRegistry codecRegistry = CodecRegistries.fromRegistries(CodecRegistries.fromCodecs(new JobCodec(), new StockCodec()), CodecRegistries.fromProviders(new BusinessCodecProvider()), MongoClientSettings.getDefaultCodecRegistry());
 
         MongoDatabase database = mongoClient.getDatabase("apollo").withCodecRegistry(codecRegistry);
 
@@ -620,10 +615,9 @@ public class Database {
             int currentPrice = (int) Double.parseDouble(data.getString("close")) / 4;
             int previousPrice = currentPrice - change;
 
-            Document stockData = new Document("ticker", ticker).append("currentPrice", currentPrice).append("previousPrice", previousPrice).append("change", change).append("arrowEmoji", BusinessHandler.getArrow(change));
-            Document document = new Document("name", businessName).append("stockCode", stockCode).append("owner", "default").append("description", businessDescription).append("logo", (logo == null) ? "https://library.kissclipart.com/20181224/fww/kissclipart-free-vector-building-clipart-computer-icons-66d576fc7c1dd7ff.png" : logo).append("public", true).append("jobs", new ArrayList<Document>()).append("stock", stockData);
+            Stock stockData = new Stock(ticker, currentPrice, previousPrice, change, BusinessHandler.getArrow(change));
 
-            businessData.insertOne(new Business(document));
+            businessData.insertOne(new Business(businessName, stockCode, "default", businessDescription, (logo == null) ? "https://library.kissclipart.com/20181224/fww/kissclipart-free-vector-building-clipart-computer-icons-66d576fc7c1dd7ff.png" : logo, true, new ArrayList<Job>(), stockData));
         } catch (Exception e) {
             System.err.println(e);
         }
@@ -744,7 +738,7 @@ public class Database {
 
                 Bson updates = Updates.combine(Updates.set("stock.currentPrice", currentPrice), Updates.set("stock.previousPrice", previousPrice), Updates.set("stock.change", change), Updates.set("stock.arrowEmoji", BusinessHandler.getArrow(change)));
 
-                    businessData.updateOne(query, updates, new UpdateOptions().upsert(true));
+                businessData.updateOne(query, updates, new UpdateOptions().upsert(true));
                 createTransaction("stockUpdate", "Business / Stock / Update", previousPrice, currentPrice);
 
                 StockData stockData = new StockData(bot, business.stock().ticker());
