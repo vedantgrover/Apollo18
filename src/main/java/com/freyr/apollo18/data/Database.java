@@ -3,10 +3,16 @@ package com.freyr.apollo18.data;
 import com.freyr.apollo18.Apollo18;
 import com.freyr.apollo18.data.codec.business.JobCodec;
 import com.freyr.apollo18.data.codec.business.StockCodec;
+import com.freyr.apollo18.data.codec.guild.GreetingCodec;
+import com.freyr.apollo18.data.codec.guild.LevelingCodec;
 import com.freyr.apollo18.data.provider.BusinessCodecProvider;
+import com.freyr.apollo18.data.provider.GuildCodecProvider;
 import com.freyr.apollo18.data.records.business.Business;
 import com.freyr.apollo18.data.records.business.Job;
 import com.freyr.apollo18.data.records.business.Stock;
+import com.freyr.apollo18.data.records.guild.Greeting;
+import com.freyr.apollo18.data.records.guild.Guild;
+import com.freyr.apollo18.data.records.guild.Leveling;
 import com.freyr.apollo18.handlers.BusinessHandler;
 import com.freyr.apollo18.util.textFormatters.RandomString;
 import com.mongodb.MongoClient;
@@ -20,7 +26,6 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.*;
 import com.mongodb.lang.Nullable;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.User;
 import org.bson.Document;
 import org.bson.codecs.configuration.CodecRegistries;
@@ -37,6 +42,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -49,7 +55,7 @@ public class Database {
 
     private final Apollo18 bot;
 
-    private final MongoCollection<Document> guildData; // The collection of documents for guilds
+    private final MongoCollection<Guild> guildData; // The collection of documents for guilds
     private final MongoCollection<Document> userData; // The collection of documents for users
     private final MongoCollection<Business> businessData;
     private final MongoCollection<Document> transactionData;
@@ -63,23 +69,23 @@ public class Database {
         this.bot = bot;
         MongoClient mongoClient = new MongoClient(new MongoClientURI(srv));
 
-        CodecRegistry codecRegistry = CodecRegistries.fromRegistries(CodecRegistries.fromCodecs(new JobCodec(), new StockCodec()), CodecRegistries.fromProviders(new BusinessCodecProvider()), MongoClientSettings.getDefaultCodecRegistry());
+        CodecRegistry codecRegistry = CodecRegistries.fromRegistries(CodecRegistries.fromCodecs(new JobCodec(), new StockCodec(), new GreetingCodec(), new LevelingCodec()), CodecRegistries.fromProviders(new BusinessCodecProvider(), new GuildCodecProvider()), MongoClientSettings.getDefaultCodecRegistry());
 
         MongoDatabase database = mongoClient.getDatabase("apollo").withCodecRegistry(codecRegistry);
 
-        guildData = database.getCollection("guildData");
+        guildData = database.getCollection("guildData", Guild.class);
         userData = database.getCollection("userData");
         businessData = database.getCollection("businesses", Business.class);
         transactionData = database.getCollection("transactions");
     }
 
-    public void createGuildData(Guild guild) {
+    public void createGuildData(net.dv8tion.jda.api.entities.Guild guild) {
         if (checkIfGuildExists(guild)) return;
-        Document levelingData = new Document("onOff", true).append("channel", null).append("levelingMessage", "Congratulations [member], you have leveled up to [level]!");
-        Document greetingData = new Document("onOff", false).append("welcomeChannel", null).append("leaveChannel", null).append("memberCountChannel", null).append("welcomeMessage", "[member] has joined [server]!").append("leaveMessage", "[member] has left [server].");
 
+        Leveling levelingData = new Leveling(true, null, "Congratulations [member], you have leveled up to [level]!");
+        Greeting greetingData = new Greeting(false, null, null, null, "[member] has joined [server]!", "[member] has left [server].");
 
-        guildData.insertOne(new Document("guildID", guild.getId()).append("leveling", levelingData).append("greetings", greetingData));
+        guildData.insertOne(new Guild(guild.getId(), levelingData, greetingData));
     }
 
     public boolean createUserData(User user) {
@@ -105,7 +111,7 @@ public class Database {
         return userData.find();
     }
 
-    public FindIterable<Document> getAllGuilds() {
+    public FindIterable<Guild> getAllGuilds() {
         return guildData.find();
     }
 
@@ -113,7 +119,7 @@ public class Database {
         return userData.find(new Document("userID", userId)).first();
     }
 
-    public Document getGuild(String guildId) {
+    public Guild getGuild(String guildId) {
         return guildData.find(new Document("guildID", guildId)).first();
     }
 
@@ -122,8 +128,8 @@ public class Database {
         return iterable.first() != null;
     }
 
-    private boolean checkIfGuildExists(Guild guild) {
-        FindIterable<Document> iterable = guildData.find(new Document("guildID", guild.getId()));
+    private boolean checkIfGuildExists(net.dv8tion.jda.api.entities.Guild guild) {
+        FindIterable<Guild> iterable = guildData.find(new Document("guildID", guild.getId()));
         return iterable.first() != null;
     }
 
@@ -141,27 +147,27 @@ public class Database {
     // Welcome System
     // region
     public boolean getWelcomeSystemToggle(String guildId) {
-        return guildData.find(new Document("guildID", guildId)).first().get("greetings", Document.class).getBoolean("onOff");
+        return Objects.requireNonNull(guildData.find(new Document("guildID", guildId)).first()).greeting().onOff();
     }
 
     public String getWelcomeChannel(String guildId) {
-        return guildData.find(new Document("guildID", guildId)).first().get("greetings", Document.class).getString("welcomeChannel");
+        return Objects.requireNonNull(guildData.find(new Document("guildID", guildId)).first()).greeting().welcomeChannel();
     }
 
     public String getLeaveChannel(String guildId) {
-        return guildData.find(new Document("guildID", guildId)).first().get("greetings", Document.class).getString("leaveChannel");
+        return Objects.requireNonNull(guildData.find(new Document("guildID", guildId)).first()).greeting().leaveChannel();
     }
 
     public String getWelcomeMessage(String guildId) {
-        return guildData.find(new Document("guildID", guildId)).first().get("greetings", Document.class).getString("welcomeMessage");
+        return Objects.requireNonNull(guildData.find(new Document("guildID", guildId)).first()).greeting().welcomeMessage();
     }
 
     public String getLeaveMessage(String guildId) {
-        return guildData.find(new Document("guildID", guildId)).first().get("greetings", Document.class).getString("leaveMessage");
+        return Objects.requireNonNull(guildData.find(new Document("guildID", guildId)).first()).greeting().leaveMessage();
     }
 
     public String getMemberCountChannel(String guildId) {
-        return guildData.find(new Document("guildID", guildId)).first().get("greetings", Document.class).getString("memberCountChannel");
+        return Objects.requireNonNull(guildData.find(new Document("guildID", guildId)).first()).greeting().memberCountChannel();
     }
 
     public void toggleWelcomeSystem(String guildId) {
@@ -300,7 +306,7 @@ public class Database {
     }
 
     public boolean getLevelingSystemToggle(String guildId) {
-        return guildData.find(new Document("guildID", guildId)).first().get("leveling", Document.class).getBoolean("onOff");
+        return Objects.requireNonNull(guildData.find(new Document("guildID", guildId)).first()).leveling().onOff();
     }
 
     public void toggleLevelingSystem(String guildId) {
@@ -318,7 +324,7 @@ public class Database {
     }
 
     public String getLevelingChannel(String guildId) {
-        return guildData.find(new Document("guildID", guildId)).first().get("leveling", Document.class).getString("channel");
+        return Objects.requireNonNull(guildData.find(new Document("guildID", guildId)).first()).leveling().channel();
     }
 
     public void setLevelingChannel(String guildId, String channelId) {
@@ -336,7 +342,7 @@ public class Database {
     }
 
     public String getLevelingMessage(String guildId) {
-        return guildData.find(new Document("guildID", guildId)).first().get("leveling", Document.class).getString("levelingMessage");
+        return Objects.requireNonNull(guildData.find(new Document("guildID", guildId)).first()).leveling().levelingMessage();
     }
 
     public void setLevelingMessage(String guildId, String message) {
