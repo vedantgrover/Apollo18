@@ -1,4 +1,4 @@
-package com.freyr.apollo18.data.codec;
+package com.freyr.apollo18.data.codec.business;
 
 import com.freyr.apollo18.data.records.business.Job;
 import org.bson.BsonReader;
