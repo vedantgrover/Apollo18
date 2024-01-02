@@ -7,6 +7,8 @@ import com.freyr.apollo18.data.codec.guild.GreetingCodec;
 import com.freyr.apollo18.data.codec.guild.LevelingCodec;
 import com.freyr.apollo18.data.provider.BusinessCodecProvider;
 import com.freyr.apollo18.data.provider.GuildCodecProvider;
+import com.freyr.apollo18.data.provider.TransactionCodecProvider;
+import com.freyr.apollo18.data.records.Transaction;
 import com.freyr.apollo18.data.records.business.Business;
 import com.freyr.apollo18.data.records.business.Job;
 import com.freyr.apollo18.data.records.business.Stock;
@@ -58,7 +60,7 @@ public class Database {
     private final MongoCollection<Guild> guildData; // The collection of documents for guilds
     private final MongoCollection<Document> userData; // The collection of documents for users
     private final MongoCollection<Business> businessData;
-    private final MongoCollection<Document> transactionData;
+    private final MongoCollection<Transaction> transactionData;
 
     /**
      * Creates a connection to the database and the collections
@@ -69,14 +71,14 @@ public class Database {
         this.bot = bot;
         MongoClient mongoClient = new MongoClient(new MongoClientURI(srv));
 
-        CodecRegistry codecRegistry = CodecRegistries.fromRegistries(CodecRegistries.fromCodecs(new JobCodec(), new StockCodec(), new GreetingCodec(), new LevelingCodec()), CodecRegistries.fromProviders(new BusinessCodecProvider(), new GuildCodecProvider()), MongoClientSettings.getDefaultCodecRegistry());
+        CodecRegistry codecRegistry = CodecRegistries.fromRegistries(CodecRegistries.fromCodecs(new JobCodec(), new StockCodec(), new GreetingCodec(), new LevelingCodec()), CodecRegistries.fromProviders(new BusinessCodecProvider(), new GuildCodecProvider(), new TransactionCodecProvider()), MongoClientSettings.getDefaultCodecRegistry());
 
         MongoDatabase database = mongoClient.getDatabase("apollo").withCodecRegistry(codecRegistry);
 
         guildData = database.getCollection("guildData", Guild.class);
         userData = database.getCollection("userData");
         businessData = database.getCollection("businesses", Business.class);
-        transactionData = database.getCollection("transactions");
+        transactionData = database.getCollection("transactions", Transaction.class);
     }
 
     public void createGuildData(net.dv8tion.jda.api.entities.Guild guild) {
@@ -492,7 +494,7 @@ public class Database {
     // region
 
     public void createTransaction(String userId, String transactionType, int oldBal, int newBal) {
-        Document transaction = new Document("userID", userId).append("byteExchange", (newBal - oldBal)).append("previousBal", oldBal).append("newBal", newBal).append("transactionType", transactionType).append("transactionDate", DateTimeFormatter.ofPattern("yyyy/MM/dd-HH:mm:ss").format(LocalDateTime.now()));
+        Transaction transaction = new Transaction(userId, (newBal - oldBal), oldBal, newBal, transactionType, DateTimeFormatter.ofPattern("yyyy/MM/dd-HH:mm:ss").format(LocalDateTime.now()));
 
         transactionData.insertOne(transaction);
     }
