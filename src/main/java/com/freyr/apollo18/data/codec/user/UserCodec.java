@@ -32,6 +32,10 @@ public class UserCodec implements Codec<User> {
     public User decode(BsonReader bsonReader, DecoderContext decoderContext) {
         bsonReader.readStartDocument();
 
+        if (bsonReader.readName().equals("_id")) {
+            bsonReader.skipValue();
+        }
+
         String userID = bsonReader.readString("userID");
         List<UserLeveling> leveling = readLeveling(bsonReader, decoderContext);
 

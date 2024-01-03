@@ -36,7 +36,7 @@ public class PlaylistCodec implements Codec<Playlist> {
 
         if (playlist != null) {
             bsonWriter.writeString("playlistName", playlist.playlistName());
-            writeJobs(bsonWriter, playlist.songs(), encoderContext);
+            writeSongs(bsonWriter, playlist.songs(), encoderContext);
         }
 
         bsonWriter.writeEndDocument();
@@ -59,8 +59,8 @@ public class PlaylistCodec implements Codec<Playlist> {
         return songs;
     }
 
-    private void writeJobs(BsonWriter bsonWriter, List<Song> songs, EncoderContext encoderContext) {
-        bsonWriter.writeStartArray("jobs");
+    private void writeSongs(BsonWriter bsonWriter, List<Song> songs, EncoderContext encoderContext) {
+        bsonWriter.writeStartArray("songs");
         for (Song song : songs) {
             songCodec.encode(bsonWriter, song, encoderContext);
         }

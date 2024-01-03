@@ -79,7 +79,7 @@ public class Database {
         this.bot = bot;
         MongoClient mongoClient = new MongoClient(new MongoClientURI(srv));
 
-        CodecRegistry codecRegistry = CodecRegistries.fromRegistries(CodecRegistries.fromCodecs(new JobCodec(), new StockCodec(), new GreetingCodec(), new LevelingCodec(), new UserLevelingCodec(), new UserCreditCardCodec(), new UserJobCodec(), new UserStockCodec(), new SongCodec()), CodecRegistries.fromProviders(new BusinessCodecProvider(), new GuildCodecProvider(), new TransactionCodecProvider(), new UserCardCodecProvider(), new UserEconomyCodecProvider(), new PlaylistCodecProvider(), new UserCodecProvider()), MongoClientSettings.getDefaultCodecRegistry());
+        CodecRegistry codecRegistry = CodecRegistries.fromRegistries(CodecRegistries.fromCodecs(new JobCodec(), new StockCodec(), new GreetingCodec(), new LevelingCodec(), new UserLevelingCodec(), new UserCreditCardCodec(), new UserJobCodec(), new UserStockCodec(), new SongCodec()), CodecRegistries.fromProviders(new BusinessCodecProvider(), new GuildCodecProvider(), new TransactionCodecProvider(), new UserCardCodecProvider(), new UserEconomyCodecProvider(), new PlaylistCodecProvider(), new UserMusicCodecProvider(), new UserCodecProvider()), MongoClientSettings.getDefaultCodecRegistry());
 
         MongoDatabase database = mongoClient.getDatabase("apollo").withCodecRegistry(codecRegistry);
 
