@@ -9,6 +9,7 @@ import com.freyr.apollo18.data.codec.user.UserLevelingCodec;
 import com.freyr.apollo18.data.codec.user.economy.UserCreditCardCodec;
 import com.freyr.apollo18.data.codec.user.economy.UserJobCodec;
 import com.freyr.apollo18.data.codec.user.economy.UserStockCodec;
+import com.freyr.apollo18.data.codec.user.music.SongCodec;
 import com.freyr.apollo18.data.provider.*;
 import com.freyr.apollo18.data.records.Transaction;
 import com.freyr.apollo18.data.records.business.Business;
@@ -17,7 +18,6 @@ import com.freyr.apollo18.data.records.business.Stock;
 import com.freyr.apollo18.data.records.guild.Greeting;
 import com.freyr.apollo18.data.records.guild.Guild;
 import com.freyr.apollo18.data.records.guild.Leveling;
-import com.freyr.apollo18.data.records.user.economy.UserCard;
 import com.freyr.apollo18.handlers.BusinessHandler;
 import com.freyr.apollo18.util.textFormatters.RandomString;
 import com.mongodb.MongoClient;
@@ -74,7 +74,7 @@ public class Database {
         this.bot = bot;
         MongoClient mongoClient = new MongoClient(new MongoClientURI(srv));
 
-        CodecRegistry codecRegistry = CodecRegistries.fromRegistries(CodecRegistries.fromCodecs(new JobCodec(), new StockCodec(), new GreetingCodec(), new LevelingCodec(), new UserLevelingCodec(), new UserCreditCardCodec(), new UserJobCodec(), new UserStockCodec()), CodecRegistries.fromProviders(new BusinessCodecProvider(), new GuildCodecProvider(), new TransactionCodecProvider(), new UserCardCodecProvider(), new UserEconomyCodecProvider()), MongoClientSettings.getDefaultCodecRegistry());
+        CodecRegistry codecRegistry = CodecRegistries.fromRegistries(CodecRegistries.fromCodecs(new JobCodec(), new StockCodec(), new GreetingCodec(), new LevelingCodec(), new UserLevelingCodec(), new UserCreditCardCodec(), new UserJobCodec(), new UserStockCodec(), new SongCodec()), CodecRegistries.fromProviders(new BusinessCodecProvider(), new GuildCodecProvider(), new TransactionCodecProvider(), new UserCardCodecProvider(), new UserEconomyCodecProvider(), new PlaylistCodecProvider()), MongoClientSettings.getDefaultCodecRegistry());
 
         MongoDatabase database = mongoClient.getDatabase("apollo").withCodecRegistry(codecRegistry);
 
