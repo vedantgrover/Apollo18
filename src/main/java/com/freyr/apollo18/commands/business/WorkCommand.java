@@ -9,7 +9,6 @@ import com.freyr.apollo18.util.embeds.EmbedColor;
 import com.freyr.apollo18.util.embeds.EmbedUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import org.bson.Document;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
@@ -43,9 +42,9 @@ public class WorkCommand extends Command {
         if (db.work(event.getUser().getId())) {
             EmbedBuilder embed = new EmbedBuilder();
             embed.setTitle("Success");
-            embed.addField(workResponses.getString((int) (Math.random() * workResponses.length())), "You were payed " + BusinessHandler.byteEmoji + " `" + db.getJob(db.getUserJob(event.getUser().getId()).getString("business"), db.getUserJob(event.getUser().getId()).getString("job")).salary() + " bytes`", false);
+            embed.addField(workResponses.getString((int) (Math.random() * workResponses.length())), "You were payed " + BusinessHandler.byteEmoji + " `" + db.getJob(db.getUserJob(event.getUser().getId()).businessCode(), db.getUserJob(event.getUser().getId()).jobName()).salary() + " bytes`", false);
             embed.setColor(EmbedColor.DEFAULT_COLOR);
-            embed.setFooter("You have worked for " + db.getUser(event.getUser().getId()).get("economy", Document.class).get("job", Document.class).getInteger("daysWorked") + " day(s)");
+            embed.setFooter("You have worked for " + db.getUser(event.getUser().getId()).economy().job().daysWorked() + " day(s)");
 
             event.getHook().sendMessageEmbeds(embed.build()).queue();
         } else {

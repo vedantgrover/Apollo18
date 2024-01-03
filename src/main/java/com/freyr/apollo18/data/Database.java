@@ -18,6 +18,11 @@ import com.freyr.apollo18.data.records.business.Stock;
 import com.freyr.apollo18.data.records.guild.Greeting;
 import com.freyr.apollo18.data.records.guild.Guild;
 import com.freyr.apollo18.data.records.guild.Leveling;
+import com.freyr.apollo18.data.records.user.UserLeveling;
+import com.freyr.apollo18.data.records.user.economy.*;
+import com.freyr.apollo18.data.records.user.music.Playlist;
+import com.freyr.apollo18.data.records.user.music.Song;
+import com.freyr.apollo18.data.records.user.music.UserMusic;
 import com.freyr.apollo18.handlers.BusinessHandler;
 import com.freyr.apollo18.util.textFormatters.RandomString;
 import com.mongodb.MongoClient;
@@ -61,7 +66,7 @@ public class Database {
     private final Apollo18 bot;
 
     private final MongoCollection<Guild> guildData; // The collection of documents for guilds
-    private final MongoCollection<Document> userData; // The collection of documents for users
+    private final MongoCollection<com.freyr.apollo18.data.records.user.User> userData; // The collection of documents for users
     private final MongoCollection<Business> businessData;
     private final MongoCollection<Transaction> transactionData;
 
@@ -74,12 +79,12 @@ public class Database {
         this.bot = bot;
         MongoClient mongoClient = new MongoClient(new MongoClientURI(srv));
 
-        CodecRegistry codecRegistry = CodecRegistries.fromRegistries(CodecRegistries.fromCodecs(new JobCodec(), new StockCodec(), new GreetingCodec(), new LevelingCodec(), new UserLevelingCodec(), new UserCreditCardCodec(), new UserJobCodec(), new UserStockCodec(), new SongCodec()), CodecRegistries.fromProviders(new BusinessCodecProvider(), new GuildCodecProvider(), new TransactionCodecProvider(), new UserCardCodecProvider(), new UserEconomyCodecProvider(), new PlaylistCodecProvider()), MongoClientSettings.getDefaultCodecRegistry());
+        CodecRegistry codecRegistry = CodecRegistries.fromRegistries(CodecRegistries.fromCodecs(new JobCodec(), new StockCodec(), new GreetingCodec(), new LevelingCodec(), new UserLevelingCodec(), new UserCreditCardCodec(), new UserJobCodec(), new UserStockCodec(), new SongCodec()), CodecRegistries.fromProviders(new BusinessCodecProvider(), new GuildCodecProvider(), new TransactionCodecProvider(), new UserCardCodecProvider(), new UserEconomyCodecProvider(), new PlaylistCodecProvider(), new UserCodecProvider()), MongoClientSettings.getDefaultCodecRegistry());
 
         MongoDatabase database = mongoClient.getDatabase("apollo").withCodecRegistry(codecRegistry);
 
         guildData = database.getCollection("guildData", Guild.class);
-        userData = database.getCollection("userData");
+        userData = database.getCollection("userData", com.freyr.apollo18.data.records.user.User.class);
         businessData = database.getCollection("businesses", Business.class);
         transactionData = database.getCollection("transactions", Transaction.class);
     }
@@ -99,20 +104,23 @@ public class Database {
             return false;
         }
 
-        List<Document> xp = new ArrayList<>();
+        List<UserLeveling> xp = new ArrayList<>();
 
-        List<Document> items = new ArrayList<>();
-        List<Document> playlists = new ArrayList<>();
+        List<UserStock> stocks = new ArrayList<>();
+        List<Playlist> playlists = new ArrayList<>();
 
-        Document economyData = new Document("balance", 0).append("bank", 0).append("job", new Document("business", null).append("job", null).append("daysWorked", 0).append("daysMissed", 0).append("worked", false)).append("card", new Document("debit-card", false).append("credit-card", new Document("hasCard", false).append("currentBalance", 0).append("totalBalance", 0).append("expirationDate", null))).append("items", items);
-        Document musicData = new Document("playlists", playlists);
+        UserEconomy economyData = new UserEconomy(0, 0, new UserJob(null, null, 0, 0, false), new UserCard(false, new UserCreditCard(false, 0, 0, null)), stocks);
+        UserMusic musicData = new UserMusic(playlists);
 
-        userData.insertOne(new Document("userID", user.getId()).append("notifications", true).append("leveling", xp).append("economy", economyData).append("music", musicData));
-
-        return true;
+        try {
+            userData.insertOne(new com.freyr.apollo18.data.records.user.User(user.getId(), xp, economyData, musicData, true));
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
-    public FindIterable<Document> getAllUsers() {
+    public FindIterable<com.freyr.apollo18.data.records.user.User> getAllUsers() {
         return userData.find();
     }
 
@@ -120,7 +128,7 @@ public class Database {
         return guildData.find();
     }
 
-    public Document getUser(String userId) {
+    public com.freyr.apollo18.data.records.user.User getUser(String userId) {
         return userData.find(new Document("userID", userId)).first();
     }
 
@@ -129,7 +137,7 @@ public class Database {
     }
 
     private boolean checkIfUserExists(User user) {
-        FindIterable<Document> iterable = userData.find(new Document("userID", user.getId()));
+        FindIterable<com.freyr.apollo18.data.records.user.User> iterable = userData.find(new Document("userID", user.getId()));
         return iterable.first() != null;
     }
 
@@ -297,12 +305,13 @@ public class Database {
     }
 
     private boolean checkIfUserXpExists(String userId, String guildId) {
-        Document userDoc = userData.find(new Document("userID", userId)).first();
+        com.freyr.apollo18.data.records.user.User userDoc = userData.find(new Document("userID", userId)).first();
 
-        List<Document> xp = userDoc.getList("leveling", Document.class);
+        assert userDoc != null;
+        List<UserLeveling> xp = userDoc.leveling();
 
-        for (Document doc : xp) {
-            if (doc.getString("guildID").equals(guildId)) {
+        for (UserLeveling doc : xp) {
+            if (doc.guildID().equals(guildId)) {
                 return true;
             }
         }
@@ -364,11 +373,11 @@ public class Database {
         }
     }
 
-    public Document getUserLevelingProfile(String userId, String guildId) {
-        Document userDoc = userData.find(new Document("userID", userId)).first();
-        Document guildUserXpData = null;
-        for (Document doc : userDoc.getList("leveling", Document.class)) {
-            if (doc.getString("guildID").equals(guildId)) {
+    public UserLeveling getUserLevelingProfile(String userId, String guildId) {
+        com.freyr.apollo18.data.records.user.User userDoc = userData.find(new Document("userID", userId)).first();
+        UserLeveling guildUserXpData = null;
+        for (UserLeveling doc : userDoc.leveling()) {
+            if (doc.guildID().equals(guildId)) {
                 guildUserXpData = doc;
                 break;
             }
@@ -410,23 +419,23 @@ public class Database {
         }
     }
 
-    public FindIterable<Document> getLevelingLeaderboard(String guildId, int limit) {
+    public FindIterable<com.freyr.apollo18.data.records.user.User> getLevelingLeaderboard(String guildId, int limit) {
         return userData.find(new Document("leveling.guildID", guildId)).sort(Sorts.descending("leveling.totalXp")).limit(limit);
     }
     // endregion
 
     // Economy System
     // region
-    public Document getEconomyUser(String userId) {
-        return userData.find(new Document("userID", userId)).first().get("economy", Document.class);
+    public UserEconomy getEconomyUser(String userId) {
+        return Objects.requireNonNull(userData.find(new Document("userID", userId)).first()).economy();
     }
 
     public int getBalance(String userId) {
-        return userData.find(new Document("userID", userId)).first().get("economy", Document.class).getInteger("balance");
+        return Objects.requireNonNull(userData.find(new Document("userID", userId)).first()).economy().balance();
     }
 
     public int getBank(String userId) {
-        return userData.find(new Document("userID", userId)).first().get("economy", Document.class).getInteger("bank");
+        return Objects.requireNonNull(userData.find(new Document("userID", userId)).first()).economy().bank();
     }
 
     public int getNetWorth(String userID) {
@@ -488,7 +497,7 @@ public class Database {
         userData.updateOne(query, updates, options);
     }
 
-    public AggregateIterable<Document> getEconomyLeaderboard(String guildId, int limit) {
+    public AggregateIterable<com.freyr.apollo18.data.records.user.User> getEconomyLeaderboard(String guildId, int limit) {
         return userData.aggregate(Arrays.asList(Aggregates.match(Filters.and(Filters.eq("leveling.guildID", guildId), Filters.eq("leveling.inServer", true))), Aggregates.addFields(new Field("sum", Filters.eq("$add", Arrays.asList("balance", "$bank")))), Aggregates.sort(Sorts.descending("sum"))));
     }
     // endregion
@@ -536,7 +545,7 @@ public class Database {
         Bson filter = Filters.and(Filters.eq("userID", userId));
         UpdateOptions options = new UpdateOptions().arrayFilters(List.of(Filters.eq("ele.playlistName", playlist)));
 
-        List<Document> songs = getSongs(userId, playlist);
+        List<Song> songs = getSongs(userId, playlist);
         if (songs == null) {
             throw new NullPointerException("Couldn't find the song");
         }
@@ -587,15 +596,15 @@ public class Database {
         }
     }
 
-    public List<Document> getPlaylists(String userId) {
-        return userData.find(new Document("userID", userId)).first().get("music", Document.class).getList("playlists", Document.class);
+    public List<Playlist> getPlaylists(String userId) {
+        return userData.find(new Document("userID", userId)).first().music().playlists();
     }
 
-    public List<Document> getSongs(String userId, String playlist) {
-        Document userDoc = userData.find(new Document("userID", userId)).first();
-        Document userPlaylist = null;
-        for (Document doc : userDoc.get("music", Document.class).getList("playlists", Document.class)) {
-            if (doc.getString("playlistName").equals(playlist)) {
+    public List<Song> getSongs(String userId, String playlist) {
+        com.freyr.apollo18.data.records.user.User userDoc = userData.find(new Document("userID", userId)).first();
+        Playlist userPlaylist = null;
+        for (Playlist doc : userDoc.music().playlists()) {
+            if (doc.playlistName().equals(playlist)) {
                 userPlaylist = doc;
                 break;
             }
@@ -605,7 +614,7 @@ public class Database {
             return null;
         }
 
-        return userPlaylist.getList("songs", Document.class);
+        return userPlaylist.songs();
     }
 
     private boolean checkIfSongExists(String userId, String playlist, String songName) {
@@ -692,21 +701,21 @@ public class Database {
     private List<Document> getPurchasedStocks(String userId, String stockCode, int quantity) {
         List<Document> result = new ArrayList<>();
 
-        Document userDoc = userData.find(new Document("userID", userId)).first();
-        List<Document> stocks = userDoc.get("economy", Document.class).getList("stocks", Document.class);
+        com.freyr.apollo18.data.records.user.User userDoc = userData.find(new Document("userID", userId)).first();
+        List<UserStock> stocks = userDoc.economy().stocks();
         int tempQuantity = quantity;
 
         System.out.println("Info: Building Document for Stock: " + stockCode + ", Quantity: " + tempQuantity);
 
         for (int i = 0; i < stocks.size(); i++) {
-            if (stocks.get(i).getString("stockCode").equals(stockCode.toUpperCase()) && tempQuantity > 0) {
-                if (stocks.get(i).getInteger("quantity") <= tempQuantity && (tempQuantity - stocks.get(i).getInteger("quantity")) >= 0) {
-                    tempQuantity -= stocks.get(i).getInteger("quantity");
-                    System.out.println("Info: Action: Delete | SQ: " + stocks.get(i).getInteger("quantity") + " | TQ Left: " + tempQuantity);
-                    result.add(new Document("_id", stocks.get(i).getString("_id")).append("quantity", stocks.get(i).getInteger("quantity")).append("index", i).append("action", 0));
-                } else if (stocks.get(i).getInteger("quantity") > tempQuantity) {
-                    System.out.println("Info: Action: Update | SQ from: " + stocks.get(i).getInteger("quantity") + " to: " + (stocks.get(i).getInteger("quantity") - tempQuantity));
-                    result.add(new Document("_id", stocks.get(i).getString("_id")).append("quantity", (stocks.get(i).getInteger("quantity") - tempQuantity)).append("index", i).append("action", 1));
+            if (stocks.get(i).stockCode().equals(stockCode.toUpperCase()) && tempQuantity > 0) {
+                if (stocks.get(i).quantity() <= tempQuantity && (tempQuantity - stocks.get(i).quantity()) >= 0) {
+                    tempQuantity -= stocks.get(i).quantity();
+                    System.out.println("Info: Action: Delete | SQ: " + stocks.get(i).quantity() + " | TQ Left: " + tempQuantity);
+                    result.add(new Document("_id", stocks.get(i)._id()).append("quantity", stocks.get(i).quantity()).append("index", i).append("action", 0));
+                } else if (stocks.get(i).quantity() > tempQuantity) {
+                    System.out.println("Info: Action: Update | SQ from: " + stocks.get(i).quantity() + " to: " + (stocks.get(i).quantity() - tempQuantity));
+                    result.add(new Document("_id", stocks.get(i)._id()).append("quantity", (stocks.get(i).quantity() - tempQuantity)).append("index", i).append("action", 1));
                     tempQuantity -= tempQuantity;
                     System.out.println("Info: TQ Left: " + tempQuantity);
                 }
@@ -719,11 +728,11 @@ public class Database {
 
     public int getTotalStocks(String userId, String stockCode) {
         try {
-            List<Document> purchasedStocks = userData.find(new Document("userID", userId)).first().get("economy", Document.class).getList("stocks", Document.class);
+            List<UserStock> purchasedStocks = userData.find(new Document("userID", userId)).first().economy().stocks();
             int totalStocks = 0;
-            for (Document purchasedStock : purchasedStocks) {
-                if (purchasedStock.getString("stockCode").equals(stockCode)) {
-                    totalStocks += purchasedStock.getInteger("quantity");
+            for (UserStock purchasedStock : purchasedStocks) {
+                if (purchasedStock.stockCode().equals(stockCode)) {
+                    totalStocks += purchasedStock.quantity();
                 }
             }
 
@@ -795,15 +804,15 @@ public class Database {
     }
 
     public boolean work(String userId) {
-        Document userEconomyDoc = userData.find(new Document("userID", userId)).first().get("economy", Document.class);
-        Job userJob = getJob(userEconomyDoc.get("job", Document.class).getString("business"), userEconomyDoc.get("job", Document.class).getString("job"));
+        UserEconomy userEconomyDoc = userData.find(new Document("userID", userId)).first().economy();
+        Job userJob = getJob(userEconomyDoc.job().businessCode(), userEconomyDoc.job().jobName());
         if (userJob == null) return false;
 
         addBytes(userId, userJob.salary());
         Document query = new Document("userID", userId);
 
-        if (userEconomyDoc.get("job", Document.class).getInteger("daysMissed") == null) {
-            Document job = new Document("business", userEconomyDoc.get("job", Document.class).getString("business")).append("job", userEconomyDoc.get("job", Document.class).getString("job")).append("daysWorked", 1).append("daysMissed", 0).append("worked", true);
+        if (Integer.valueOf(userEconomyDoc.job().daysMissed()) == null) {
+            UserJob job = new UserJob(userEconomyDoc.job().businessCode(), userEconomyDoc.job().jobName(), 1, 0, true);
 
             Bson updates = Updates.set("economy.job", job);
 
@@ -811,7 +820,7 @@ public class Database {
             return true;
         }
 
-        if (!userEconomyDoc.get("job", Document.class).getBoolean("worked")) {
+        if (!userEconomyDoc.job().worked()) {
             Bson updates = Updates.combine(Updates.inc("economy.job.daysWorked", 1), Updates.set("economy.job.worked", true), Updates.set("economy.job.daysMissed", 0));
 
             userData.updateOne(query, updates, new UpdateOptions().upsert(true));
@@ -829,41 +838,41 @@ public class Database {
         userData.updateOne(query, updates, new UpdateOptions().upsert(true));
     }
 
-    public Document getUserJob(String userId) {
-        return userData.find(new Document("userID", userId)).first().get("economy", Document.class).get("job", Document.class);
+    public UserJob getUserJob(String userId) {
+        return userData.find(new Document("userID", userId)).first().economy().job();
     }
 
     // endregion
 
     public void dailyWorkChecks() {
-        for (Document user : userData.find(new Document())) {
-            Document query = new Document("userID", user.getString("userID"));
-            System.out.println("Updating data for " + user.getString("userID"));
-            if (user.get("economy", Document.class).get("job", Document.class).getInteger("daysMissed") == null || user.get("economy", Document.class).get("job", Document.class).getBoolean("worked") == null) {
+        for (com.freyr.apollo18.data.records.user.User user : userData.find(new Document())) {
+            Document query = new Document("userID", user.userID());
+            System.out.println("Updating data for " + user.userID());
+            if (Integer.valueOf(user.economy().job().daysMissed()) == null || Boolean.valueOf(user.economy().job().worked()) == null) {
                 Document job = new Document("business", null).append("job", null).append("daysWorked", 0).append("daysMissed", 0).append("worked", false);
                 Bson updates = Updates.set("economy.job", job);
 
                 userData.updateOne(query, updates, new UpdateOptions().upsert(true));
-                System.out.println("Replaced Job Data with Updated Job Data for " + user.getString("userID"));
+                System.out.println("Replaced Job Data with Updated Job Data for " + user.userID());
             }
 
-            if (!user.get("economy", Document.class).get("job", Document.class).getBoolean("worked") && user.get("economy", Document.class).get("job", Document.class).getString("job") != null) {
+            if (!user.economy().job().worked() && user.economy().job().jobName() != null) {
                 Bson updates = Updates.combine(Updates.set("economy.job.daysWorked", 0), Updates.inc("economy.job.daysMissed", 1));
 
                 userData.updateOne(query, updates, new UpdateOptions().upsert(true));
-                System.out.println(user.getString("userID") + " did not work today. Days missed added");
+                System.out.println(user.userID() + " did not work today. Days missed added");
             }
 
-            if (getJob(user.get("economy", Document.class).get("job", Document.class).getString("business"), user.get("economy", Document.class).get("job", Document.class).getString("job")) == null) {
+            if (getJob(user.economy().job().businessCode(), user.economy().job().jobName()) == null) {
                 continue;
             }
 
-            if (user.get("economy", Document.class).get("job", Document.class).getInteger("daysMissed") > getJob(user.get("economy", Document.class).get("job", Document.class).getString("business"), user.get("economy", Document.class).get("job", Document.class).getString("job")).daysBeforeFire()) {
+            if (user.economy().job().daysMissed() > getJob(user.economy().job().businessCode(), user.economy().job().jobName()).daysBeforeFire()) {
                 Bson updates = Updates.combine(Updates.set("economy.job.business", null), Updates.set("economy.job.job", null), Updates.set("economy.job.daysMissed", 0));
 
                 userData.updateOne(query, updates, new UpdateOptions().upsert(true));
-                removeBytes(user.getString("userID"), getJob(user.get("economy", Document.class).get("job", Document.class).getString("business"), user.get("economy", Document.class).get("job", Document.class).getString("job")).salary() * 5);
-                System.out.println(user.getString("userID") + " was fired");
+                removeBytes(user.userID(), getJob(user.economy().job().businessCode(), user.economy().job().jobName()).salary() * 5);
+                System.out.println(user.userID() + " was fired");
             }
 
             Bson updates = Updates.set("economy.job.worked", false);
@@ -876,10 +885,10 @@ public class Database {
     // region
     public boolean getNotificationToggle(String userId) {
         try {
-            return userData.find(new Document("userID", userId)).first().getBoolean("notifications");
+            return Objects.requireNonNull(userData.find(new Document("userID", userId)).first()).notifications();
         } catch (NullPointerException ne) {
             userData.updateOne(new Document("userID", userId), Updates.set("notifications", true), new UpdateOptions().upsert(true));
-            return userData.find(new Document("userID", userId)).first().getBoolean("notifications");
+            return Objects.requireNonNull(userData.find(new Document("userID", userId)).first()).notifications();
         }
     }
 

@@ -29,7 +29,7 @@ public class RankCommand extends Command {
         event.deferReply().queue();
         Database db = bot.getDatabase();
 
-        User user = (event.getOption("user") == null) ? event.getUser():event.getOption("user").getAsUser();
+        User user = (event.getOption("user") == null) ? event.getUser() : event.getOption("user").getAsUser();
 
         if (user.isBot()) {
             event.getHook().sendMessageEmbeds(EmbedUtils.createError(user.getAsMention() + " is a bot and has no levels")).queue();
@@ -42,8 +42,8 @@ public class RankCommand extends Command {
             embed.setColor(EmbedColor.DEFAULT_COLOR);
             embed.setThumbnail(user.getAvatarUrl());
             embed.setTitle(user.getName() + "'s Rank");
-            embed.setDescription("**__Level " + db.getUserLevelingProfile(user.getId(), event.getGuild().getId()).getInteger("level") + "__**");
-            embed.addField("Xp", db.getUserLevelingProfile(user.getId(), event.getGuild().getId()).getInteger("xp") + " / " + LevelingHandler.calculateLevelGoal(db.getUserLevelingProfile(user.getId(), event.getGuild().getId()).getInteger("level")), false);
+            embed.setDescription("**__Level " + db.getUserLevelingProfile(user.getId(), event.getGuild().getId()).level() + "__**");
+            embed.addField("Xp", db.getUserLevelingProfile(user.getId(), event.getGuild().getId()).xp() + " / " + LevelingHandler.calculateLevelGoal(db.getUserLevelingProfile(user.getId(), event.getGuild().getId()).level()), false);
 
             event.getHook().sendMessageEmbeds(embed.build()).queue();
         } catch (Exception e) {

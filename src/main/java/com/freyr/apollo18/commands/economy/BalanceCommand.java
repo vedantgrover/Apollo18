@@ -12,7 +12,6 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-import org.bson.Document;
 
 import java.util.List;
 import java.util.Objects;
@@ -44,7 +43,7 @@ public class BalanceCommand extends Command {
         embed.addField("Balance", BusinessHandler.byteEmoji + " " + db.getBalance(user.getId()) + " bytes", true);
         embed.addField("Bank", BusinessHandler.byteEmoji + " " + db.getBank(user.getId()) + " bytes", true);
         embed.addField("Net Worth", BusinessHandler.byteEmoji + " " + db.getNetWorth(user.getId()) + " bytes", true);
-        embed.addField("Job", (db.getUserJob(user.getId()).getString("job") == null) ? "None" : db.getUserJob(user.getId()).getString("job"), false);
+        embed.addField("Job", (db.getUserJob(user.getId()).jobName() == null) ? "None" : db.getUserJob(user.getId()).jobName(), false);
         for (Business business : businesses) {
             if (db.getTotalStocks(user.getId(), business.stockCode()) > 0) {
                 embed.addField(business.name(), db.getTotalStocks(event.getUser().getId(), business.stockCode()) + " share(s)\nCode: `" + business.stockCode() + "`", true);
