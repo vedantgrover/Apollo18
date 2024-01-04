@@ -44,7 +44,13 @@ public class UserEconomyCodec implements Codec<UserEconomy> {
             userCard = userCardCodec.decode(bsonReader, decoderContext);
         }
 
+        if (bsonReader.readName().equals("items")) {
+            skipArray(bsonReader);
+        }
+
         List<UserStock> stocks = readStocks(bsonReader, decoderContext);
+
+        bsonReader.readEndDocument();
 
         return new UserEconomy(balance, bank, job, userCard, stocks);
     }
@@ -93,5 +99,15 @@ public class UserEconomyCodec implements Codec<UserEconomy> {
             userStockCodec.encode(bsonWriter, stock, encoderContext);
         }
         bsonWriter.writeEndArray();
+    }
+
+    private void skipArray(BsonReader reader) {
+        reader.readStartArray();
+
+        while (reader.readBsonType() != BsonType.END_OF_DOCUMENT) {
+            reader.skipValue();
+        }
+
+        reader.readEndArray();
     }
 }

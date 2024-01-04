@@ -23,7 +23,10 @@ public class UserMusicCodec implements Codec<UserMusic> {
 
     @Override
     public UserMusic decode(BsonReader bsonReader, DecoderContext decoderContext) {
+        bsonReader.readStartDocument();
         List<Playlist> playlists = readPlaylists(bsonReader, decoderContext);
+
+        bsonReader.readEndDocument();
 
         return new UserMusic(playlists);
     }

@@ -27,6 +27,7 @@ public class PlaylistCodec implements Codec<Playlist> {
         String playlistName = bsonReader.readString("playlistName");
         List<Song> songs = readSongs(bsonReader, decoderContext);
 
+        bsonReader.readEndDocument();
         return new Playlist(playlistName, songs);
     }
 
