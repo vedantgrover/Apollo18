@@ -167,7 +167,7 @@ public class BusinessCommand extends Command {
                     return;
                 }
 
-                db.setJob(event.getUser().getId(), business.stockCode(), job);
+                db.setJob(event.getUser().getId(), code, job);
 
                 event.getHook().sendMessageEmbeds(EmbedUtils.createSuccess("Job has been set to __" + db.getJob(code, job).name() + "__")).queue();
                 break;
