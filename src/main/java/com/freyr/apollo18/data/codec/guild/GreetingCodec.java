@@ -1,6 +1,7 @@
 package com.freyr.apollo18.data.codec.guild;
 
 import com.freyr.apollo18.data.records.guild.Greeting;
+import com.freyr.apollo18.util.DataUtility;
 import org.bson.BsonReader;
 import org.bson.BsonType;
 import org.bson.BsonWriter;
@@ -14,9 +15,9 @@ public class GreetingCodec implements Codec<Greeting> {
         bsonReader.readStartDocument();
 
         boolean onOff = bsonReader.readBoolean("onOff");
-        String welcomeChannel = readNullableString(bsonReader,"welcomeChannel");
-        String leaveChannel = readNullableString(bsonReader, "leaveChannel");
-        String memberCountChannel = readNullableString(bsonReader, "memberCountChannel");
+        String welcomeChannel = DataUtility.readNullableString(bsonReader, "welcomeChannel");
+        String leaveChannel = DataUtility.readNullableString(bsonReader, "leaveChannel");
+        String memberCountChannel = DataUtility.readNullableString(bsonReader, "memberCountChannel");
         String welcomeMessage = bsonReader.readString("welcomeMessage");
         String leaveMessage = bsonReader.readString("leaveMessage");
 
@@ -31,9 +32,9 @@ public class GreetingCodec implements Codec<Greeting> {
 
         if (greeting != null) {
             bsonWriter.writeBoolean("onOff", greeting.onOff());
-            writeNullableString(bsonWriter,"welcomeChannel", greeting.welcomeChannel());
-            writeNullableString(bsonWriter, "leaveChannel", greeting.leaveChannel());
-            writeNullableString(bsonWriter,"memberCountChannel", greeting.memberCountChannel());
+            DataUtility.writeNullableString(bsonWriter, "welcomeChannel", greeting.welcomeChannel());
+            DataUtility.writeNullableString(bsonWriter, "leaveChannel", greeting.leaveChannel());
+            DataUtility.writeNullableString(bsonWriter, "memberCountChannel", greeting.memberCountChannel());
             bsonWriter.writeString("welcomeMessage", greeting.welcomeMessage());
             bsonWriter.writeString("leaveMessage", greeting.leaveMessage());
         }
@@ -44,22 +45,5 @@ public class GreetingCodec implements Codec<Greeting> {
     @Override
     public Class<Greeting> getEncoderClass() {
         return Greeting.class;
-    }
-
-    private String readNullableString(BsonReader bsonReader, String fieldName) {
-        if (bsonReader.readBsonType() == BsonType.NULL) {
-            bsonReader.readNull();
-            return null;
-        }
-
-        return bsonReader.readString(fieldName);
-    }
-
-    private void writeNullableString(BsonWriter writer, String fieldName, String value) {
-        if (value == null) {
-            writer.writeNull(fieldName);
-        } else {
-            writer.writeString(fieldName, value);
-        }
     }
 }

@@ -1,6 +1,7 @@
 package com.freyr.apollo18.data.codec.user.economy;
 
 import com.freyr.apollo18.data.records.user.economy.UserCreditCard;
+import com.freyr.apollo18.util.DataUtility;
 import org.bson.BsonReader;
 import org.bson.BsonType;
 import org.bson.BsonWriter;
@@ -16,7 +17,7 @@ public class UserCreditCardCodec implements Codec<UserCreditCard> {
         boolean hasCard = bsonReader.readBoolean("hasCard");
         int currentBalance = bsonReader.readInt32("currentBalance");
         int totalBalance = bsonReader.readInt32("totalBalance");
-        String expirationDate = readNullableString(bsonReader, "expirationDate");
+        String expirationDate = DataUtility.readNullableString(bsonReader, "expirationDate");
 
         bsonReader.readEndDocument();
 
@@ -31,7 +32,7 @@ public class UserCreditCardCodec implements Codec<UserCreditCard> {
             bsonWriter.writeBoolean("currentBalance", userCreditCard.hasCard());
             bsonWriter.writeInt32("currentBalance", userCreditCard.currentBalance());
             bsonWriter.writeInt32("totalBalance", userCreditCard.totalBalance());
-            writeNullableString(bsonWriter, "expirationDate", userCreditCard.expirationDate());
+            DataUtility.writeNullableString(bsonWriter, "expirationDate", userCreditCard.expirationDate());
         }
 
         bsonWriter.writeEndDocument();
@@ -40,22 +41,5 @@ public class UserCreditCardCodec implements Codec<UserCreditCard> {
     @Override
     public Class<UserCreditCard> getEncoderClass() {
         return UserCreditCard.class;
-    }
-
-    private String readNullableString(BsonReader bsonReader, String fieldName) {
-        if (bsonReader.readBsonType() == BsonType.NULL) {
-            bsonReader.readNull();
-            return null;
-        }
-
-        return bsonReader.readString(fieldName);
-    }
-
-    private void writeNullableString(BsonWriter writer, String fieldName, String value) {
-        if (value == null) {
-            writer.writeNull(fieldName);
-        } else {
-            writer.writeString(fieldName, value);
-        }
     }
 }

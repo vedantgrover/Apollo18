@@ -16,12 +16,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BusinessCodec implements Codec<Business> {
-    private final CodecRegistry codecRegistry;
     private final Codec<Job> jobCodec;
     private final Codec<Stock> stockCodec;
 
     public BusinessCodec(CodecRegistry registry) {
-        this.codecRegistry = registry;
         this.jobCodec = registry.get(Job.class);
         this.stockCodec = registry.get(Stock.class);
     }

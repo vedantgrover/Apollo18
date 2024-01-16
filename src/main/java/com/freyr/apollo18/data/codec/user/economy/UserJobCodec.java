@@ -1,7 +1,9 @@
 package com.freyr.apollo18.data.codec.user.economy;
 
 import com.freyr.apollo18.data.records.user.economy.UserJob;
+import com.freyr.apollo18.util.DataUtility;
 import org.bson.BsonReader;
+import org.bson.BsonType;
 import org.bson.BsonWriter;
 import org.bson.codecs.Codec;
 import org.bson.codecs.DecoderContext;
@@ -12,8 +14,8 @@ public class UserJobCodec implements Codec<UserJob> {
     public UserJob decode(BsonReader bsonReader, DecoderContext decoderContext) {
         bsonReader.readStartDocument();
 
-        String businessCode = bsonReader.readString("business");
-        String jobName = bsonReader.readString("job");
+        String businessCode = DataUtility.readNullableString(bsonReader,"business");
+        String jobName = DataUtility.readNullableString(bsonReader,"job");
         int daysWorked = bsonReader.readInt32("daysWorked");
         int daysMissed = bsonReader.readInt32("daysMissed");
         boolean worked = bsonReader.readBoolean("worked");
@@ -28,8 +30,8 @@ public class UserJobCodec implements Codec<UserJob> {
         bsonWriter.writeStartDocument();
 
         if (userJob != null) {
-            bsonWriter.writeString("business", userJob.businessCode());
-            bsonWriter.writeString("job", userJob.jobName());
+            DataUtility.writeNullableString(bsonWriter,"business", userJob.businessCode());
+            DataUtility.writeNullableString(bsonWriter,"job", userJob.jobName());
             bsonWriter.writeInt32("daysWorked", userJob.daysWorked());
             bsonWriter.writeInt32("daysMissed", userJob.daysMissed());
             bsonWriter.writeBoolean("worked", userJob.worked());
