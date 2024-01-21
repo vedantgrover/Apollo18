@@ -87,7 +87,7 @@ public class CommandManager extends ListenerAdapter {
 
                 // Image Commands
                 new BeautifulCommand(bot), new ChangeMyMindCommand(bot), new ClydeCommand(bot), new DistractedCommand(bot), new FuseCommand(bot), new HitlerCommand(bot), new JailCommand(bot), new JokeOverHeadCommand(bot), new OhNoCommand(bot),
-                new RainbowCommand(bot), new RipCommand(bot), new SlapCommand(bot), new SpankCommand(bot), new TriggerCommand(bot), new WantedCommand(bot), new GenerateCommand(bot), new CatImageCommand(bot), new DogImageCommand(bot), new ImageGenerationCommand(bot),
+                new RainbowCommand(bot), new RipCommand(bot), new SlapCommand(bot), new SpankCommand(bot), new TriggerCommand(bot), new WantedCommand(bot), /*new GenerateCommand(bot),*/ new CatImageCommand(bot), new DogImageCommand(bot), /* new ImageGenerationCommand(bot),*/
 
                 // Business Commands
                 new BusinessCommand(bot), new WorkCommand(bot),
