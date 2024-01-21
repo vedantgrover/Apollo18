@@ -13,14 +13,14 @@ import com.freyr.apollo18.commands.fun.EmoteCommand;
 import com.freyr.apollo18.commands.fun.MemeCommand;
 import com.freyr.apollo18.commands.fun.UrbanDictionaryCommand;
 import com.freyr.apollo18.commands.image.ImageGenerationCommand;
+import com.freyr.apollo18.commands.image.CatImageCommand;
+import com.freyr.apollo18.commands.image.DogImageCommand;
+import com.freyr.apollo18.commands.image.GenerateCommand;
 import com.freyr.apollo18.commands.image.image.*;
 import com.freyr.apollo18.commands.image.text.ChangeMyMindCommand;
 import com.freyr.apollo18.commands.image.text.ClydeCommand;
 import com.freyr.apollo18.commands.image.text.OhNoCommand;
-import com.freyr.apollo18.commands.information.ServerInfoCommand;
-import com.freyr.apollo18.commands.information.UserInfoCommand;
-import com.freyr.apollo18.commands.information.WeatherCommand;
-import com.freyr.apollo18.commands.information.YouTubeCommand;
+import com.freyr.apollo18.commands.information.*;
 import com.freyr.apollo18.commands.leveling.RankCommand;
 import com.freyr.apollo18.commands.music.*;
 import com.freyr.apollo18.commands.settings.LevelingSettings;
@@ -71,7 +71,7 @@ public class CommandManager extends ListenerAdapter {
                 // Music Commands
                 new PlayCommand(bot), new StopCommand(bot), new SkipCommand(bot), new NowPlayingCommand(bot), new QueueCommand(bot), new LoopCommand(bot), new VolumeCommand(bot), new PauseCommand(bot), new ResumeCommand(bot), new PlaylistCommand(bot),
                 // Information Commands
-                new WeatherCommand(bot), new YouTubeCommand(bot), new ServerInfoCommand(bot), new UserInfoCommand(bot),
+                new WeatherCommand(bot), new YouTubeCommand(bot), new ServerInfoCommand(bot), new UserInfoCommand(bot), new DictionaryCommand(bot), new TranslateCommand(bot), new StockCommand(bot),
 
                 // Fun Commands
                 new EmoteCommand(bot), new AvatarCommand(bot), new UrbanDictionaryCommand(bot), new MemeCommand(bot),
@@ -87,7 +87,7 @@ public class CommandManager extends ListenerAdapter {
 
                 // Image Commands
                 new BeautifulCommand(bot), new ChangeMyMindCommand(bot), new ClydeCommand(bot), new DistractedCommand(bot), new FuseCommand(bot), new HitlerCommand(bot), new JailCommand(bot), new JokeOverHeadCommand(bot), new OhNoCommand(bot),
-                new RainbowCommand(bot), new RipCommand(bot), new SlapCommand(bot), new SpankCommand(bot), new TriggerCommand(bot), new WantedCommand(bot), new ImageGenerationCommand(bot),
+                new RainbowCommand(bot), new RipCommand(bot), new SlapCommand(bot), new SpankCommand(bot), new TriggerCommand(bot), new WantedCommand(bot), new GenerateCommand(bot), new CatImageCommand(bot), new DogImageCommand(bot), new ImageGenerationCommand(bot),
 
                 // Business Commands
                 new BusinessCommand(bot), new WorkCommand(bot),

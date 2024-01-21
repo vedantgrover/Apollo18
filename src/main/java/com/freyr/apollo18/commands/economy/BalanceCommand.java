@@ -4,6 +4,7 @@ import com.freyr.apollo18.Apollo18;
 import com.freyr.apollo18.commands.Category;
 import com.freyr.apollo18.commands.Command;
 import com.freyr.apollo18.data.Database;
+import com.freyr.apollo18.data.records.business.Business;
 import com.freyr.apollo18.handlers.BusinessHandler;
 import com.freyr.apollo18.util.embeds.EmbedColor;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -11,7 +12,6 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-import org.bson.Document;
 
 import java.util.List;
 import java.util.Objects;
@@ -34,7 +34,7 @@ public class BalanceCommand extends Command {
         Database db = bot.getDatabase();
 
         User user = (event.getOption("user") == null) ? event.getUser() : Objects.requireNonNull(event.getOption("user")).getAsUser();
-        List<Document> businesses = db.getBusinesses();
+        List<Business> businesses = db.getBusinesses();
 
         EmbedBuilder embed = new EmbedBuilder();
         embed.setTitle(user.getName() + "'s Balance");
@@ -43,10 +43,10 @@ public class BalanceCommand extends Command {
         embed.addField("Balance", BusinessHandler.byteEmoji + " " + db.getBalance(user.getId()) + " bytes", true);
         embed.addField("Bank", BusinessHandler.byteEmoji + " " + db.getBank(user.getId()) + " bytes", true);
         embed.addField("Net Worth", BusinessHandler.byteEmoji + " " + db.getNetWorth(user.getId()) + " bytes", true);
-        embed.addField("Job", (db.getUserJob(user.getId()).getString("job") == null) ? "None" : db.getUserJob(user.getId()).getString("job"), false);
-        for (Document business : businesses) {
-            if (db.getTotalStocks(user.getId(), business.getString("stockCode")) > 0) {
-                embed.addField(business.getString("name"), db.getTotalStocks(event.getUser().getId(), business.getString("stockCode")) + " share(s)\nCode: `" + business.getString("stockCode") + "`", true);
+        embed.addField("Job", (db.getUserJob(user.getId()).jobName() == null) ? "None" : db.getUserJob(user.getId()).jobName(), false);
+        for (Business business : businesses) {
+            if (db.getTotalStocks(user.getId(), business.stockCode()) > 0) {
+                embed.addField(business.name(), db.getTotalStocks(event.getUser().getId(), business.stockCode()) + " share(s)\nCode: `" + business.stockCode() + "`", true);
             }
         }
 

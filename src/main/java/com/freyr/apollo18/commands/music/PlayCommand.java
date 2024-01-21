@@ -4,6 +4,7 @@ import com.freyr.apollo18.Apollo18;
 import com.freyr.apollo18.commands.Category;
 import com.freyr.apollo18.commands.Command;
 import com.freyr.apollo18.data.Database;
+import com.freyr.apollo18.data.records.user.music.Song;
 import com.freyr.apollo18.util.embeds.EmbedColor;
 import com.freyr.apollo18.util.embeds.EmbedUtils;
 import com.freyr.apollo18.util.music.PlayerManager;
@@ -17,7 +18,6 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.managers.AudioManager;
-import org.bson.Document;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -74,10 +74,10 @@ public class PlayCommand extends Command {
             PlayerManager.getInstance().loadAndPlay(event, event.getChannel(), link);
         } else if (playlistOption != null) {
             Database db = bot.getDatabase();
-            List<Document> songs = db.getSongs(event.getUser().getId(), event.getOption("playlist").getAsString().toLowerCase());
+            List<Song> songs = db.getSongs(event.getUser().getId(), event.getOption("playlist").getAsString().toLowerCase());
 
-            for (Document songData : songs) {
-                PlayerManager.getInstance().loadAndPlay(event, event.getChannel(), songData.getString("uri"));
+            for (Song songData : songs) {
+                PlayerManager.getInstance().loadAndPlay(event, event.getChannel(), songData.uri());
             }
         }
     }

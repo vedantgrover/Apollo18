@@ -5,10 +5,14 @@ import com.freyr.apollo18.commands.Category;
 import com.freyr.apollo18.commands.Command;
 import com.freyr.apollo18.util.embeds.EmbedColor;
 import com.freyr.apollo18.util.embeds.EmbedUtils;
+import com.neovisionaries.i18n.LanguageCode;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import okhttp3.*;
+import org.json.JSONArray;
+import org.json.JSONException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -27,7 +31,7 @@ import java.util.Map;
  */
 public class TranslateCommand extends Command {
 
-    private static final Map<String, String> languages = new HashMap<>(); // Holds all the language names with its corresponding ISO language code.
+    private final OkHttpClient client = new OkHttpClient();
 
     public TranslateCommand(Apollo18 bot) {
         super(bot);
@@ -35,63 +39,54 @@ public class TranslateCommand extends Command {
         this.description = "Translate any text to another language!";
         this.category = Category.INFORMATION;
 
-        this.args.add(new OptionData(OptionType.STRING, "language", "ISO Language Code", true));
         this.args.add(new OptionData(OptionType.STRING, "text", "The text you want translated", true));
-        this.args.add(new OptionData(OptionType.STRING, "from", "The language you are translating from", false));
-
-        // Adding all the languages and their ISO language codes into the map.
-        for (String lang : Locale.getISOLanguages()) {
-            Locale l = new Locale(lang);
-            languages.put(l.getDisplayLanguage().toLowerCase(), lang);
-        }
-    }
-
-    /**
-     * Using an API that I made, the bot translates the text into a language and returns the string (the translated text).
-     *
-     * @param langTo The ISO Language code. This tells the API what language to translate to.
-     * @param text   The text you want to translate
-     * @return The translated text
-     * @throws IOException when the text cannot be encoded due to an invalid encoder
-     */
-    private static String translate(String langTo, String langFrom, String text) throws Exception {
-
-        if (!languages.containsValue(langTo) && !languages.containsKey(langTo)) throw new Exception("Incorrect Language");
-
-        String urlStr = "https://script.google.com/macros/s/AKfycbwGTyjBTwcPLAdt2EErzRdVA9CN-cngEglSEg0XcpzS6YZopWfuq-RcYl_fCe8kXVnk/exec?q=" + URLEncoder.encode(text, "UTF-8") + "&target=" + langTo + "&source=" + langFrom;
-        URL url = new URL(urlStr);
-        StringBuilder response = new StringBuilder();
-        HttpURLConnection con = (HttpURLConnection) url.openConnection();
-        con.setRequestProperty("User-Agent", "Mozilla/5.0");
-        BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
-        String inputLine;
-        while ((inputLine = in.readLine()) != null) {
-            response.append(inputLine);
-        }
-        in.close();
-        return response.toString();
+        this.args.add(new OptionData(OptionType.STRING, "language", "The language", true));
     }
 
     @Override
     public void execute(SlashCommandInteractionEvent event) {
         event.deferReply().queue();
 
-        String lang = event.getOption("language").getAsString();
+        String userLanguage = event.getOption("language").getAsString();
         String text = event.getOption("text").getAsString();
 
-        try {
-            EmbedBuilder embed = new EmbedBuilder();
+        LanguageCode[] languageCodes = LanguageCode.values();
 
-            String language = (event.getOption("from") != null) ? event.getOption("from").getAsString().toUpperCase() : "";
+        String language = "";
+        for (LanguageCode code : languageCodes) {
+            if (code.getName().equalsIgnoreCase(userLanguage)) {
+                language = code.toString();
+            }
+        }
 
-            embed.setAuthor(event.getUser().getName(), null, event.getUser().getAvatarUrl());
-            embed.addField("Original `(" + language + ")`", text, false);
-            embed.addField("Translated `(" + lang.toUpperCase() + ")`", translate((languages.get(lang.toLowerCase()) != null) ? languages.get(lang.toLowerCase()):lang.toLowerCase(), (event.getOption("from") == null) ? "" : languages.get(event.getOption("from").getAsString()), text).replace("&#39;", "'"), false);
-            embed.setColor(EmbedColor.DEFAULT_COLOR);
+        String subscriptionKey = bot.getConfig().get("AZURETRANSLATORKEY", System.getenv("AZURETRANSLATORKEY"));
 
-            event.getHook().sendMessageEmbeds(embed.build()).queue();
-        } catch (Exception e) {
-            event.getHook().sendMessageEmbeds(EmbedUtils.createError("`" + lang + "` is not a language")).queue();
+        // Request URL and body
+        String url = "https://api.cognitive.microsofttranslator.com/translate?api-version=3.0&to=" + language;
+        String requestBody = "[{'Text':'" + text + "'}]";
+
+        MediaType mediaType = MediaType.parse("application/json; charset=UTF-8");
+        RequestBody body = RequestBody.create(requestBody, mediaType);
+        // Create the request
+        Request request = new Request.Builder()
+                .url(url)
+                .addHeader("Ocp-Apim-Subscription-Key", subscriptionKey)
+                .addHeader("Ocp-Apim-Subscription-Region", "westus")
+                .addHeader("Content-Type", "application/json; charset=UTF-8")
+                .post(body)
+                .build();
+
+        // Send the request
+        try (Response response = client.newCall(request).execute()) {
+            // Handle the response
+            JSONArray responseBody = new JSONArray(response.body().string());
+            System.out.println("Response: " + responseBody);
+
+            event.getHook().sendMessage(responseBody.getJSONObject(0).getJSONArray("translations").getJSONObject(0).getString("text")).queue();
+        } catch (IOException | JSONException e) {
+            System.err.println(e);
+
+            event.getHook().sendMessageEmbeds(EmbedUtils.createError("That language doesn't exist")).queue();
         }
 
     }

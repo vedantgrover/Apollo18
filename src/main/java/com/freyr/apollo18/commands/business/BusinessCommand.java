@@ -4,6 +4,8 @@ import com.freyr.apollo18.Apollo18;
 import com.freyr.apollo18.commands.Category;
 import com.freyr.apollo18.commands.Command;
 import com.freyr.apollo18.data.Database;
+import com.freyr.apollo18.data.records.business.Business;
+import com.freyr.apollo18.data.records.business.Job;
 import com.freyr.apollo18.handlers.BusinessHandler;
 import com.freyr.apollo18.util.embeds.EmbedColor;
 import com.freyr.apollo18.util.embeds.EmbedUtils;
@@ -45,7 +47,7 @@ public class BusinessCommand extends Command {
 
         EmbedBuilder embed;
         String code;
-        Document business;
+        Business business;
 
         switch (Objects.requireNonNull(event.getSubcommandName())) {
             case "market":
@@ -53,8 +55,8 @@ public class BusinessCommand extends Command {
                 embed.setTitle("Businesses");
                 embed.setDescription("Here are all of the businesses that you can invest in!");
 
-                for (Document currentBusiness : db.getBusinesses()) {
-                    embed.addField(currentBusiness.getString("name"), "Price: " + BusinessHandler.byteEmoji + "`" + currentBusiness.get("stock", Document.class).getInteger("currentPrice") + " bytes`" + currentBusiness.get("stock", Document.class).getString("arrowEmoji") + "\nChange: `" + currentBusiness.get("stock", Document.class).getInteger("change") + " bytes`\nCode: `" + currentBusiness.getString("stockCode") + "`", true);
+                for (Business currentBusiness : db.getBusinesses()) {
+                    embed.addField(currentBusiness.stockCode(), "Price: " + BusinessHandler.byteEmoji + "`" + currentBusiness.stock().currentPrice() + " bytes`" + currentBusiness.stock().arrowEmoji() + "\nChange: `" + currentBusiness.stock().change() + " bytes`\nCode: `" + currentBusiness.stockCode() + "`", true);
                 }
 
                 embed.setColor(EmbedColor.DEFAULT_COLOR);
@@ -72,12 +74,12 @@ public class BusinessCommand extends Command {
 
                 embed = new EmbedBuilder();
                 embed.setColor(EmbedColor.DEFAULT_COLOR);
-                embed.setThumbnail(business.getString("logo"));
-                embed.setTitle(business.getString("name"));
-                embed.setDescription(business.getString("description"));
-                embed.addField("Stock Info", "Price: " + BusinessHandler.byteEmoji + " `" + business.get("stock", Document.class).getInteger("currentPrice") + " bytes` " + business.get("stock", Document.class).getString("arrowEmoji") + " `(" + business.get("stock", Document.class).getInteger("change") + ")`\nCode: `" + business.getString("stockCode") + "`", false);
+                embed.setThumbnail(business.logo());
+                embed.setTitle(business.name());
+                embed.setDescription(business.description());
+                embed.addField("Stock Info", "Price: " + BusinessHandler.byteEmoji + " `" + business.stock().currentPrice() + " bytes` " + business.stock().arrowEmoji() + " `(" + business.stock().change() + ")`\nCode: `" + business.stockCode() + "`", false);
 
-                String imagePath = "src/main/resources/stock_data/" + business.get("stock", Document.class).getString("ticker") + "/" + business.get("stock", Document.class).getString("ticker") + "-graph.png";
+                String imagePath = "src/main/resources/stock_data/" + business.stock().ticker() + "/" + business.stock().ticker() + "-graph.png";
                 System.out.println(imagePath);
 
                 File graph = new File(imagePath);
@@ -97,7 +99,7 @@ public class BusinessCommand extends Command {
                     return;
                 }
 
-                if (db.getBalance(event.getUser().getId()) < (business.get("stock", Document.class).getInteger("currentPrice") * quantity)) {
+                if (db.getBalance(event.getUser().getId()) < (business.stock().currentPrice() * quantity)) {
                     event.getHook().sendMessageEmbeds(EmbedUtils.createError("You cannot afford this")).queue();
                     return;
                 }
@@ -134,17 +136,17 @@ public class BusinessCommand extends Command {
                     return;
                 }
 
-                List<Document> jobs = db.getJobs(code);
+                List<Job> jobs = db.getJobs(code);
 
                 embed = new EmbedBuilder();
-                embed.setTitle(business.getString("name") + "'s Jobs");
+                embed.setTitle(business.name() + "'s Jobs");
                 embed.setDescription("Here are the jobs from this business! Use `/business set-job` to set your job!");
                 embed.setColor(EmbedColor.DEFAULT_COLOR);
-                embed.setThumbnail(business.getString("logo"));
+                embed.setThumbnail(business.logo());
 
                 for (int i = 0; i < jobs.size(); i++) {
-                    if (jobs.get(i).getBoolean("available")) {
-                        embed.addField((i + 1) + ") " + jobs.get(i).getString("name"), jobs.get(i).getString("description") + "\nSalary: " + BusinessHandler.byteEmoji + " `" + jobs.get(i).getInteger("salary") + " bytes`", true);
+                    if (jobs.get(i).available()) {
+                        embed.addField((i + 1) + ") " + jobs.get(i).name(), jobs.get(i).description() + "\nSalary: " + BusinessHandler.byteEmoji + " `" + jobs.get(i).salary() + " bytes`", true);
                     }
                 }
 
@@ -165,7 +167,9 @@ public class BusinessCommand extends Command {
                     return;
                 }
 
-                event.getHook().sendMessageEmbeds(EmbedUtils.createSuccess("Job has been set to __" + db.getJob(code, job).getString("name") + "__")).queue();
+                db.setJob(event.getUser().getId(), code, job);
+
+                event.getHook().sendMessageEmbeds(EmbedUtils.createSuccess("Job has been set to __" + db.getJob(code, job).name() + "__")).queue();
                 break;
         }
     }

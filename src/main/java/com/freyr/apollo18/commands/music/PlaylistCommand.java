@@ -4,6 +4,8 @@ import com.freyr.apollo18.Apollo18;
 import com.freyr.apollo18.commands.Category;
 import com.freyr.apollo18.commands.Command;
 import com.freyr.apollo18.data.Database;
+import com.freyr.apollo18.data.records.user.music.Playlist;
+import com.freyr.apollo18.data.records.user.music.Song;
 import com.freyr.apollo18.util.embeds.EmbedColor;
 import com.freyr.apollo18.util.embeds.EmbedUtils;
 import com.freyr.apollo18.util.music.GuildMusicManager;
@@ -16,9 +18,9 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
-import org.bson.Document;
 
 import java.util.List;
+import java.util.Objects;
 
 public class PlaylistCommand extends Command {
 
@@ -42,19 +44,20 @@ public class PlaylistCommand extends Command {
         Database db = bot.getDatabase();
 
         final Member member = event.getMember();
+        assert member != null;
         final GuildVoiceState memberVoiceState = member.getVoiceState();
 
-        GuildMusicManager musicManager = PlayerManager.getInstance().getMusicManager(event.getGuild());
+        GuildMusicManager musicManager = PlayerManager.getInstance().getMusicManager(Objects.requireNonNull(event.getGuild()));
 
-        switch (event.getSubcommandName()) {
+        switch (Objects.requireNonNull(event.getSubcommandName())) {
             case "see":
                 OptionMapping playlist = event.getOption("playlist");
-                User user = (event.getOption("user") == null) ? event.getUser() : event.getOption("user").getAsUser();
+                User user = (event.getOption("user") == null) ? event.getUser() : Objects.requireNonNull(event.getOption("user")).getAsUser();
                 if (playlist == null) {
                     StringBuilder playlists = new StringBuilder();
-                    List<Document> userPlaylists = db.getPlaylists(user.getId());
+                    List<Playlist> userPlaylists = db.getPlaylists(user.getId());
                     for (int i = 0; i < userPlaylists.size(); i++) {
-                        playlists.append("**").append(i + 1).append(")** `").append(userPlaylists.get(i).getString("playlistName")).append("` - **").append(userPlaylists.get(i).getList("songs", Document.class).size()).append(" songs**\n");
+                        playlists.append("**").append(i + 1).append(")** `").append(userPlaylists.get(i).playlistName()).append("` - **").append(userPlaylists.get(i).songs().size()).append(" songs**\n");
                     }
 
                     EmbedBuilder embed = new EmbedBuilder();
@@ -69,9 +72,9 @@ public class PlaylistCommand extends Command {
                     String userPlaylist = playlist.getAsString();
 
                     StringBuilder songs = new StringBuilder();
-                    List<Document> userSongs = db.getSongs(event.getUser().getId(), userPlaylist);
+                    List<Song> userSongs = db.getSongs(event.getUser().getId(), userPlaylist);
                     for (int i = 0; i < userSongs.size(); i++) {
-                        songs.append("**").append(i + 1).append(")** `").append(userSongs.get(i).getString("songName")).append("`\n");
+                        songs.append("**").append(i + 1).append(")** `").append(userSongs.get(i).songName()).append("`\n");
                         if (i > 10) {
                             break;
                         }
@@ -94,11 +97,12 @@ public class PlaylistCommand extends Command {
                     event.getHook().sendMessageEmbeds(EmbedUtils.createError("You have reached the max number of playlists")).queue();
                     return;
                 }
-                db.createPlaylist(event.getUser().getId(), event.getOption("name").getAsString());
-                event.getHook().sendMessageEmbeds(EmbedUtils.createSuccess(event.getOption("name").getAsString() + " has been successfully created.")).queue();
+                db.createPlaylist(event.getUser().getId(), Objects.requireNonNull(event.getOption("name")).getAsString());
+                event.getHook().sendMessageEmbeds(EmbedUtils.createSuccess(Objects.requireNonNull(event.getOption("name")).getAsString() + " has been successfully created.")).queue();
                 break;
 
             case "add":
+                assert memberVoiceState != null;
                 if (!memberVoiceState.inAudioChannel()) {
                     event.getHook().sendMessageEmbeds(EmbedUtils.createError("You need to be in a voice channel for this command to work.")).setEphemeral(true).queue();
                     return;
@@ -109,23 +113,23 @@ public class PlaylistCommand extends Command {
                     return;
                 }
 
-                if (db.getPlaylists(event.getUser().getId()).size() == 0) {
+                if (db.getPlaylists(event.getUser().getId()).isEmpty()) {
                     event.getHook().sendMessageEmbeds(EmbedUtils.createError("You currently do not have any playlists!")).queue();
                     return;
                 }
 
                 try {
-                    db.addSong(event.getUser().getId(), event.getOption("playlist").getAsString(), musicManager.audioPlayer.getPlayingTrack());
+                    db.addSong(event.getUser().getId(), Objects.requireNonNull(event.getOption("playlist")).getAsString(), musicManager.audioPlayer.getPlayingTrack());
                 } catch (NullPointerException e) {
                     event.getHook().sendMessageEmbeds(EmbedUtils.createError("We could not find that playlist")).queue();
                     return;
                 }
-                event.getHook().sendMessageEmbeds(EmbedUtils.createSuccess(musicManager.audioPlayer.getPlayingTrack().getInfo().title + " has been added to " + event.getOption("playlist").getAsString())).queue();
+                event.getHook().sendMessageEmbeds(EmbedUtils.createSuccess(musicManager.audioPlayer.getPlayingTrack().getInfo().title + " has been added to " + Objects.requireNonNull(event.getOption("playlist")).getAsString())).queue();
                 break;
 
             case "remove-song":
-                db.removeSong(event.getUser().getId(), event.getOption("playlist").getAsString(), event.getOption("song").getAsString());
-                event.getHook().sendMessageEmbeds(EmbedUtils.createSuccess(event.getOption("song").getAsString() + " has been removed from the playlist.")).queue();
+                db.removeSong(event.getUser().getId(), Objects.requireNonNull(event.getOption("playlist")).getAsString(), Objects.requireNonNull(event.getOption("song")).getAsString());
+                event.getHook().sendMessageEmbeds(EmbedUtils.createSuccess(Objects.requireNonNull(event.getOption("song")).getAsString() + " has been removed from the playlist.")).queue();
                 break;
 
             case "remove":
