@@ -83,7 +83,6 @@
             <artifactId>nv-i18n</artifactId>
             <version>1.29</version>
         </dependency>
-
     </dependencies>
     <build>
         <plugins>

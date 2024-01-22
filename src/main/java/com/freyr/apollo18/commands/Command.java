@@ -6,6 +6,7 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import okhttp3.*;
+import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -111,15 +112,7 @@ public abstract class Command {
 
         Request request = new Request.Builder().url(apiURL).addHeader("Authorization", "Bearer " + apiAuthentication).build();
 
-        try (Response response = okHttpClient.newCall(request).execute()) {
-            String responseBody = response.body().string();
-            System.out.println(responseBody);
-
-            return new JSONObject(responseBody);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
+        return getJsonObject(okHttpClient, request);
     }
 
     /**
@@ -138,6 +131,11 @@ public abstract class Command {
 
         Request request = new Request.Builder().url(apiUrl).post(body).build();
 
+        return getJsonObject(okHttpClient, request);
+    }
+
+    @Nullable
+    private JSONObject getJsonObject(OkHttpClient okHttpClient, Request request) {
         try (Response response = okHttpClient.newCall(request).execute()) {
             String responseBody = response.body().string();
             System.out.println(responseBody);
