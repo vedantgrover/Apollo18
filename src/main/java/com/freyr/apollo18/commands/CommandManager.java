@@ -12,10 +12,8 @@ import com.freyr.apollo18.commands.fun.AvatarCommand;
 import com.freyr.apollo18.commands.fun.EmoteCommand;
 import com.freyr.apollo18.commands.fun.MemeCommand;
 import com.freyr.apollo18.commands.fun.UrbanDictionaryCommand;
-import com.freyr.apollo18.commands.image.ImageGenerationCommand;
 import com.freyr.apollo18.commands.image.CatImageCommand;
 import com.freyr.apollo18.commands.image.DogImageCommand;
-import com.freyr.apollo18.commands.image.GenerateCommand;
 import com.freyr.apollo18.commands.image.image.*;
 import com.freyr.apollo18.commands.image.text.ChangeMyMindCommand;
 import com.freyr.apollo18.commands.image.text.ClydeCommand;
@@ -86,8 +84,7 @@ public class CommandManager extends ListenerAdapter {
                 new CoinFlipGame(bot), new SlotMachineCommands(bot), new CrashGame(bot),
 
                 // Image Commands
-                new BeautifulCommand(bot), new ChangeMyMindCommand(bot), new ClydeCommand(bot), new DistractedCommand(bot), new FuseCommand(bot), new HitlerCommand(bot), new JailCommand(bot), new JokeOverHeadCommand(bot), new OhNoCommand(bot),
-                new RainbowCommand(bot), new RipCommand(bot), new SlapCommand(bot), new SpankCommand(bot), new TriggerCommand(bot), new WantedCommand(bot), /*new GenerateCommand(bot),*/ new CatImageCommand(bot), new DogImageCommand(bot), /* new ImageGenerationCommand(bot),*/
+                new BeautifulCommand(bot), new ChangeMyMindCommand(bot), new ClydeCommand(bot), new DistractedCommand(bot), new FuseCommand(bot), new HitlerCommand(bot), new JailCommand(bot), new JokeOverHeadCommand(bot), new OhNoCommand(bot), new RainbowCommand(bot), new RipCommand(bot), new SlapCommand(bot), new SpankCommand(bot), new TriggerCommand(bot), new WantedCommand(bot), /*new GenerateCommand(bot),*/ new CatImageCommand(bot), new DogImageCommand(bot),
 
                 // Business Commands
                 new BusinessCommand(bot), new WorkCommand(bot),

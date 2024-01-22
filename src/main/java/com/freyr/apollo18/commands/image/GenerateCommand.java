@@ -7,11 +7,13 @@ import com.freyr.apollo18.util.embeds.EmbedUtils;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-import okhttp3.*;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.IOException;
-import java.net.SocketTimeoutException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.Objects;
 
 public class GenerateCommand extends Command {
@@ -20,44 +22,46 @@ public class GenerateCommand extends Command {
         super(bot);
 
         this.name = "generate";
-        this.description = "Uses the DALL-E to generate AI art";
+        this.description = "Generate an image through text. `IN DEVELOPMENT`";
         this.category = Category.IMAGE;
-        this.args.add(new OptionData(OptionType.STRING, "prompt", "The description of the image", true));
-        this.cooldown = 5 * 1000;
+        this.args.add(new OptionData(OptionType.STRING, "description", "Image description", true));
+        this.args.add(new OptionData(OptionType.INTEGER, "number", "Number of Images you want").setMinValue(1).setMaxValue(5));
     }
 
     @Override
     public void execute(SlashCommandInteractionEvent event) {
         event.deferReply().queue();
 
-        OkHttpClient client = new OkHttpClient();
+        int numberOfImages = (event.getOption("number") == null) ? 1: Objects.requireNonNull(event.getOption("number")).getAsInt();
 
-        // OpenAI API endpoint
-        String url = "https://api.openai.com/v1/images/generations";
+        JSONObject requestBodyJSON = new JSONObject();
+        requestBodyJSON.put("prompt", Objects.requireNonNull(event.getOption("description")).getAsString());
+        requestBodyJSON.put("n", numberOfImages);
+        requestBodyJSON.put("size", "256x256");
 
-        // OpenAI API request payload
-        String requestBody = "{\"prompt\":\"" + Objects.requireNonNull(event.getOption("prompt")).getAsString() + "\", \"n\": 1, \"size\": \"256x256\"}";
+        String requestBody = requestBodyJSON.toString();
 
-        // Create the request
-        Request request = new Request.Builder()
-                .url(url)
-                .addHeader("Content-Type", "application/json")
-                .addHeader("Authorization", "Bearer sk-" + bot.getConfig().get("OPENAI_KEY", System.getenv("OPENAI_KEY")))
-                .post(RequestBody.create(requestBody, MediaType.parse("application/json")))
-                .build();
+        try {
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create("https://api.openai.com/v1/images/generations"))
+                    .header("Content-Type", "application/json")
+                    .header("Authorization", "Bearer " + bot.getConfig().get("OPENAI_KEY", System.getenv("OPENAI_KEY")))
+                    .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+                    .build();
+            HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+            JSONObject data = new JSONObject(response.body());
 
-        // Send the request
-        try (Response response = client.newCall(request).execute()) {
-            // Handle the response
-            JSONObject responseBody = new JSONObject(response.body().string());
-            System.out.println(responseBody);
-            event.getHook().sendMessage(responseBody.getJSONArray("data").getJSONObject(0).getString("url")).queue();
-        } catch (SocketTimeoutException e) {
-            event.getHook().sendMessageEmbeds(EmbedUtils.createError("It took too long to generate your image...")).queue();
-        } catch (IOException e) {
+            JSONArray image = data.getJSONArray("data");
+
+            for (int i = 0; i < image.length(); i++) {
+                JSONObject urlHolder = image.getJSONObject(i);
+
+                String url = urlHolder.getString("url");
+                event.getHook().sendMessage(url).queue();
+            }
+        } catch (Exception e) {
+            event.getHook().sendMessageEmbeds(EmbedUtils.createError("Something went wrong while generating your image.")).queue();
             System.err.println(e);
-
-            event.getHook().sendMessageEmbeds(EmbedUtils.createError("Something went wrong while generating your image")).queue();
         }
     }
 }
