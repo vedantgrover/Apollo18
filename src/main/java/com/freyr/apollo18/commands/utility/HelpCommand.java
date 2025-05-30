@@ -33,6 +33,7 @@ public class HelpCommand extends Command {
         OptionData data = new OptionData(OptionType.STRING, "category", "See commands under this category");
         for (Category c : Category.values()) {
             String name = c.name.toLowerCase();
+            if (name.equals("music")) continue;
             data.addChoice(name, name);
         }
         this.args.add(data);
