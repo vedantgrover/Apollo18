@@ -32,24 +32,36 @@ public class UserCodec implements Codec<User> {
     public User decode(BsonReader bsonReader, DecoderContext decoderContext) {
         bsonReader.readStartDocument();
 
-        if (bsonReader.readName().equals("_id")) {
-            bsonReader.skipValue();
-        }
-
-        String userID = bsonReader.readString("userID");
-        List<UserLeveling> leveling = readLeveling(bsonReader, decoderContext);
-
+        String userID = null;
+        List<UserLeveling> leveling = new ArrayList<>();
         UserEconomy userEconomy = null;
-        if (bsonReader.readName().equals("economy")) {
-            userEconomy = userEconomyCodec.decode(bsonReader, decoderContext);
-        }
-
         UserMusic userMusic = null;
-        if (bsonReader.readName().equals("music")) {
-            userMusic = userMusicCodec.decode(bsonReader, decoderContext);
-        }
+        boolean notifications = false;
 
-        boolean notifications = bsonReader.readBoolean("notifications");
+        while (bsonReader.readBsonType() != BsonType.END_OF_DOCUMENT) {
+            String fieldName = bsonReader.readName();
+
+            switch (fieldName) {
+                case "userID":
+                    userID = bsonReader.readString();
+                    break;
+                case "leveling":
+                    leveling = readLeveling(bsonReader, decoderContext);
+                    break;
+                case "economy":
+                    userEconomy = userEconomyCodec.decode(bsonReader, decoderContext);
+                    break;
+                case "music":
+                    userMusic = userMusicCodec.decode(bsonReader, decoderContext);
+                    break;
+                case "notifications":
+                    notifications = bsonReader.readBoolean();
+                    break;
+                default:
+                    bsonReader.skipValue();
+                    break;
+            }
+        }
 
         bsonReader.readEndDocument();
 
@@ -84,18 +96,18 @@ public class UserCodec implements Codec<User> {
 
     private List<UserLeveling> readLeveling(BsonReader bsonReader, DecoderContext decoderContext) {
         List<UserLeveling> levelings = new ArrayList<>();
-        if (bsonReader.readBsonType() == BsonType.ARRAY) {
-            bsonReader.readStartArray();
-            while (bsonReader.readBsonType() != BsonType.END_OF_DOCUMENT) {
-                levelings.add(userLevelingCodec.decode(bsonReader, decoderContext));
-            }
-            bsonReader.readEndArray();
+
+        bsonReader.readStartArray();
+        while (bsonReader.readBsonType() != BsonType.END_OF_DOCUMENT) {
+            levelings.add(userLevelingCodec.decode(bsonReader, decoderContext));
         }
+        bsonReader.readEndArray();
+
         return levelings;
     }
 
     private void writeLeveling(BsonWriter bsonWriter, List<UserLeveling> userLevelings, EncoderContext encoderContext) {
-        bsonWriter.writeStartArray("userLeveling");
+        bsonWriter.writeStartArray("leveling");
         for (UserLeveling leveling : userLevelings) {
             userLevelingCodec.encode(bsonWriter, leveling, encoderContext);
         }
