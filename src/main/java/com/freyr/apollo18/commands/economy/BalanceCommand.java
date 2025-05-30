@@ -37,7 +37,7 @@ public class BalanceCommand extends Command {
         List<Business> businesses = db.getBusinesses();
 
         EmbedBuilder embed = new EmbedBuilder();
-        embed.setTitle(user.getName() + "'s Balance");
+        embed.setTitle(user.getEffectiveName() + "'s Balance");
         embed.setColor(EmbedColor.DEFAULT_COLOR);
         embed.setThumbnail(user.getAvatarUrl());
         embed.addField("Balance", BusinessHandler.byteEmoji + " " + db.getBalance(user.getId()) + " bytes", true);
