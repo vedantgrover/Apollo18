@@ -104,6 +104,7 @@ public class Database {
             return false;
         }
 
+        System.out.println("Creating user data for " + user.getName());
         List<UserLeveling> xp = new ArrayList<>();
 
         List<UserStock> stocks = new ArrayList<>();
@@ -116,6 +117,7 @@ public class Database {
             userData.insertOne(new com.freyr.apollo18.data.records.user.User(user.getId(), xp, economyData, musicData, true));
             return true;
         } catch (Exception e) {
+            System.err.println(e);
             return false;
         }
     }

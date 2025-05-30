@@ -20,9 +20,9 @@ public class UserCardCodec implements Codec<UserCard> {
     public UserCard decode(BsonReader bsonReader, DecoderContext decoderContext) {
         bsonReader.readStartDocument();
 
-        boolean debitCard = bsonReader.readBoolean("debit-card");
+        boolean debitCard = bsonReader.readBoolean("debitCard");
         UserCreditCard userCreditCard = null;
-        if (bsonReader.readName().equals("credit-card")) {
+        if (bsonReader.readName().equals("creditCard")) {
             userCreditCard = userCreditCardCodec.decode(bsonReader, decoderContext);
         }
 

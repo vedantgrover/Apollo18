@@ -107,10 +107,16 @@ public class UserCodec implements Codec<User> {
     }
 
     private void writeLeveling(BsonWriter bsonWriter, List<UserLeveling> userLevelings, EncoderContext encoderContext) {
-        bsonWriter.writeStartArray("leveling");
-        for (UserLeveling leveling : userLevelings) {
-            userLevelingCodec.encode(bsonWriter, leveling, encoderContext);
+        bsonWriter.writeName("leveling"); // explicitly write the field name first
+        bsonWriter.writeStartArray();     // now start the array value
+
+        if (userLevelings != null) {
+            for (UserLeveling leveling : userLevelings) {
+                userLevelingCodec.encode(bsonWriter, leveling, encoderContext);
+            }
         }
-        bsonWriter.writeEndArray();
+
+        bsonWriter.writeEndArray(); // always close array even if it was empty
     }
+
 }

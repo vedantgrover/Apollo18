@@ -29,7 +29,7 @@ public class UserCreditCardCodec implements Codec<UserCreditCard> {
         bsonWriter.writeStartDocument();
 
         if (userCreditCard != null) {
-            bsonWriter.writeBoolean("currentBalance", userCreditCard.hasCard());
+            bsonWriter.writeBoolean("hasCard", userCreditCard.hasCard());
             bsonWriter.writeInt32("currentBalance", userCreditCard.currentBalance());
             bsonWriter.writeInt32("totalBalance", userCreditCard.totalBalance());
             DataUtility.writeNullableString(bsonWriter, "expirationDate", userCreditCard.expirationDate());

@@ -31,28 +31,28 @@ public class UserEconomyCodec implements Codec<UserEconomy> {
     public UserEconomy decode(BsonReader bsonReader, DecoderContext decoderContext) {
         bsonReader.readStartDocument();
 
-        int balance = bsonReader.readInt32("balance");
-        int bank = bsonReader.readInt32("bank");
-
+        int balance = 0;
+        int bank = 0;
         UserJob job = null;
-        if (bsonReader.readName().equals("job")) {
-            job = userJobCodec.decode(bsonReader, decoderContext);
-        }
+        UserCard card = null;
+        List<UserStock> stocks = new ArrayList<>();
 
-        UserCard userCard = null;
-        if (bsonReader.readName().equals("card")) {
-            userCard = userCardCodec.decode(bsonReader, decoderContext);
+        while (bsonReader.readBsonType() != BsonType.END_OF_DOCUMENT) {
+            String name = bsonReader.readName();
+            switch (name) {
+                case "balance" -> balance = bsonReader.readInt32();
+                case "bank" -> bank = bsonReader.readInt32();
+                case "job" -> job = userJobCodec.decode(bsonReader, decoderContext);
+                case "card" -> card = userCardCodec.decode(bsonReader, decoderContext);
+                case "items" -> skipArray(bsonReader);
+                case "stocks" -> stocks = readStocks(bsonReader, decoderContext);
+                default -> bsonReader.skipValue();
+            }
         }
-
-        if (bsonReader.readName().equals("items")) {
-            skipArray(bsonReader);
-        }
-
-        List<UserStock> stocks = readStocks(bsonReader, decoderContext);
 
         bsonReader.readEndDocument();
+        return new UserEconomy(balance, bank, job, card, stocks);
 
-        return new UserEconomy(balance, bank, job, userCard, stocks);
     }
 
     @Override
@@ -83,18 +83,18 @@ public class UserEconomyCodec implements Codec<UserEconomy> {
 
     private List<UserStock> readStocks(BsonReader bsonReader, DecoderContext decoderContext) {
         List<UserStock> stocks = new ArrayList<>();
-        if (bsonReader.readBsonType() == BsonType.ARRAY) {
-            bsonReader.readStartArray();
-            while (bsonReader.readBsonType() != BsonType.END_OF_DOCUMENT) {
-                stocks.add(userStockCodec.decode(bsonReader, decoderContext));
-            }
-            bsonReader.readEndArray();
+
+        bsonReader.readStartArray();
+        while (bsonReader.readBsonType() != BsonType.END_OF_DOCUMENT) {
+            stocks.add(userStockCodec.decode(bsonReader, decoderContext));
         }
+        bsonReader.readEndArray();
+
         return stocks;
     }
 
     private void writeStocks(BsonWriter bsonWriter, List<UserStock> stocks, EncoderContext encoderContext) {
-        bsonWriter.writeStartArray("stocks");
+        bsonWriter.writeStartArray();
         for (UserStock stock : stocks) {
             userStockCodec.encode(bsonWriter, stock, encoderContext);
         }
