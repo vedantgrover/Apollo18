@@ -748,11 +748,13 @@ public class Database {
         for (Business business : businesses) {
             try {
                 Document query = new Document("stockCode", business.stockCode());
-                HttpRequest request = HttpRequest.newBuilder().uri(URI.create("https://realstonks.p.rapidapi.com/" + business.stock().ticker())).header("X-RapidAPI-Key", bot.getConfig().get("RAPIDAPI_KEY", System.getenv("RAPIDAPI_KEY"))).header("X-RapidAPI-Host", "realstonks.p.rapidapi.com").method("GET", HttpRequest.BodyPublishers.noBody()).build();
+                HttpRequest request = HttpRequest.newBuilder().uri(URI.create("https://realstonks.p.rapidapi.com/stocks/" + business.stock().ticker())).header("x-rapidapi-key", bot.getConfig().get("RAPIDAPI_KEY", System.getenv("RAPIDAPI_KEY"))).header("x-rapidapi-host", "realstonks.p.rapidapi.com").method("GET", HttpRequest.BodyPublishers.noBody()).build();
                 HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
                 JSONObject data = new JSONObject(response.body());
 
-                int currentPrice = (int) Math.round(data.getDouble("price") * 0.23);
+                System.out.println(data);
+
+                int currentPrice = (int) Math.round(data.getDouble("lastPrice") * 0.23);
                 int previousPrice = business.stock().currentPrice();
                 int change = currentPrice - previousPrice;
 
