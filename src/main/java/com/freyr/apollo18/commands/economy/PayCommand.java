@@ -44,7 +44,7 @@ public class PayCommand extends Command {
         db.addBytes(user.getId(), bytes);
         db.removeBytes(event.getUser().getId(), bytes);
 
-        event.getHook().sendMessageEmbeds(EmbedUtils.createSuccess("Payed " + user.getName() + " " + BusinessHandler.byteEmoji + " " + bytes + " bytes!")).queue();
+        event.getHook().sendMessageEmbeds(EmbedUtils.createSuccess("Paid " + user.getName() + " " + BusinessHandler.byteEmoji + " " + bytes + " bytes!")).queue();
 
         if (db.getNotificationToggle(user.getId())) {
             Objects.requireNonNull(event.getJDA().getUserById(user.getId())).openPrivateChannel().flatMap(channel -> channel.sendMessageEmbeds(EmbedUtils.createNotification(event.getUser().getName() + " has just payed you " + BusinessHandler.byteEmoji + " " + bytes + " bytes!"))).queue();
