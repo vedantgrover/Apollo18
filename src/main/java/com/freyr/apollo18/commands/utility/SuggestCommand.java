@@ -22,6 +22,7 @@ public class SuggestCommand extends Command {
         this.name = "suggest";
         this.description = "Send in a suggestion for the bot or for the server";
         this.category = Category.UTILITY;
+        this.beingServiced = true;
 
         this.args.add(new OptionData(OptionType.STRING, "suggestion", "Your Suggestion", true));
     }

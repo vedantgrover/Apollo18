@@ -20,6 +20,7 @@ public class InviteCommand extends Command {
         this.name = "invite";
         this.description = "Generate an invite to the server or to the bot";
         this.category = Category.UTILITY;
+        this.beingServiced = true;
     }
 
     @Override

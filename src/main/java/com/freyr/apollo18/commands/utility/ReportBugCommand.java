@@ -24,6 +24,7 @@ public class ReportBugCommand extends Command {
         this.name = "report";
         this.description = "Report a bug!";
         this.category = Category.UTILITY;
+        this.beingServiced = true;
 
         this.args.add(new OptionData(OptionType.STRING, "bug", "Please describe the bug you found", true));
         this.args.add(new OptionData(OptionType.ATTACHMENT, "example", "You can send in an image for us to look at.", false));

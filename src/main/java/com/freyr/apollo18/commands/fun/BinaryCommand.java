@@ -17,6 +17,7 @@ public class BinaryCommand extends Command {
         this.name = "binary";
         this.description = "Encode any string into a binary equivalent!";
         this.category = Category.FUN;
+        this.beingServiced = true;
 
         this.subCommands.add(new SubcommandData("encode", "Encode your string!").addOption(OptionType.STRING, "string", "Type in your string!", true));
         this.subCommands.add(new SubcommandData("decode", "Decode a binary string!").addOption(OptionType.STRING, "string", "Type in your binary string!", true));
@@ -26,22 +27,20 @@ public class BinaryCommand extends Command {
     public void execute(SlashCommandInteractionEvent event) {
         event.deferReply().queue();
 
-        event.getHook().sendMessageEmbeds(EmbedUtils.createNotification("Currently under repair")).queue();
+        String subCommand = event.getSubcommandName();
 
-//        String subCommand = event.getSubcommandName();
-//
-//        String data;
-//
-//        switch (subCommand) {
-//            case "encode":
-//                data = getApiData("https://some-random-api.ml/binary?text=" + URI.create(event.getOption("string").getAsString())).getString("binary");
-//                event.getHook().sendMessage("```" + data + "```").queue();
-//            break;
-//
-//            case "decode":
-//                data = getApiData("https://some-random-api.ml/binary?decode=" + event.getOption("string").getAsString()).getString("text");
-//                event.getHook().sendMessage("```" + data + "```").queue();
-//            break;
-//        }
+        String data;
+
+        switch (subCommand) {
+            case "encode":
+                data = getApiData("https://some-random-api.ml/binary?text=" + URI.create(event.getOption("string").getAsString())).getString("binary");
+                event.getHook().sendMessage("```" + data + "```").queue();
+            break;
+
+            case "decode":
+                data = getApiData("https://some-random-api.ml/binary?decode=" + event.getOption("string").getAsString()).getString("text");
+                event.getHook().sendMessage("```" + data + "```").queue();
+            break;
+        }
     }
 }

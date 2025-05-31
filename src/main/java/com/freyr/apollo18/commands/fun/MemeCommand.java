@@ -19,6 +19,7 @@ public class MemeCommand extends Command {
         this.name = "meme";
         this.description = "Get a random meme from the internet";
         this.category = Category.FUN;
+        this.beingServiced = true;
     }
 
     @Override
@@ -27,9 +28,10 @@ public class MemeCommand extends Command {
         String memeAPI = "https://www.reddit.com/r/memes/random/.json"; // Initializing the base string
 
         // Getting the data
-        JSONArray data = getApiDataArray(memeAPI);
+        JSONObject data = getApiData(memeAPI);
+        System.out.println(data);
 
-        JSONObject memeInfo = data.getJSONObject(0).getJSONObject("data").getJSONArray("children").getJSONObject(0).getJSONObject("data");
+        JSONObject memeInfo = data.getJSONObject("data").getJSONArray("children").getJSONObject(0).getJSONObject("data");
 
         // Building the embed
         EmbedBuilder memeEmbed = new EmbedBuilder();
