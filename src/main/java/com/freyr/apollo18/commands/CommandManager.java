@@ -166,6 +166,10 @@ public class CommandManager extends ListenerAdapter {
                     event.replyEmbeds(EmbedUtils.createError(text)).setEphemeral(true).queue();
                 }
             }
+            if (cmd.beingServiced) {
+                event.replyEmbeds(EmbedUtils.createError("This command is being serviced right now. Please come back later!")).setEphemeral(true).queue();
+                return;
+            }
 
             final long currentTime = System.currentTimeMillis();
             final HashMap<String, Long> timeStamps = cooldowns.get(cmd.name);
