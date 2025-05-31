@@ -39,6 +39,7 @@ public class StockCommand extends Command {
 
         JSONObject companyInfo = getCompanyInformation(code);
         JSONObject priceInfo = getPriceInformation(code);
+        String logoInfo = "https://img.logokit.com/ticker/" + code + "?token=pk_fre7166a2245ae887658df";
 
         assert priceInfo != null;
         if (priceInfo.isEmpty() || companyInfo.isEmpty()) {
@@ -46,26 +47,29 @@ public class StockCommand extends Command {
             return;
         }
 
-        String arrow = getArrow(priceInfo.getDouble("change_point"));
+//        System.out.println(companyInfo);
+//        System.out.println(priceInfo);
+//        System.out.println(logoInfo);
 
-        System.out.println(companyInfo);
-        System.out.println(priceInfo);
+        String arrow = getArrow(priceInfo.getDouble("priceChange"));
 
         EmbedBuilder stockInfoEmbed = new EmbedBuilder();
 
         stockInfoEmbed.setTitle(companyInfo.getString("Name"));
+        stockInfoEmbed.setUrl(companyInfo.getString("OfficialSite"));
+        stockInfoEmbed.setThumbnail(logoInfo);
         stockInfoEmbed.setDescription(companyInfo.getString("Description"));
         stockInfoEmbed.setColor(EmbedColor.DEFAULT_COLOR);
         stockInfoEmbed.addField("Ticker", "`" + companyInfo.getString("Symbol") + "`", true);
-        stockInfoEmbed.addField("Price", "$" + priceInfo.getDouble("price"), true);
-        stockInfoEmbed.addField("Change", "$" + priceInfo.getDouble("change_point") + " " + arrow, true);
+        stockInfoEmbed.addField("Price", "$" + priceInfo.getDouble("lastPrice"), true);
+        stockInfoEmbed.addField("Change", "$" + priceInfo.getDouble("priceChange") + " " + arrow, true);
 
         event.getHook().sendMessageEmbeds(stockInfoEmbed.build()).queue();
     }
 
     private JSONObject getPriceInformation(String code) {
         try {
-            HttpRequest request = HttpRequest.newBuilder().uri(URI.create("https://realstonks.p.rapidapi.com/" + code)).header("X-RapidAPI-Key", bot.getConfig().get("RAPIDAPI_KEY", System.getenv("RAPIDAPI_KEY"))).header("X-RapidAPI-Host", "realstonks.p.rapidapi.com").method("GET", HttpRequest.BodyPublishers.noBody()).build();
+            HttpRequest request = HttpRequest.newBuilder().uri(URI.create("https://realstonks.p.rapidapi.com/stocks/" + code)).header("x-rapidapi-key", bot.getConfig().get("RAPIDAPI_KEY", System.getenv("RAPIDAPI_KEY"))).header("x-rapidapi-host", "realstonks.p.rapidapi.com").method("GET", HttpRequest.BodyPublishers.noBody()).build();
             HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
 
             return new JSONObject(response.body());
