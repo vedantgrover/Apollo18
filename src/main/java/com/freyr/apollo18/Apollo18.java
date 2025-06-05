@@ -41,7 +41,13 @@ public class Apollo18 {
         config = Dotenv.configure().ignoreIfMissing().load(); // Initializing and loading the .env file if it exists in the classpath.
         database = new Database("mongodb+srv://apollo18:" + config.get("MONGODB", System.getenv("MONGODB")) + "@apollo18.ggfg1.mongodb.net/?retryWrites=true&w=majority", this);
 
-        DefaultShardManagerBuilder builder = DefaultShardManagerBuilder.createDefault(config.get("TOKEN", System.getenv("TOKEN"))); // Creating a basic instance of the bot and logging in with token
+        String token = config.get("TOKEN", System.getenv("TOKEN"));
+        if (token == null || token.isEmpty()) {
+            System.err.println("❌ DISCORD_TOKEN not set");
+            System.exit(1);
+        }
+
+        DefaultShardManagerBuilder builder = DefaultShardManagerBuilder.createDefault(token); // Creating a basic instance of the bot and logging in with token
         builder.setStatus(OnlineStatus.ONLINE); // Setting the bot status to ONLINE (Green Dot)
         builder.setActivity(Activity.playing("/help")); // Setting the bot activity to "Freyr fail...." (I will change this)
         builder.enableIntents(GatewayIntent.GUILD_PRESENCES, GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_VOICE_STATES); // Enabling Gateway Intents for the bot to have more access to user information (ROLES, MESSAGES)
