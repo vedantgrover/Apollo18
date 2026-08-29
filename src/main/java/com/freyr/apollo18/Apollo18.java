@@ -39,13 +39,21 @@ public class Apollo18 {
 
     public Apollo18() throws LoginException {
         config = Dotenv.configure().ignoreIfMissing().load(); // Initializing and loading the .env file if it exists in the classpath.
-        database = new Database("mongodb+srv://apollo18:" + config.get("MONGODB", System.getenv("MONGODB")) + "@apollo18.ggfg1.mongodb.net/?retryWrites=true&w=majority", this);
 
+        // Checked before the database so a missing token fails with this message rather than an opaque Mongo DNS error.
         String token = config.get("TOKEN", System.getenv("TOKEN"));
         if (token == null || token.isEmpty()) {
-            System.err.println("❌ DISCORD_TOKEN not set");
+            System.err.println("❌ TOKEN not set");
             System.exit(1);
         }
+
+        // A full MONGO_URI wins; otherwise fall back to the original Atlas cluster built from MONGODB.
+        String mongoUri = config.get("MONGO_URI", System.getenv("MONGO_URI"));
+        if (mongoUri == null || mongoUri.isEmpty()) {
+            mongoUri = "mongodb+srv://apollo18:" + config.get("MONGODB", System.getenv("MONGODB")) + "@apollo18.ggfg1.mongodb.net/?retryWrites=true&w=majority";
+        }
+
+        database = new Database(mongoUri, this);
 
         DefaultShardManagerBuilder builder = DefaultShardManagerBuilder.createDefault(token); // Creating a basic instance of the bot and logging in with token
         builder.setStatus(OnlineStatus.ONLINE); // Setting the bot status to ONLINE (Green Dot)
