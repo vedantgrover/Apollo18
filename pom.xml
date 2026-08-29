@@ -22,18 +22,31 @@
         </repository>
     </repositories>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.mongodb</groupId>
+                <artifactId>mongodb-driver-bom</artifactId>
+                <version>5.9.2</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+
     <dependencies>
         <!--  https://github.com/DV8FromTheWorld/JDA  -->
         <dependency>
             <groupId>net.dv8tion</groupId>
             <artifactId>JDA</artifactId>
-            <version>5.0.0-beta.17</version>
+            <version>6.5.0</version>
         </dependency>
         <!--  https://github.com/cdimascio/dotenv-java  -->
         <dependency>
             <groupId>io.github.cdimascio</groupId>
             <artifactId>dotenv-java</artifactId>
-            <version>3.0.1</version>
+            <version>3.2.0</version>
         </dependency>
         <!--  https://github.com/sedmelluq/lavaplayer  -->
         <dependency>
@@ -50,8 +63,7 @@
         <!-- https://mongodb.github.io/mongo-java-driver -->
         <dependency>
             <groupId>org.mongodb</groupId>
-            <artifactId>mongo-java-driver</artifactId>
-            <version>3.12.12</version>
+            <artifactId>mongodb-driver-sync</artifactId>
         </dependency>
         <!-- https://github.com/TheoKanning/openai-java -->
         <dependency>
@@ -59,23 +71,23 @@
             <artifactId>service</artifactId>
             <version>0.18.2</version>
         </dependency>
-        <!-- JFreeChart -->
+        <!-- https://github.com/jfree/jfreechart -->
         <dependency>
             <groupId>org.jfree</groupId>
             <artifactId>jfreechart</artifactId>
-            <version>1.5.5</version>
+            <version>1.5.6</version>
         </dependency>
         <!-- JSON Library -->
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
-            <version>20240303</version>
+            <version>20260814</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/com.squareup.okhttp3/okhttp -->
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>
             <artifactId>okhttp</artifactId>
-            <version>5.0.0-alpha.14</version>
+            <version>5.5.0</version>
         </dependency>
 
         <dependency>

@@ -11,8 +11,9 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-import net.dv8tion.jda.api.interactions.components.buttons.Button;
-import net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle;
+import net.dv8tion.jda.api.components.actionrow.ActionRow;
+import net.dv8tion.jda.api.components.buttons.Button;
+import net.dv8tion.jda.api.components.buttons.ButtonStyle;
 
 import java.text.DecimalFormat;
 import java.util.Objects;
@@ -46,7 +47,7 @@ public class CrashGame extends Command {
 
         event.getHook().sendMessageEmbeds(new EmbedBuilder().setTitle("Crash").setColor(EmbedColor.DEFAULT_COLOR).setDescription("Current Bet: **" + Objects.requireNonNull(event.getOption("bet")).getAsString() + "bytes**").addField("Multiplier", "1.0x", true).addField("Crash Value", Objects.requireNonNull(event.getOption("bet")).getAsString() + " bytes", true).build()
 
-        ).addActionRow(crashButton).queue(message -> {
+        ).addComponents(ActionRow.of(crashButton)).queue(message -> {
             if (crash.startGame(message, crashButton)) {
                 db.removeBytes(event.getUser().getId(), crash.startingBal);
                 System.out.println(event.getUser().getName() + " CRASHED");
@@ -91,12 +92,12 @@ public class CrashGame extends Command {
                 currentIteration += 1;
                 message.editMessageEmbeds(new EmbedBuilder().setTitle("Crash").setColor(EmbedColor.DEFAULT_COLOR).setDescription("Current Bet: **" + startingBal + " bytes**").addField("Multiplier", new DecimalFormat("#.##").format(currentMultiplier) + "x", true).addField("Crash Value", (int) (currentMultiplier * startingBal) + " bytes", true).build()).queue();
                 if (currentIteration == crashAfterIterations) {
-                    message.editMessageEmbeds(new EmbedBuilder().setTitle("Crash").setColor(EmbedColor.ERROR_COLOR).setDescription("Current Bet: **" + startingBal + " bytes**").addField("Multiplier", new DecimalFormat("#.##").format(currentMultiplier) + "x", true).addField("Crash Value", "-" + startingBal + " bytes", true).build()).setActionRow(cashButton.asDisabled()).queue();
+                    message.editMessageEmbeds(new EmbedBuilder().setTitle("Crash").setColor(EmbedColor.ERROR_COLOR).setDescription("Current Bet: **" + startingBal + " bytes**").addField("Multiplier", new DecimalFormat("#.##").format(currentMultiplier) + "x", true).addField("Crash Value", "-" + startingBal + " bytes", true).build()).setComponents(ActionRow.of(cashButton.asDisabled())).queue();
                     crashed = true;
                     executor.shutdown();
                 }
                 if (cashIn) {
-                    message.editMessageEmbeds(new EmbedBuilder().setTitle("You Won!").setColor(EmbedColor.DEFAULT_COLOR).setDescription("Winnings: **" + (int) (startingBal * currentMultiplier) + " bytes**").addField("Multiplier", new DecimalFormat("#.##").format(currentMultiplier) + "x", true).build()).setActionRow(cashButton.asDisabled()).queue();
+                    message.editMessageEmbeds(new EmbedBuilder().setTitle("You Won!").setColor(EmbedColor.DEFAULT_COLOR).setDescription("Winnings: **" + (int) (startingBal * currentMultiplier) + " bytes**").addField("Multiplier", new DecimalFormat("#.##").format(currentMultiplier) + "x", true).build()).setComponents(ActionRow.of(cashButton.asDisabled())).queue();
                     executor.shutdown();
                 }
             }, 0, 2, TimeUnit.SECONDS);

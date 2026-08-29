@@ -7,7 +7,8 @@ import com.freyr.apollo18.util.embeds.EmbedColor;
 import com.freyr.apollo18.util.embeds.EmbedUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.interactions.components.buttons.Button;
+import net.dv8tion.jda.api.components.actionrow.ActionRow;
+import net.dv8tion.jda.api.components.buttons.Button;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -49,7 +50,7 @@ public class VoteCommand extends Command {
                 embed.setDescription("Click [here](https://top.gg/bot/853812538218381352/vote) to vote for me!\nYou can vote every 12 hours.");
                 embed.setColor(EmbedColor.DEFAULT_COLOR);
 
-                event.getHook().sendMessageEmbeds(embed.build()).addActionRow(Button.link("https://top.gg/bot/853812538218381352/vote", "Vote")).queue();
+                event.getHook().sendMessageEmbeds(embed.build()).addComponents(ActionRow.of(Button.link("https://top.gg/bot/853812538218381352/vote", "Vote"))).queue();
             } else
                 event.getHook().sendMessageEmbeds(EmbedUtils.createError("You have already voted! You can vote every 12 hours.")).queue();
         } catch (IOException | InterruptedException e) {

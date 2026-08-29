@@ -5,6 +5,7 @@ import com.freyr.apollo18.data.Database;
 import com.freyr.apollo18.data.records.user.UserLeveling;
 import com.freyr.apollo18.handlers.BusinessHandler;
 import com.freyr.apollo18.handlers.LevelingHandler;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -42,7 +43,7 @@ public class LevelingListener extends ListenerAdapter {
 
             if (db.getUserLevelingProfile(event.getAuthor().getId(), event.getGuild().getId()) == null)
                 db.createLevelingProfile(event.getAuthor().getId(), event.getGuild().getId()); // If the user does not have any levels within this server, it creates a profile within the user data.
-            MessageChannel channel = (db.getLevelingChannel(event.getGuild().getId()) == null) ? event.getChannel() : event.getGuild().getChannelById(MessageChannel.class, db.getLevelingChannel(event.getGuild().getId())); // Grabbing the leveling channel set by the user. If the channel does not exist, it grabs the channel the message was sent in.
+            MessageChannel channel = (db.getLevelingChannel(event.getGuild().getId()) == null) ? event.getChannel() : event.getGuild().getChannelById(GuildMessageChannel.class, db.getLevelingChannel(event.getGuild().getId())); // Grabbing the leveling channel set by the user. If the channel does not exist, it grabs the channel the message was sent in.
             UserLeveling userDoc = db.getUserLevelingProfile(event.getAuthor().getId(), event.getGuild().getId()); // Grabbing the leveling data for the user
 
             db.addXptoUser(event.getAuthor().getId(), event.getGuild().getId()); // Adding the XP to a user. This can be from 10 to 15 xp points

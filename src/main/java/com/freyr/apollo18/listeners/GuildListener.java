@@ -5,6 +5,7 @@ import com.freyr.apollo18.data.Database;
 import com.freyr.apollo18.util.embeds.EmbedColor;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
@@ -47,7 +48,7 @@ public class GuildListener extends ListenerAdapter {
         Database db = bot.getDatabase(); // Grabbing the database
 
         if (db.getWelcomeSystemToggle(event.getGuild().getId())) { // Checking if the server has turned the welcoming system on
-            MessageChannel welcomeChannel = (event.getGuild().getChannelById(MessageChannel.class, db.getWelcomeChannel(event.getGuild().getId())) == null) ? (MessageChannel) event.getGuild().getDefaultChannel() : event.getGuild().getChannelById(MessageChannel.class, db.getWelcomeChannel(event.getGuild().getId())); // Grabbing the default channel if the user has not set a server channel
+            MessageChannel welcomeChannel = (event.getGuild().getChannelById(GuildMessageChannel.class, db.getWelcomeChannel(event.getGuild().getId())) == null) ? (MessageChannel) event.getGuild().getDefaultChannel() : event.getGuild().getChannelById(GuildMessageChannel.class, db.getWelcomeChannel(event.getGuild().getId())); // Grabbing the default channel if the user has not set a server channel
             String welcomeMessage = db.getWelcomeMessage(event.getGuild().getId()).replace("[member]", event.getUser().getAsMention()).replace("[server]", event.getGuild().getName()); // Grabbing the welcome message from the database and replacing all of the placeholders with their respective values
 
             EmbedBuilder embed = new EmbedBuilder(); // Allows us to create and set the properties of an embed
@@ -83,7 +84,7 @@ public class GuildListener extends ListenerAdapter {
         Database db = bot.getDatabase(); // Getting the database
 
         if (db.getWelcomeSystemToggle(event.getGuild().getId())) { // Checking to see if the server has the welcoming system turned on for their server
-            MessageChannel leaveChannel = (event.getGuild().getChannelById(MessageChannel.class, db.getLeaveChannel(event.getGuild().getId())) == null) ? (MessageChannel) event.getGuild().getDefaultChannel() : event.getGuild().getChannelById(MessageChannel.class, db.getLeaveChannel(event.getGuild().getId())); // Grabbing the default channel if the user hasn't set a leave channel
+            MessageChannel leaveChannel = (event.getGuild().getChannelById(GuildMessageChannel.class, db.getLeaveChannel(event.getGuild().getId())) == null) ? (MessageChannel) event.getGuild().getDefaultChannel() : event.getGuild().getChannelById(GuildMessageChannel.class, db.getLeaveChannel(event.getGuild().getId())); // Grabbing the default channel if the user hasn't set a leave channel
             String leaveMessage = db.getLeaveMessage(event.getGuild().getId()).replace("[member]", event.getUser().getAsMention()).replace("[server]", event.getGuild().getName()); // Grabbing the leave message and replacing all placeholders
 
             leaveChannel.sendMessage(leaveMessage).queue(); // Sending the message to the leave channel
@@ -108,7 +109,7 @@ public class GuildListener extends ListenerAdapter {
      */
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
-        if (event.getChannel().equals(event.getJDA().getChannelById(MessageChannel.class, 861700722482872371L))) { // Grabbing the count channel within Delphi's Cave
+        if (event.getChannel().equals(event.getJDA().getChannelById(GuildMessageChannel.class, 861700722482872371L))) { // Grabbing the count channel within Delphi's Cave
             event.getChannel().getHistory().retrievePast(2).queue(messages -> { // Grabbing the past two messages
                 try {
                     int firstMessage = Integer.parseInt(messages.get(0).getContentRaw()); // Converting the first message into an integer

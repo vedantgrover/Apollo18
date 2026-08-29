@@ -8,9 +8,9 @@ import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.exceptions.ErrorHandler;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.InteractionHook;
-import net.dv8tion.jda.api.interactions.components.ActionRow;
-import net.dv8tion.jda.api.interactions.components.buttons.Button;
-import net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle;
+import net.dv8tion.jda.api.components.actionrow.ActionRow;
+import net.dv8tion.jda.api.components.buttons.Button;
+import net.dv8tion.jda.api.components.buttons.ButtonStyle;
 import net.dv8tion.jda.api.requests.ErrorResponse;
 import net.dv8tion.jda.api.requests.restaction.WebhookAction;
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction;
@@ -45,7 +45,7 @@ public class ButtonListener extends ListenerAdapter {
         List<Button> components = getPaginationButtons(uuid, embeds.size());
         buttons.put(uuid, components);
         menus.put(uuid, embeds);
-        action.addActionRow(components).queue(interactionHook -> ButtonListener.disableButtons(uuid, interactionHook));
+        action.addComponents(ActionRow.of(components)).queue(interactionHook -> ButtonListener.disableButtons(uuid, interactionHook));
     }
 
     /**
@@ -133,16 +133,16 @@ public class ButtonListener extends ListenerAdapter {
         String uuid = userID + ":" + pressedArgs[3];
         List<Button> components = buttons.get(uuid);
         if (components == null) return;
-        String[] storedArgs = components.get(0).getId().split(":");
+        String[] storedArgs = components.get(0).getCustomId().split(":");
 
         if (pressedArgs[0].equals("pagination") && storedArgs[0].equals("pagination")) {
             if (pressedArgs[1].equals("next")) {
                 // Move to next embed
-                int page = Integer.parseInt(components.get(1).getId().split(":")[2]) + 1;
+                int page = Integer.parseInt(components.get(1).getCustomId().split(":")[2]) + 1;
                 List<MessageEmbed> embeds = menus.get(uuid);
                 if (page < embeds.size()) {
                     // Update buttons
-                    components.set(1, components.get(1).withId("pagination:page:" + page).withLabel((page + 1) + "/" + embeds.size()));
+                    components.set(1, components.get(1).withCustomId("pagination:page:" + page).withLabel((page + 1) + "/" + embeds.size()));
                     components.set(0, components.get(0).asEnabled());
                     if (page == embeds.size() - 1) {
                         components.set(2, components.get(2).asDisabled());
@@ -152,11 +152,11 @@ public class ButtonListener extends ListenerAdapter {
                 }
             } else if (pressedArgs[1].equals("prev")) {
                 // Move to previous embed
-                int page = Integer.parseInt(components.get(1).getId().split(":")[2]) - 1;
+                int page = Integer.parseInt(components.get(1).getCustomId().split(":")[2]) - 1;
                 List<MessageEmbed> embeds = menus.get(uuid);
                 if (page >= 0) {
                     // Update buttons
-                    components.set(1, components.get(1).withId("pagination:page:" + page).withLabel((page + 1) + "/" + embeds.size()));
+                    components.set(1, components.get(1).withCustomId("pagination:page:" + page).withLabel((page + 1) + "/" + embeds.size()));
                     components.set(2, components.get(2).asEnabled());
                     if (page == 0) {
                         components.set(0, components.get(0).asDisabled());
