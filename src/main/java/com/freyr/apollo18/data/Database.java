@@ -25,12 +25,12 @@ import com.freyr.apollo18.data.records.user.music.Song;
 import com.freyr.apollo18.data.records.user.music.UserMusic;
 import com.freyr.apollo18.handlers.BusinessHandler;
 import com.freyr.apollo18.util.textFormatters.RandomString;
-import com.mongodb.MongoClient;
 import com.mongodb.MongoClientSettings;
-import com.mongodb.MongoClientURI;
 import com.mongodb.MongoException;
 import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.FindIterable;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.*;
@@ -77,7 +77,7 @@ public class Database {
      */
     public Database(String srv, Apollo18 bot) {
         this.bot = bot;
-        MongoClient mongoClient = new MongoClient(new MongoClientURI(srv));
+        MongoClient mongoClient = MongoClients.create(srv);
 
         CodecRegistry codecRegistry = CodecRegistries.fromRegistries(CodecRegistries.fromCodecs(new JobCodec(), new StockCodec(), new GreetingCodec(), new LevelingCodec(), new UserLevelingCodec(), new UserCreditCardCodec(), new UserJobCodec(), new UserStockCodec(), new SongCodec()), CodecRegistries.fromProviders(new BusinessCodecProvider(), new GuildCodecProvider(), new TransactionCodecProvider(), new UserCardCodecProvider(), new UserEconomyCodecProvider(), new PlaylistCodecProvider(), new UserMusicCodecProvider(), new UserCodecProvider()), MongoClientSettings.getDefaultCodecRegistry());
 

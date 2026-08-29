@@ -6,7 +6,7 @@ import com.freyr.apollo18.commands.Command;
 import com.freyr.apollo18.util.embeds.EmbedColor;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -42,7 +42,7 @@ public class ReportBugCommand extends Command {
         }
 
         //noinspection ConstantConditions
-        event.getGuild().getChannelById(MessageChannel.class, 854150278760103937L).sendMessageEmbeds(embed.build()).queue();
+        event.getGuild().getChannelById(GuildMessageChannel.class, 854150278760103937L).sendMessageEmbeds(embed.build()).queue();
 
         MessageEmbed replyEmbed = new EmbedBuilder().setDescription(":white_check_mark: - **Your report has been sent to the bot developer!**").setColor(EmbedColor.DEFAULT_COLOR).build();
         event.getHook().sendMessageEmbeds(replyEmbed).setEphemeral(true).queue();

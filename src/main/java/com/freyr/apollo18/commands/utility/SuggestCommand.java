@@ -6,7 +6,7 @@ import com.freyr.apollo18.commands.Command;
 import com.freyr.apollo18.util.embeds.EmbedColor;
 import com.freyr.apollo18.util.embeds.EmbedUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -40,7 +40,7 @@ public class SuggestCommand extends Command {
         embed.addField("Server", event.getGuild().getName(), false);
         embed.setColor(EmbedColor.DEFAULT_COLOR);
 
-        event.getGuild().getChannelById(MessageChannel.class, 854150407655784448L).sendMessageEmbeds(embed.build()).queue(m -> {
+        event.getGuild().getChannelById(GuildMessageChannel.class, 854150407655784448L).sendMessageEmbeds(embed.build()).queue(m -> {
             m.addReaction(Emoji.fromUnicode("⬆️")).queue();
             m.addReaction(Emoji.fromUnicode("⬇️")).queue();
         });
