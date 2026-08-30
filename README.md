@@ -6,24 +6,17 @@
 </a>
 <hr>
 
-Hey everyone! Freyr here from Discord. I have been working on Discord bots for the past 2 years now. All of them have been in Node.js.
-But I know that I can do a better job from Java. So I have decided to restart my bot (previously known as Vicki the Robot) and create
-Apollo18.
-
-This bot will be a full multipurpose bot, including things from Moderation to Economy to maybe even a WEB DASHBOARD (still got to learn web development. might release late 2023)
-
-I am beyond excited to start making bots again. I hope you enjoy!!
+Apollo18 is a multipurpose Discord bot built with [JDA (Java Discord API)](https://github.com/DV8FromTheWorld/JDA) and a MongoDB backend. It covers economy, casino games, leveling, business/stock simulation, image manipulation, utility commands, and more.
 
 ### Built With
 
-Below is a comprehensive list of the frameworks and libraries used to build Apollo18.
-
-* [Java Discord API](https://github.com/DV8FromTheWorld/JDA)
-* [MongoDB Java Driver](https://mongodb.github.io/mongo-java-driver/3.2/driver/getting-started/installation-guide/)
+* [Java Discord API (JDA)](https://github.com/DV8FromTheWorld/JDA)
+* [MongoDB Java Driver](https://www.mongodb.com/docs/drivers/java/sync/current/)
 * [DotEnv](https://github.com/cdimascio/dotenv-java)
 * [LavaPlayer](https://github.com/sedmelluq/lavaplayer)
+* [JFreeChart](https://www.jfree.org/jfreechart/) (stock chart generation)
 
-<p align="right">(<a href="#top">back to top</a>)</p>
+<p align="right">(<a href="#apollo18">back to top</a>)</p>
 
 ## Self Hosting
 
@@ -41,7 +34,7 @@ _Below are the necessary steps needed to run this project._
    ```sh
    git clone https://github.com/vedantgrover/Apollo18.git
    ```
-2. Create a `.env` file in the root project folder and populate it with all the variables in `.env.example`. Only `TOKEN` plus a Mongo target (`MONGODB` or `MONGO_URI`) are required to boot; every other key just degrades a single command if left blank.
+2. Create a `.env` file in the root project folder and populate it with the variables in `.env.example`. Only `TOKEN` plus a Mongo target (`MONGODB` or `MONGO_URI`) are required to boot; every other key just degrades a single command if left blank.
 3. Build and run with Docker Compose (recommended):
    ```sh
    docker compose up -d --build
@@ -54,29 +47,39 @@ _Below are the necessary steps needed to run this project._
 
 `MONGO_URI` accepts a complete MongoDB connection string and overrides `MONGODB` when set.
 
-<p align="right">(<a href="#top">back to top</a>)</p>
+### Running Tests
 
-<!-- CONTRIBUTING -->
+There is currently no test suite in this repo (`mvn test` has nothing to run).
+
+<p align="right">(<a href="#apollo18">back to top</a>)</p>
+
+## Project Structure
+
+* `commands/` — slash commands, organized by category (`business`, `casino`, `dev`, `economy`, `fun`, `image`, `information`, `leveling`, `music`, `settings`, `utility`). New commands are registered in `CommandManager`.
+* `data/` — MongoDB access layer (`data/Database.java`) and domain records (`data/records/**`) with matching codecs.
+* `listeners/` — JDA event listeners (guild join/leave, buttons, leveling XP, bot lifecycle).
+* `handlers/` — cross-cutting logic shared across multiple commands.
+* `util/` — embed styling, music/LavaPlayer wiring, text formatters, and API helpers.
+
+See [`CLAUDE.md`](CLAUDE.md) for a more detailed architecture overview.
+
+<p align="right">(<a href="#apollo18">back to top</a>)</p>
+
 ## Contributing
 
 Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
-If you have a suggestion that would make this better, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement".
+
+Please read [CONTRIBUTING.md](CONTRIBUTING.md) before opening a pull request — it covers our etiquette expectations and workflow. If you have a suggestion, you can also open an issue with the tag "enhancement".
+
 Don't forget to give the project a star! Thanks again!
 
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-<p align="right">(<a href="#top">back to top</a>)</p>
+<p align="right">(<a href="#apollo18">back to top</a>)</p>
 
 <!-- CONTACT -->
 ## Contact
 
-Vedant Grover - [@bladedurman](https://www.instagram.com/bladedurman/) - bladedurman@gmail.com
+Vedant Grover - bladedurman@gmail.com
 
 Project Link: [https://github.com/vedantgrover/Apollo18](https://github.com/vedantgrover/Apollo18)
 
-<p align="right">(<a href="#top">back to top</a>)</p>
-
+<p align="right">(<a href="#apollo18">back to top</a>)</p>
