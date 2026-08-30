@@ -6,7 +6,7 @@
 
     <groupId>com.freyr.apollo18</groupId>
     <artifactId>Apollo18</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
 
     <properties>
         <maven.compiler.source>26</maven.compiler.source>
