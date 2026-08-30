@@ -10,6 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      packages: write
 
     steps:
       - name: Checkout Repository
@@ -21,14 +22,16 @@ jobs:
           java-version: '26'
           distribution: 'oracle-openjdk'
 
-      - name: Increment Maven Version
-        run: mvn versions:set -DnextSnapshot=false -DgenerateBackupPoms=false
+      - name: Set Lowercase Repository Name
+        run: echo "REPO_LC=${GITHUB_REPOSITORY,,}" >> "${GITHUB_ENV}"
 
-      - name: Extract Version String
+      - name: Increment Maven Version
         id: get_version
         run: |
-          VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
-          echo "NEW_VERSION=${VERSION}" >> $GITHUB_OUTPUT
+          CURRENT_VERSION=$(mvn -B help:evaluate -Dexpression=project.version -q -DforceStdout)
+          NEW_VERSION=$(echo "${CURRENT_VERSION}" | awk -F. -v OFS=. '{$NF++; print}')
+          mvn -B versions:set -DnewVersion="${NEW_VERSION}" -DgenerateBackupPoms=false
+          echo "NEW_VERSION=${NEW_VERSION}" >> "$GITHUB_OUTPUT"
 
       - name: Commit Updated pom.xml
         uses: EndBug/add-and-commit@v9
@@ -54,8 +57,8 @@ jobs:
           context: .
           push: true
           tags: |
-            ghcr.io/${{ str.toLower(github.repository) }}:latest
-            ghcr.io/${{ str.toLower(github.repository) }}:${{ steps.get_version.outputs.NEW_VERSION }}
+            ghcr.io/${{ env.REPO_LC }}:latest
+            ghcr.io/${{ env.REPO_LC }}:${{ steps.get_version.outputs.NEW_VERSION }}
 
       - name: Deploy to Azure VM
         uses: appleboy/ssh-action@v1.0.3
