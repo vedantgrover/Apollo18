@@ -30,7 +30,7 @@
             <dependency>
                 <groupId>org.mongodb</groupId>
                 <artifactId>mongodb-driver-bom</artifactId>
-                <version>5.9.2</version>
+                <version>5.10.0</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -55,13 +55,13 @@
         <dependency>
             <groupId>com.sedmelluq</groupId>
             <artifactId>lavaplayer</artifactId>
-            <version>1.3.77</version>
+            <version>1.3.78</version>
         </dependency>
         <!-- https://search.maven.org/artifact/com.fathzer/javaluator/3.0.3/jar -->
         <dependency>
             <groupId>com.fathzer</groupId>
             <artifactId>javaluator</artifactId>
-            <version>3.0.3</version>
+            <version>3.0.6</version>
         </dependency>
         <!-- https://mongodb.github.io/mongo-java-driver -->
         <dependency>
@@ -105,7 +105,7 @@
                 <!--  https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-shade-plugin  -->
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.3.0</version>
+                <version>3.6.2</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
