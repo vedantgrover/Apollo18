@@ -2,7 +2,6 @@ package com.freyr.apollo18.data;
 
 import com.freyr.apollo18.Apollo18;
 import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartFrame;
 import org.jfree.chart.ChartUtils;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.XYPlot;
@@ -18,6 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -35,7 +35,7 @@ public class StockData {
         try {
             String apiUrl = "https://www.alphavantage.co/query?" + "function=TIME_SERIES_INTRADAY" + "&symbol=" + symbol + "&interval=60min" + "&apikey=" + API_KEY;
 
-            URL url = new URL(apiUrl);
+            URL url = URI.create(apiUrl).toURL();
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
 
@@ -117,24 +117,25 @@ public class StockData {
         plot.setRenderer(renderer);
         chart.setBackgroundPaint(Color.WHITE);
 
-        ChartFrame frame = new ChartFrame("Stock Prices", chart);
-        frame.pack();
-
         // Create a new folder for the ticker if it doesn't exist
-        String folderPath = "src/main/resources/stock_data/" + symbol;
-        File folder = new File(folderPath);
+        File folder = new File(stockDataDir(), symbol);
         if (!folder.exists()) {
-            folder.mkdir();
-            System.out.println("Created folder: " + folderPath);
+            folder.mkdirs();
+            System.out.println("Created folder: " + folder.getPath());
         }
 
         // Save the chart as an image
         try {
-            String imagePath = "src/main/resources/stock_data/" + symbol + "/" + symbol + "-graph.png"; // Specify the file path and format (e.g., PNG)
-            ChartUtils.saveChartAsPNG(new File(imagePath), chart, frame.getWidth(), frame.getHeight());
-            System.out.println("Chart saved as image: " + imagePath);
+            File imageFile = new File(folder, symbol + "-graph.png");
+            ChartUtils.saveChartAsPNG(imageFile, chart, 800, 420);
+            System.out.println("Chart saved as image: " + imageFile.getPath());
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static File stockDataDir() {
+        String dir = System.getenv("STOCK_DATA_DIR");
+        return new File(dir == null || dir.isEmpty() ? "src/main/resources/stock_data" : dir);
     }
 }

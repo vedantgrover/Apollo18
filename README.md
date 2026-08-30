@@ -31,7 +31,7 @@ To get a local copy of Apollo18 up and running, follow these simple steps.
 
 ### Prerequisites
 
-You must have [Java JDK 17](https://www.oracle.com/java/technologies/downloads/) installed on your machine.
+You must have [Java JDK 26](https://www.oracle.com/java/technologies/downloads/) installed on your machine, or [Docker](https://docs.docker.com/get-docker/) with the Compose plugin.
 
 ### Installation
 
@@ -41,8 +41,18 @@ _Below are the necessary steps needed to run this project._
    ```sh
    git clone https://github.com/vedantgrover/Apollo18.git
    ```
-2. Create a `.env` file in the root project folder and populate it with all the variables in `.env.example`.
-3. You can now build and run the application using maven or the provided docker file.
+2. Create a `.env` file in the root project folder and populate it with all the variables in `.env.example`. Only `TOKEN` plus a Mongo target (`MONGODB` or `MONGO_URI`) are required to boot; every other key just degrades a single command if left blank.
+3. Build and run with Docker Compose (recommended):
+   ```sh
+   docker compose up -d --build
+   ```
+   Or build and run with Maven directly:
+   ```sh
+   mvn -B package
+   java -jar target/Apollo18-1.0.0.jar
+   ```
+
+`MONGO_URI` accepts a complete MongoDB connection string and overrides `MONGODB` when set.
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 

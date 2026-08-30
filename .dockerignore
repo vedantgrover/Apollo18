@@ -1,0 +1,13 @@
+.env
+.git
+.github
+.idea
+.junie
+target
+dependency-reduced-pom.xml
+*.jar
+scripts
+CLAUDE.md
+README.md
+PLAN.md
+LICENSE

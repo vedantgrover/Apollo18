@@ -1,0 +1,13 @@
+services:
+  apollo18:
+    image: ghcr.io/vedantgrover/apollo18:latest
+    container_name: apollo18
+    env_file: .env
+    restart: unless-stopped
+    volumes:
+      - stock-data:/app/data/stock_data
+    logging:
+      driver: json-file
+      options: { max-size: "10m", max-file: "3" }
+volumes:
+  stock-data:

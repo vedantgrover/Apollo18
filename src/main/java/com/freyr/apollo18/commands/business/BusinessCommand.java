@@ -4,6 +4,7 @@ import com.freyr.apollo18.Apollo18;
 import com.freyr.apollo18.commands.Category;
 import com.freyr.apollo18.commands.Command;
 import com.freyr.apollo18.data.Database;
+import com.freyr.apollo18.data.StockData;
 import com.freyr.apollo18.data.records.business.Business;
 import com.freyr.apollo18.data.records.business.Job;
 import com.freyr.apollo18.handlers.BusinessHandler;
@@ -79,13 +80,15 @@ public class BusinessCommand extends Command {
                 embed.setDescription(business.description());
                 embed.addField("Stock Info", "Price: " + BusinessHandler.byteEmoji + " `" + business.stock().currentPrice() + " bytes` " + business.stock().arrowEmoji() + " `(" + business.stock().change() + ")`\nCode: `" + business.stockCode() + "`", false);
 
-                String imagePath = "src/main/resources/stock_data/" + business.stock().ticker() + "/" + business.stock().ticker() + "-graph.png";
-                System.out.println(imagePath);
+                String ticker = business.stock().ticker();
+                File graph = new File(StockData.stockDataDir(), ticker + "/" + ticker + "-graph.png");
 
-                File graph = new File(imagePath);
-                embed.setImage("attachment://graph.png");
-
-                event.getHook().sendMessageEmbeds(embed.build()).addFiles(FileUpload.fromData(graph, "graph.png")).queue();
+                if (graph.exists()) {
+                    embed.setImage("attachment://graph.png");
+                    event.getHook().sendMessageEmbeds(embed.build()).addFiles(FileUpload.fromData(graph, "graph.png")).queue();
+                } else {
+                    event.getHook().sendMessageEmbeds(embed.build()).queue();
+                }
                 break;
 
             case "buy":
