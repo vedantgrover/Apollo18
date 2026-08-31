@@ -14,6 +14,8 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.components.actionrow.ActionRow;
 import net.dv8tion.jda.api.components.buttons.Button;
 import net.dv8tion.jda.api.components.buttons.ButtonStyle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.text.DecimalFormat;
 import java.util.Objects;
@@ -22,6 +24,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class CrashGame extends Command {
+
+    private static final Logger logger = LoggerFactory.getLogger(CrashGame.class);
 
     private final Database db = bot.getDatabase();
 
@@ -50,7 +54,7 @@ public class CrashGame extends Command {
         ).addComponents(ActionRow.of(crashButton)).queue(message -> {
             if (crash.startGame(message, crashButton)) {
                 db.removeBytes(event.getUser().getId(), crash.startingBal);
-                System.out.println(event.getUser().getName() + " CRASHED");
+                logger.info("{} crashed", event.getUser().getName());
             } else {
                 db.addBytes(event.getUser().getId(), (int) (crash.startingBal * crash.currentMultiplier));
             }
@@ -70,7 +74,7 @@ public class CrashGame extends Command {
             this.startingBal = startingBal;
             currentMultiplier = 1.0;
             this.crashAfterIterations = (int) (Math.random() * (30 - 5)) + 5;
-            System.out.println(crashAfterIterations);
+            logger.debug("Crash after iterations: {}", crashAfterIterations);
             this.currentIteration = 0;
             crashed = false;
             cashIn = false;
@@ -103,7 +107,7 @@ public class CrashGame extends Command {
             }, 0, 2, TimeUnit.SECONDS);
             try {
                 if (executor.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS)) {
-                    System.out.println("Successfully terminated executor");
+                    logger.debug("Successfully terminated executor");
                 }
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();

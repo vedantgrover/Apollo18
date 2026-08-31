@@ -7,8 +7,12 @@ import com.freyr.apollo18.util.embeds.EmbedUtils;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CreateDefaultJob extends Command {
+
+    private static final Logger logger = LoggerFactory.getLogger(CreateDefaultJob.class);
 
     public CreateDefaultJob(Apollo18 bot) {
         super(bot);
@@ -52,7 +56,7 @@ public class CreateDefaultJob extends Command {
         try {
             db.createDefaultJob(businessCode, jobName, jobDescription, salary, daysTillFire);
         } catch (Exception e) {
-            System.err.println(e);
+            logger.error("Error creating default job {} for business {}", jobName, businessCode, e);
         }
 
         event.getHook().sendMessageEmbeds(EmbedUtils.createSuccess(jobName + " has been created for " + businessCode)).queue();

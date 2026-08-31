@@ -9,6 +9,8 @@ import okhttp3.*;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -21,6 +23,8 @@ import java.util.List;
  * @author Freyr
  */
 public abstract class Command {
+
+    private static final Logger logger = LoggerFactory.getLogger(Command.class);
 
     public Apollo18 bot; // This gives us access to the config file which is in the main class
     public String name; // Name of the command
@@ -71,7 +75,7 @@ public abstract class Command {
             response.close();
             return new JSONObject(responseBody);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Error fetching API data from {}", apiURL, e);
             return null;
         }
     }
@@ -95,7 +99,7 @@ public abstract class Command {
             response.close();
             return new JSONArray(responseBody);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Error fetching API data from {}", apiURL, e);
             return null;
         }
     }
@@ -139,11 +143,11 @@ public abstract class Command {
     private JSONObject getJsonObject(OkHttpClient okHttpClient, Request request) {
         try (Response response = okHttpClient.newCall(request).execute()) {
             String responseBody = response.body().string();
-            System.out.println(responseBody);
+            logger.debug(responseBody);
 
             return new JSONObject(responseBody);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Error fetching API data from {}", request.url(), e);
             return null;
         }
     }

@@ -14,6 +14,8 @@ import net.dv8tion.jda.api.components.buttons.ButtonStyle;
 import net.dv8tion.jda.api.requests.ErrorResponse;
 import net.dv8tion.jda.api.requests.restaction.WebhookAction;
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyCallbackAction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.concurrent.Executors;
@@ -26,6 +28,8 @@ import java.util.concurrent.TimeUnit;
  * @author Freyr
  */
 public class ButtonListener extends ListenerAdapter {
+
+    private static final Logger logger = LoggerFactory.getLogger(ButtonListener.class);
 
     public static final int MINUTES_TO_DISABLE = 3;
 
@@ -114,7 +118,7 @@ public class ButtonListener extends ListenerAdapter {
     public void onButtonInteraction(ButtonInteractionEvent event) {
         // Check that these are 'help' buttons
         String[] pressedArgs = event.getComponentId().split(":");
-        System.out.println(Arrays.toString(pressedArgs));
+        logger.debug("{}", Arrays.toString(pressedArgs));
 
         if (pressedArgs[0].equals("cash")) {
             event.deferEdit().queue();

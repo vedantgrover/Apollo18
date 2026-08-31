@@ -10,6 +10,8 @@ import org.jfree.data.time.Hour;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.io.BufferedReader;
@@ -23,6 +25,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class StockData {
+    private static final Logger logger = LoggerFactory.getLogger(StockData.class);
+
     private final String API_KEY;
     private final String symbol;
 
@@ -49,7 +53,7 @@ public class StockData {
 
             return response.toString();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Error retrieving stock data for {}", symbol, e);
         }
 
         return null;
@@ -60,7 +64,7 @@ public class StockData {
 
         try {
             JSONObject json = new JSONObject(stockData);
-            System.out.println(json);
+            logger.debug("{}", json);
             JSONObject timeSeriesData = json.getJSONObject("Time Series (60min)");
 
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
@@ -72,7 +76,7 @@ public class StockData {
                 timeSeries.addOrUpdate(new Hour(date), closePrice);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Error parsing stock data for {}", symbol, e);
         }
 
         TimeSeriesCollection dataset = new TimeSeriesCollection();
@@ -121,16 +125,16 @@ public class StockData {
         File folder = new File(stockDataDir(), symbol);
         if (!folder.exists()) {
             folder.mkdirs();
-            System.out.println("Created folder: " + folder.getPath());
+            logger.debug("Created folder: {}", folder.getPath());
         }
 
         // Save the chart as an image
         try {
             File imageFile = new File(folder, symbol + "-graph.png");
             ChartUtils.saveChartAsPNG(imageFile, chart, 800, 420);
-            System.out.println("Chart saved as image: " + imageFile.getPath());
+            logger.debug("Chart saved as image: {}", imageFile.getPath());
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Error saving chart for {}", symbol, e);
         }
     }
 
