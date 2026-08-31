@@ -98,6 +98,12 @@
             <artifactId>nv-i18n</artifactId>
             <version>1.29</version>
         </dependency>
+        <!-- JDA brings slf4j-api; you bring logback -->
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.5.13</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
