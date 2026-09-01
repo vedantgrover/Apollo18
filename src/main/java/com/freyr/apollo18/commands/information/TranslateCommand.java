@@ -13,6 +13,8 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import okhttp3.*;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -30,6 +32,8 @@ import java.util.Map;
  * @author Freyr
  */
 public class TranslateCommand extends Command {
+
+    private static final Logger logger = LoggerFactory.getLogger(TranslateCommand.class);
 
     private final OkHttpClient client = new OkHttpClient();
 
@@ -80,11 +84,11 @@ public class TranslateCommand extends Command {
         try (Response response = client.newCall(request).execute()) {
             // Handle the response
             JSONArray responseBody = new JSONArray(response.body().string());
-            System.out.println("Response: " + responseBody);
+            logger.debug("Response: {}", responseBody);
 
             event.getHook().sendMessage(responseBody.getJSONObject(0).getJSONArray("translations").getJSONObject(0).getString("text")).queue();
         } catch (IOException | JSONException e) {
-            System.err.println(e);
+            logger.error("Error translating text to {}", language, e);
 
             event.getHook().sendMessageEmbeds(EmbedUtils.createError("That language doesn't exist")).queue();
         }

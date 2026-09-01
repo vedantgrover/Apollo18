@@ -10,6 +10,8 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.components.actionrow.ActionRow;
 import net.dv8tion.jda.api.components.buttons.Button;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URI;
@@ -23,6 +25,8 @@ import java.net.http.HttpResponse;
  * @author Freyr
  */
 public class VoteCommand extends Command {
+
+    private static final Logger logger = LoggerFactory.getLogger(VoteCommand.class);
 
     public VoteCommand(Apollo18 bot) {
         super(bot);
@@ -54,7 +58,7 @@ public class VoteCommand extends Command {
             } else
                 event.getHook().sendMessageEmbeds(EmbedUtils.createError("You have already voted! You can vote every 12 hours.")).queue();
         } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
+            logger.error("Error checking vote status for user {}", event.getUser().getId(), e);
             event.getHook().sendMessageEmbeds(EmbedUtils.createError("Something went wrong while getting the data. Please try again later.")).queue();
         }
     }

@@ -5,6 +5,8 @@ import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This is a bot Event Listener. Anytime something happens in a server, it is registered as an event for the bot.
@@ -13,6 +15,8 @@ import org.jetbrains.annotations.NotNull;
  * @author Freyr
  */
 public class BotListener extends ListenerAdapter {
+
+    private static final Logger logger = LoggerFactory.getLogger(BotListener.class);
 
     private final Apollo18 bot; // This is used to access the database
 
@@ -35,7 +39,7 @@ public class BotListener extends ListenerAdapter {
     public void onGuildJoin(@NotNull GuildJoinEvent event) {
         bot.getDatabase().createGuildData(event.getGuild());
 
-        System.out.println("Joined " + event.getGuild().getName() + ". Data creation successful");
+        logger.info("Joined {}. Data creation successful", event.getGuild().getName());
     }
 
     /**

@@ -16,6 +16,8 @@ import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.LoginException;
 import java.time.Duration;
@@ -33,6 +35,8 @@ import java.util.concurrent.TimeUnit;
  */
 public class Apollo18 {
 
+    private static final Logger logger = LoggerFactory.getLogger(Apollo18.class);
+
     private final @NotNull Dotenv config; // Getting all of my sensitive info from environment file
     private final @NotNull ShardManager shardManager; // Allows bot to run on multiple servers. Bot "builder"
     private final @NotNull Database database; // All direct database method interactions are stored in this class.
@@ -43,7 +47,7 @@ public class Apollo18 {
         // Checked before the database so a missing token fails with this message rather than an opaque Mongo DNS error.
         String token = config.get("TOKEN", System.getenv("TOKEN"));
         if (token == null || token.isEmpty()) {
-            System.err.println("❌ TOKEN not set");
+            logger.error("❌ TOKEN not set");
             System.exit(1);
         }
 
@@ -78,23 +82,23 @@ public class Apollo18 {
 
         Duration duration = Duration.between(now, nextRun);
         long initialDelay = duration.getSeconds();
-        System.out.println("Will run in: " + initialDelay);
+        logger.info("Will run in: {}", initialDelay);
 
         ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
         scheduler.scheduleAtFixedRate(() -> {
-            System.out.println("Running");
+            logger.info("Running daily stock/work update job");
             database.updateStocks();
             database.dailyWorkChecks();
         }, initialDelay, TimeUnit.DAYS.toSeconds(1), TimeUnit.SECONDS);
 
-        System.out.println("Will run at " + nextRun.format(DateTimeFormatter.ofPattern("yyyy/MM/dd-hh:mm:ss")));
+        logger.info("Will run at {}", nextRun.format(DateTimeFormatter.ofPattern("yyyy/MM/dd-hh:mm:ss")));
     }
 
     public static void main(String[] args) {
         try {
             new Apollo18(); // Starting the bot
         } catch (LoginException e) {
-            System.out.println("ERROR: Provided bot token is invalid"); // Exception handling if the bot token is invalid
+            logger.error("Provided bot token is invalid", e); // Exception handling if the bot token is invalid
         }
     }
 

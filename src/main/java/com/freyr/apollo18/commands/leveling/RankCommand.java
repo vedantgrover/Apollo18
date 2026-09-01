@@ -12,8 +12,12 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RankCommand extends Command {
+
+    private static final Logger logger = LoggerFactory.getLogger(RankCommand.class);
 
     public RankCommand(Apollo18 bot) {
         super(bot);
@@ -47,7 +51,7 @@ public class RankCommand extends Command {
 
             event.getHook().sendMessageEmbeds(embed.build()).queue();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Error building rank card for {}", user.getName(), e);
             event.getHook().sendMessageEmbeds(EmbedUtils.createError(user.getName() + " has not sent any messages within this server.")).queue();
         }
     }

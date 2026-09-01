@@ -4,18 +4,21 @@ import org.bson.BsonInvalidOperationException;
 import org.bson.BsonReader;
 import org.bson.BsonType;
 import org.bson.BsonWriter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DataUtility {
+
+    private static final Logger logger = LoggerFactory.getLogger(DataUtility.class);
 
     public static String readNullableString(BsonReader bsonReader, String fieldName) {
         try {
             return bsonReader.readString(fieldName);
         } catch (BsonInvalidOperationException invalidOperationException) {
-//            System.err.println(invalidOperationException);
             bsonReader.readNull();
             return null;
         } catch (Exception e) {
-            System.err.println(e);
+            logger.error("Error reading nullable string for field {}", fieldName, e);
             return null;
         }
     }

@@ -8,11 +8,15 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This command goes through Reddit and finds a meme to give you
  */
 public class MemeCommand extends Command {
+
+    private static final Logger logger = LoggerFactory.getLogger(MemeCommand.class);
 
     public MemeCommand(Apollo18 bot) {
         super(bot);
@@ -29,7 +33,7 @@ public class MemeCommand extends Command {
 
         // Getting the data
         JSONObject data = getApiData(memeAPI);
-        System.out.println(data);
+        logger.debug("{}", data);
 
         JSONObject memeInfo = data.getJSONObject("data").getJSONArray("children").getJSONObject(0).getJSONObject("data");
 

@@ -7,12 +7,16 @@ import com.freyr.apollo18.data.Database;
 import com.freyr.apollo18.handlers.BusinessHandler;
 import com.freyr.apollo18.util.embeds.EmbedUtils;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
 public class DailyCommand extends Command {
+
+    private static final Logger logger = LoggerFactory.getLogger(DailyCommand.class);
 
     public DailyCommand(Apollo18 bot) {
         super(bot);
@@ -28,7 +32,7 @@ public class DailyCommand extends Command {
 
         Duration duration = Duration.between(now, nextRun);
         long initialDelay = duration.getSeconds();
-        System.out.println("Will run in: " + initialDelay);
+        logger.info("Will run in: {}", initialDelay);
 
         this.cooldown = Integer.parseInt(Long.toString(initialDelay));
     }

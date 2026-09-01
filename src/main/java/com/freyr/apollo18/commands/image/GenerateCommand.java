@@ -9,6 +9,8 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -17,6 +19,8 @@ import java.net.http.HttpResponse;
 import java.util.Objects;
 
 public class GenerateCommand extends Command {
+
+    private static final Logger logger = LoggerFactory.getLogger(GenerateCommand.class);
 
     public GenerateCommand(Apollo18 bot) {
         super(bot);
@@ -61,7 +65,7 @@ public class GenerateCommand extends Command {
             }
         } catch (Exception e) {
             event.getHook().sendMessageEmbeds(EmbedUtils.createError("Something went wrong while generating your image.")).queue();
-            System.err.println(e);
+            logger.error("Error generating image", e);
         }
     }
 }

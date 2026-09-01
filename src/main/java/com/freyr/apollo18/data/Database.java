@@ -42,6 +42,8 @@ import org.bson.codecs.configuration.CodecRegistries;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.conversions.Bson;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -62,6 +64,8 @@ import java.util.concurrent.TimeUnit;
  * @author Freyr
  */
 public class Database {
+
+    private static final Logger logger = LoggerFactory.getLogger(Database.class);
 
     private final Apollo18 bot;
 
@@ -104,7 +108,7 @@ public class Database {
             return false;
         }
 
-        System.out.println("Creating user data for " + user.getName());
+        logger.debug("Creating user data for {}", user.getName());
         List<UserLeveling> xp = new ArrayList<>();
 
         List<UserStock> stocks = new ArrayList<>();
@@ -117,7 +121,7 @@ public class Database {
             userData.insertOne(new com.freyr.apollo18.data.records.user.User(user.getId(), xp, economyData, musicData, true));
             return true;
         } catch (Exception e) {
-            System.err.println(e);
+            logger.error("Error creating user data for {}", user.getName(), e);
             return false;
         }
     }
@@ -195,7 +199,7 @@ public class Database {
         try {
             guildData.updateOne(query, updates, options);
         } catch (MongoException me) {
-            me.printStackTrace();
+            logger.error("Mongo error in toggleWelcomeSystem", me);
         }
     }
 
@@ -209,7 +213,7 @@ public class Database {
         try {
             guildData.updateOne(query, updates, options);
         } catch (MongoException me) {
-            me.printStackTrace();
+            logger.error("Mongo error in setWelcomeChannel", me);
         }
     }
 
@@ -223,7 +227,7 @@ public class Database {
         try {
             guildData.updateOne(query, updates, options);
         } catch (MongoException me) {
-            me.printStackTrace();
+            logger.error("Mongo error in setLeaveChannel", me);
         }
     }
 
@@ -237,7 +241,7 @@ public class Database {
         try {
             guildData.updateOne(query, updates, options);
         } catch (MongoException me) {
-            me.printStackTrace();
+            logger.error("Mongo error in setMemberCountChannel", me);
         }
     }
 
@@ -251,7 +255,7 @@ public class Database {
         try {
             guildData.updateOne(query, updates, options);
         } catch (MongoException me) {
-            me.printStackTrace();
+            logger.error("Mongo error in setWelcomeMessage", me);
         }
     }
 
@@ -265,7 +269,7 @@ public class Database {
         try {
             guildData.updateOne(query, updates, options);
         } catch (MongoException me) {
-            me.printStackTrace();
+            logger.error("Mongo error in setLeaveMessage", me);
         }
     }
 
@@ -279,7 +283,7 @@ public class Database {
         try {
             guildData.updateOne(query, updates, options);
         } catch (MongoException me) {
-            me.printStackTrace();
+            logger.error("Mongo error in resetWelcomeSystem", me);
         }
     }
     // endregion
@@ -302,7 +306,7 @@ public class Database {
         try {
             userData.updateOne(query, updates, options);
         } catch (MongoException me) {
-            me.printStackTrace();
+            logger.error("Mongo error in createLevelingProfile", me);
         }
     }
 
@@ -335,7 +339,7 @@ public class Database {
         try {
             guildData.updateOne(query, updates, options);
         } catch (MongoException me) {
-            me.printStackTrace();
+            logger.error("Mongo error in toggleLevelingSystem", me);
         }
     }
 
@@ -353,7 +357,7 @@ public class Database {
         try {
             guildData.updateOne(query, updates, options);
         } catch (MongoException me) {
-            me.printStackTrace();
+            logger.error("Mongo error in setLevelingChannel", me);
         }
     }
 
@@ -371,7 +375,7 @@ public class Database {
         try {
             guildData.updateOne(query, updates, options);
         } catch (MongoException me) {
-            me.printStackTrace();
+            logger.error("Mongo error in setLevelingMessage", me);
         }
     }
 
@@ -399,7 +403,7 @@ public class Database {
         try {
             userData.updateOne(filter, update, options);
         } catch (MongoException me) {
-            me.printStackTrace();
+            logger.error("Mongo error in addXptoUser", me);
         }
     }
 
@@ -417,7 +421,7 @@ public class Database {
             userData.updateOne(filter, update, options);
             createTransaction(userId, "Leveling / Level-up", oldBal, getBalance(userId));
         } catch (MongoException me) {
-            me.printStackTrace();
+            logger.error("Mongo error in levelUp", me);
         }
     }
 
@@ -463,7 +467,7 @@ public class Database {
         try {
             userData.updateOne(query, updates, options);
         } catch (MongoException me) {
-            me.printStackTrace();
+            logger.error("Mongo error in addBytes", me);
         }
     }
 
@@ -483,7 +487,7 @@ public class Database {
         try {
             userData.updateOne(query, updates, options);
         } catch (MongoException me) {
-            me.printStackTrace();
+            logger.error("Mongo error in depositBytes", me);
         }
     }
 
@@ -529,7 +533,7 @@ public class Database {
         try {
             userData.updateOne(query, updates, options);
         } catch (MongoException me) {
-            me.printStackTrace();
+            logger.error("Mongo error in createPlaylist", me);
         }
     }
 
@@ -559,7 +563,7 @@ public class Database {
         try {
             userData.updateOne(filter, update, options);
         } catch (MongoException me) {
-            me.printStackTrace();
+            logger.error("Mongo error in addSong", me);
         }
     }
 
@@ -576,7 +580,7 @@ public class Database {
         try {
             userData.updateOne(filter, update, options);
         } catch (MongoException me) {
-            me.printStackTrace();
+            logger.error("Mongo error in removeSong", me);
         }
 
     }
@@ -594,7 +598,7 @@ public class Database {
         try {
             userData.updateOne(query, updates, options);
         } catch (MongoException me) {
-            me.printStackTrace();
+            logger.error("Mongo error in moveSong", me);
         }
     }
 
@@ -641,7 +645,7 @@ public class Database {
 
             businessData.insertOne(new Business(businessName, stockCode, "default", businessDescription, (logo == null) ? "https://library.kissclipart.com/20181224/fww/kissclipart-free-vector-building-clipart-computer-icons-66d576fc7c1dd7ff.png" : logo, true, new ArrayList<Job>(), stockData));
         } catch (Exception e) {
-            System.err.println(e);
+            logger.error("Error creating default business for ticker {}", ticker, e);
         }
     }
 
@@ -707,24 +711,24 @@ public class Database {
         List<UserStock> stocks = userDoc.economy().stocks();
         int tempQuantity = quantity;
 
-        System.out.println("Info: Building Document for Stock: " + stockCode + ", Quantity: " + tempQuantity);
+        logger.debug("Building document for stock {}, quantity {}", stockCode, tempQuantity);
 
         for (int i = 0; i < stocks.size(); i++) {
             if (stocks.get(i).stockCode().equals(stockCode.toUpperCase()) && tempQuantity > 0) {
                 if (stocks.get(i).quantity() <= tempQuantity && (tempQuantity - stocks.get(i).quantity()) >= 0) {
                     tempQuantity -= stocks.get(i).quantity();
-                    System.out.println("Info: Action: Delete | SQ: " + stocks.get(i).quantity() + " | TQ Left: " + tempQuantity);
+                    logger.debug("Action: delete | stock quantity: {} | quantity left: {}", stocks.get(i).quantity(), tempQuantity);
                     result.add(new Document("_id", stocks.get(i)._id()).append("quantity", stocks.get(i).quantity()).append("index", i).append("action", 0));
                 } else if (stocks.get(i).quantity() > tempQuantity) {
-                    System.out.println("Info: Action: Update | SQ from: " + stocks.get(i).quantity() + " to: " + (stocks.get(i).quantity() - tempQuantity));
+                    logger.debug("Action: update | stock quantity from {} to {}", stocks.get(i).quantity(), (stocks.get(i).quantity() - tempQuantity));
                     result.add(new Document("_id", stocks.get(i)._id()).append("quantity", (stocks.get(i).quantity() - tempQuantity)).append("index", i).append("action", 1));
                     tempQuantity -= tempQuantity;
-                    System.out.println("Info: TQ Left: " + tempQuantity);
+                    logger.debug("Quantity left: {}", tempQuantity);
                 }
             }
         }
 
-        System.out.println(result);
+        logger.debug("Purchased stocks result: {}", result);
         return result;
     }
 
@@ -754,7 +758,7 @@ public class Database {
                 HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
                 JSONObject data = new JSONObject(response.body());
 
-                System.out.println(data);
+                logger.debug("Stock update response: {}", data);
 
                 int currentPrice = (int) Math.round(data.getDouble("lastPrice") * 0.23);
                 int previousPrice = business.stock().currentPrice();
@@ -768,11 +772,11 @@ public class Database {
                 StockData stockData = new StockData(bot, business.stock().ticker());
                 stockData.displayLineChart(stockData.parseStockData(stockData.retrieveStockData()));
 
-                System.out.println("Updating " + business.stock().ticker() + "; Old Price: " + previousPrice + "; Current Price: " + currentPrice + "; Change: " + change + "\nAll Details: " + data);
+                logger.info("Updating {}; old price: {}; current price: {}; change: {}", business.stock().ticker(), previousPrice, currentPrice, change);
 
                 TimeUnit.SECONDS.sleep(5);
             } catch (Exception e) {
-                System.err.println(e);
+                logger.error("Error updating stock for business {}", business.stockCode(), e);
             }
         }
     }
@@ -851,20 +855,20 @@ public class Database {
     public void dailyWorkChecks() {
         for (com.freyr.apollo18.data.records.user.User user : userData.find(new Document())) {
             Document query = new Document("userID", user.userID());
-            System.out.println("Updating data for " + user.userID());
+            logger.debug("Updating data for {}", user.userID());
             if (Integer.valueOf(user.economy().job().daysMissed()) == null || Boolean.valueOf(user.economy().job().worked()) == null) {
                 Document job = new Document("business", null).append("job", null).append("daysWorked", 0).append("daysMissed", 0).append("worked", false);
                 Bson updates = Updates.set("economy.job", job);
 
                 userData.updateOne(query, updates, new UpdateOptions().upsert(true));
-                System.out.println("Replaced Job Data with Updated Job Data for " + user.userID());
+                logger.debug("Replaced job data with updated job data for {}", user.userID());
             }
 
             if (!user.economy().job().worked() && user.economy().job().jobName() != null) {
                 Bson updates = Updates.combine(Updates.set("economy.job.daysWorked", 0), Updates.inc("economy.job.daysMissed", 1));
 
                 userData.updateOne(query, updates, new UpdateOptions().upsert(true));
-                System.out.println(user.userID() + " did not work today. Days missed added");
+                logger.info("{} did not work today. Days missed added", user.userID());
             }
 
             if (getJob(user.economy().job().businessCode(), user.economy().job().jobName()) == null) {
@@ -876,7 +880,7 @@ public class Database {
 
                 userData.updateOne(query, updates, new UpdateOptions().upsert(true));
                 removeBytes(user.userID(), getJob(user.economy().job().businessCode(), user.economy().job().jobName()).salary() * 5);
-                System.out.println(user.userID() + " was fired");
+                logger.info("{} was fired", user.userID());
             }
 
             Bson updates = Updates.set("economy.job.worked", false);
@@ -905,7 +909,7 @@ public class Database {
             try {
                 userData.updateOne(query, updates, options);
             } catch (MongoException me) {
-                me.printStackTrace();
+                logger.error("Mongo error in toggleNotifications", me);
             }
         } catch (NullPointerException ne) {
             userData.updateOne(query, Updates.set("notifications", false), options);

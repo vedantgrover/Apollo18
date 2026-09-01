@@ -10,12 +10,16 @@ import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
 public class CreateDefaultBusiness extends Command {
+
+    private static final Logger logger = LoggerFactory.getLogger(CreateDefaultBusiness.class);
 
     public CreateDefaultBusiness(Apollo18 bot) {
         super(bot);
@@ -63,7 +67,7 @@ public class CreateDefaultBusiness extends Command {
         try {
             db.createDefaultBusiness(businessName, businessDescription, ticker, stockCode, (event.getOption("logo") == null) ? null : event.getOption("logo").getAsString());
         } catch (Exception e) {
-            System.err.println(e);
+            logger.error("Error creating default business {}", businessName, e);
         }
 
         event.getHook().sendMessageEmbeds(EmbedUtils.createSuccess(businessName + " has been created")).queue();
