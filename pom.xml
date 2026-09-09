@@ -43,7 +43,7 @@
         <dependency>
             <groupId>net.dv8tion</groupId>
             <artifactId>JDA</artifactId>
-            <version>6.5.0</version>
+            <version>6.6.0</version>
         </dependency>
         <!--  https://github.com/cdimascio/dotenv-java  -->
         <dependency>
