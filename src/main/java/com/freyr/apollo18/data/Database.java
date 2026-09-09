@@ -53,7 +53,9 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
@@ -760,6 +762,11 @@ public class Database {
 
                 logger.debug("Stock update response: {}", data);
 
+                if (!data.has("lastPrice")) {
+                    logger.warn("No lastPrice in stock API response for {}: {}", business.stock().ticker(), data);
+                    continue;
+                }
+
                 int currentPrice = (int) Math.round(data.getDouble("lastPrice") * 0.23);
                 int previousPrice = business.stock().currentPrice();
                 int change = currentPrice - previousPrice;
@@ -852,39 +859,67 @@ public class Database {
 
     // endregion
 
+    private UserJob defaultJob() {
+        return new UserJob(null, null, 0, 0, false);
+    }
+
+    private UserEconomy defaultEconomy() {
+        return new UserEconomy(0, 0, defaultJob(), new UserCard(false, new UserCreditCard(false, 0, 0, null)), new ArrayList<>());
+    }
+
     public void dailyWorkChecks() {
+        Map<String, Job> jobCache = new HashMap<>();
+
         for (com.freyr.apollo18.data.records.user.User user : userData.find(new Document())) {
-            Document query = new Document("userID", user.userID());
-            logger.debug("Updating data for {}", user.userID());
-            if (Integer.valueOf(user.economy().job().daysMissed()) == null || Boolean.valueOf(user.economy().job().worked()) == null) {
-                Document job = new Document("business", null).append("job", null).append("daysWorked", 0).append("daysMissed", 0).append("worked", false);
-                Bson updates = Updates.set("economy.job", job);
+            try {
+                Document query = new Document("userID", user.userID());
+                logger.debug("Updating data for {}", user.userID());
 
+                if (user.economy() == null) {
+                    userData.updateOne(query, Updates.set("economy", defaultEconomy()), new UpdateOptions().upsert(true));
+                    logger.warn("{} had no economy data. Replaced with default economy", user.userID());
+                    continue;
+                }
+
+                if (user.economy().job() == null) {
+                    userData.updateOne(query, Updates.set("economy.job", defaultJob()), new UpdateOptions().upsert(true));
+                    logger.warn("{} had no job data. Replaced with default job", user.userID());
+                    continue;
+                }
+
+                UserJob userJob = user.economy().job();
+
+                if (!userJob.worked() && userJob.jobName() != null) {
+                    Bson updates = Updates.combine(Updates.set("economy.job.daysWorked", 0), Updates.inc("economy.job.daysMissed", 1));
+
+                    userData.updateOne(query, updates, new UpdateOptions().upsert(true));
+                    logger.info("{} did not work today. Days missed added", user.userID());
+                }
+
+                if (userJob.businessCode() == null || userJob.jobName() == null) {
+                    continue;
+                }
+
+                String jobKey = userJob.businessCode() + "|" + userJob.jobName();
+                Job job = jobCache.computeIfAbsent(jobKey, k -> getJob(userJob.businessCode(), userJob.jobName()));
+
+                if (job == null) {
+                    continue;
+                }
+
+                if (userJob.daysMissed() > job.daysBeforeFire()) {
+                    Bson updates = Updates.combine(Updates.set("economy.job.business", null), Updates.set("economy.job.job", null), Updates.set("economy.job.daysMissed", 0));
+
+                    userData.updateOne(query, updates, new UpdateOptions().upsert(true));
+                    removeBytes(user.userID(), job.salary() * 5);
+                    logger.info("{} was fired", user.userID());
+                }
+
+                Bson updates = Updates.set("economy.job.worked", false);
                 userData.updateOne(query, updates, new UpdateOptions().upsert(true));
-                logger.debug("Replaced job data with updated job data for {}", user.userID());
+            } catch (Exception e) {
+                logger.error("Error processing daily work check for user {}", user.userID(), e);
             }
-
-            if (!user.economy().job().worked() && user.economy().job().jobName() != null) {
-                Bson updates = Updates.combine(Updates.set("economy.job.daysWorked", 0), Updates.inc("economy.job.daysMissed", 1));
-
-                userData.updateOne(query, updates, new UpdateOptions().upsert(true));
-                logger.info("{} did not work today. Days missed added", user.userID());
-            }
-
-            if (getJob(user.economy().job().businessCode(), user.economy().job().jobName()) == null) {
-                continue;
-            }
-
-            if (user.economy().job().daysMissed() > getJob(user.economy().job().businessCode(), user.economy().job().jobName()).daysBeforeFire()) {
-                Bson updates = Updates.combine(Updates.set("economy.job.business", null), Updates.set("economy.job.job", null), Updates.set("economy.job.daysMissed", 0));
-
-                userData.updateOne(query, updates, new UpdateOptions().upsert(true));
-                removeBytes(user.userID(), getJob(user.economy().job().businessCode(), user.economy().job().jobName()).salary() * 5);
-                logger.info("{} was fired", user.userID());
-            }
-
-            Bson updates = Updates.set("economy.job.worked", false);
-            userData.updateOne(query, updates, new UpdateOptions().upsert(true));
         }
     }
     // endregion
