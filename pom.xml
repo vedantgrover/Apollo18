@@ -94,9 +94,9 @@
         </dependency>
 
         <dependency>
-            <groupId>com.neovisionaries</groupId>
+            <groupId>uk.co.foundationsedge</groupId>
             <artifactId>nv-i18n</artifactId>
-            <version>1.29</version>
+            <version>1.35.0</version>
         </dependency>
         <!-- JDA brings slf4j-api; you bring logback -->
         <dependency>
